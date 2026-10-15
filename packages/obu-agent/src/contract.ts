@@ -371,6 +371,38 @@ export interface FetchInPageResult {
   bytes: number;
 }
 
+// Code mode (r2-repl): a persistent per-session JS sandbox with a
+// Playwright-compatible `page`/`context` bound to the same action layer.
+export interface ReplRunParams {
+  sessionId: SessionId;
+  /** JavaScript; top-level await allowed; bindings persist across calls. Print with console.log. */
+  code: string;
+  /** Default 30000, max 300000. */
+  timeoutMs?: number;
+}
+export interface ReplRunResult {
+  /** false when the cell threw; output printed before the throw is kept. */
+  ok: boolean;
+  /** console output, newline-joined. */
+  output: string;
+  /** Inspected value of the cell's last expression, if any. */
+  value?: string;
+  error?: { name: string; message: string; code?: string; stack?: string };
+  /** Images passed to display() / annotatedScreenshot(), for the model to see. */
+  images: { path: string; mime: string }[];
+  warnings?: string[];
+  /** The REPL's ./artifacts directory (absolute). */
+  artifactsDir: string;
+  ms: number;
+  events: SystemEvent[];
+}
+export interface ReplResetParams {
+  sessionId: SessionId;
+}
+export interface ReplResetResult {
+  ok: true;
+}
+
 export interface SessionEventsParams {
   sessionId: SessionId;
   afterSeq?: number;
@@ -507,6 +539,8 @@ export interface MethodMap {
   wait: { params: WaitParams; result: WaitResult };
   "network.capture": { params: NetworkCaptureParams; result: NetworkCaptureResult };
   fetchInPage: { params: FetchInPageParams; result: FetchInPageResult };
+  "repl.run": { params: ReplRunParams; result: ReplRunResult };
+  "repl.reset": { params: ReplResetParams; result: ReplResetResult };
 }
 export type MethodName = keyof MethodMap;
 export type ParamsOf<M extends MethodName> = MethodMap[M]["params"];
@@ -533,6 +567,8 @@ export const METHODS: readonly MethodName[] = [
   "wait",
   "network.capture",
   "fetchInPage",
+  "repl.run",
+  "repl.reset",
 ] as const;
 
 /** Methods that only read state; safe to run in parallel across sessions (WS-F executionMode). */

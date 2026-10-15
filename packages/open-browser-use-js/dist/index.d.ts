@@ -6,6 +6,12 @@ export type BrowserUseRequestParams = {
 };
 export type OpenBrowserUseClientOptions = {
     socketPath: string;
+    /**
+     * Relay token file. Precedence: OBU_RELAY_AUTH=uid (no token) >
+     * OBU_RELAY_TOKEN_PATH > this option > `<socket dir>/relay.token`.
+     * A missing file means the relay runs without token auth.
+     */
+    tokenPath?: string;
     sessionId?: string;
     turnId?: string;
     timeoutMs?: number;
@@ -33,6 +39,7 @@ export declare class OpenBrowserUseClient {
     readonly sessionId: string;
     readonly turnId: string;
     readonly timeoutMs: number;
+    readonly tokenPath?: string;
     constructor(options: OpenBrowserUseClientOptions);
     connect(): Promise<this>;
     close(): void;
@@ -115,5 +122,17 @@ export declare class OpenBrowserUseCdp {
     }): Promise<OpenBrowserUseNotification>;
     waitForLoadEvent(tabId: number, state: OpenBrowserUseLoadState, timeoutMs: number): Promise<void>;
     ensureAttached(tabId: number): Promise<void>;
+}
+/** Resolves and reads the relay token (see OpenBrowserUseClientOptions.tokenPath). */
+export declare function readRelayToken(socketPath: string, tokenPath?: string): string | null;
+/**
+ * Reassembles `{"chunk":{id,i,n,data}}` envelopes (WIRE.md framing: `data` is
+ * the i-th slice of the message's JSON text). Non-chunk messages pass through.
+ */
+export declare class ChunkAssembler {
+    #private;
+    private readonly ttlMs;
+    constructor(ttlMs?: number);
+    accept(message: JsonValue): JsonValue | null;
 }
 export declare function encodeFrame(value: JsonValue | Record<string, unknown>): Buffer;
