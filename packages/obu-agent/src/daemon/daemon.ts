@@ -50,7 +50,8 @@ import type { Store, SessionRow } from "../store/index.js";
 import type { HandlerTable } from "../server/rpc.js";
 import { takeSnapshot as wsdTakeSnapshot } from "../snapshot/index.js";
 import { act as wseAct } from "../actions/index.js";
-import { performActionAndWait as wsePerformActionAndWait } from "../wait/index.js";
+import { deliverSystemEvent, performActionAndWait as wsePerformActionAndWait, takePendingDialogAction } from "../wait/index.js";
+import { configureDownloads, type PendingDownload } from "../files/index.js";
 import { screenshot as wseScreenshot } from "../screenshot/index.js";
 import { INJECTED_BUNDLE_SOURCE, INJECTED_VERSION } from "../injected/index.js";
 
@@ -92,6 +93,10 @@ export class Daemon {
   #mutex = new KeyedMutex<TabId>();
   #runtimes = new Map<TabId, TabRuntime>();
   #dialogDecisions = new Map<TabId, DialogDecision[]>();
+  /** Browser-level downloads (chrome.downloads via the extension), by backend id. */
+  #downloads = new Map<string, { downloadId: number; tabId?: TabId; url: string; path: string; finishedAt?: number; state: "in_progress" | "complete" | "interrupted" }>();
+  #downloadWaiters = new Set<() => void>();
+  #nextDownloadId = 1;
   #artifactRoot: string;
   #bundle: { source: string; version: string };
   #stopSweeper: (() => void) | null = null;
@@ -136,6 +141,9 @@ export class Daemon {
   /** Connect the backend (best effort), reconcile (I5), start the lease sweeper. */
   async start(): Promise<void> {
     this.#unsubscribe = this.backend.onEvent((event) => this.#onBackendEvent(event));
+    // WS-E's per-tab tracker sees Page.downloadWillBegin but (through the
+    // extension) never the final path: resolve it from chrome.downloads.
+    configureDownloads({ resolvePath: (d) => this.#resolveDownloadPath(d) });
     await this.backend.connect().catch((error) => {
       this.#log(`browser backend not connected yet: ${(error as Error).message}`);
       this.#scheduleReconnect();
@@ -187,6 +195,18 @@ export class Daemon {
         this.sessions.emit(opener.sessionId, { type: "popup_opened", tabId: event.tabId, tab, openerTabId: event.openerTabId });
         break;
       }
+      case "download":
+        this.#onDownload(event);
+        break;
+      case "owner_expired": {
+        // The extension's lease backstop finalized a session we still hold.
+        for (const tabId of event.closedTabIds) {
+          this.#forgetRuntime(tabId);
+          const dropped = this.sessions.dropTab(tabId);
+          if (dropped) this.sessions.emit(dropped.sessionId, { type: "tab_closed", tabId, reason: "lease_expired", activeTabId: dropped.activeTabId });
+        }
+        break;
+      }
       case "disconnected":
         for (const runtime of this.#runtimes.values()) runtime.dispose();
         this.#runtimes.clear();
@@ -194,6 +214,76 @@ export class Daemon {
         this.#scheduleReconnect();
         break;
     }
+  }
+
+  #capabilities() {
+    return this.backend.capabilities?.() ?? { tabEvents: false, downloads: false, closeTab: false };
+  }
+
+  #onDownload(event: Extract<BackendEvent, { type: "download" }>): void {
+    let entry = this.#downloads.get(event.id);
+    const firstSight = !entry;
+    if (!entry) {
+      entry = { downloadId: this.#nextDownloadId++, tabId: event.tabId, url: event.url, path: event.path, state: "in_progress" };
+      this.#downloads.set(event.id, entry);
+      // Bounded memory: forget the oldest finished downloads.
+      if (this.#downloads.size > 200) {
+        for (const [id, old] of this.#downloads) {
+          if (old.state !== "in_progress") {
+            this.#downloads.delete(id);
+            break;
+          }
+        }
+      }
+    }
+    entry.path = event.path || entry.path;
+    entry.tabId ??= event.tabId;
+    const owner = entry.tabId !== undefined ? this.sessions.store.ownerOf(entry.tabId) : undefined;
+    const info = (): import("../contract.js").DownloadInfo => ({
+      downloadId: entry!.downloadId,
+      url: entry!.url,
+      path: entry!.path,
+      ...(event.mime ? { mime: event.mime } : {}),
+      ...(event.bytes !== undefined ? { bytes: event.bytes } : {}),
+      state: entry!.state,
+      ...(entry!.tabId !== undefined ? { tabId: entry!.tabId } : {}),
+    });
+    if (firstSight && owner && this.#capabilities().downloads) {
+      this.sessions.emit(owner.sessionId, { type: "download_started", tabId: entry.tabId, download: info() });
+    }
+    if (event.status === "complete" || event.status === "interrupted") {
+      if (entry.state !== "in_progress") return;
+      entry.state = event.status;
+      entry.finishedAt = Date.now();
+      if (owner && this.#capabilities().downloads) {
+        this.sessions.emit(owner.sessionId, { type: "download_finished", tabId: entry.tabId, download: info() });
+      }
+      for (const wake of [...this.#downloadWaiters]) wake();
+    }
+  }
+
+  /** Final path of a CDP-observed download, from the matching chrome.downloads item. */
+  async #resolveDownloadPath(d: PendingDownload): Promise<string | undefined> {
+    const match = () =>
+      [...this.#downloads.values()].find(
+        (entry) => entry.state === "complete" && entry.url === d.url && (entry.tabId === undefined || entry.tabId === d.tabId) && (entry.finishedAt ?? 0) >= d.startedAt - 1_000,
+      );
+    const found = match();
+    if (found) return found.path;
+    return new Promise((resolve) => {
+      const wake = () => {
+        const hit = match();
+        if (hit) done(hit.path);
+      };
+      const done = (path: string | undefined) => {
+        clearTimeout(timer);
+        this.#downloadWaiters.delete(wake);
+        resolve(path);
+      };
+      const timer = setTimeout(() => done(undefined), 10_000);
+      timer.unref();
+      this.#downloadWaiters.add(wake);
+    });
   }
 
   #scheduleReconnect(): void {
@@ -230,9 +320,11 @@ export class Daemon {
       bundleVersion: () => this.#bundle.version,
       emit: (event) => {
         const owner = this.sessions.store.ownerOf(tabId);
-        if (owner) this.sessions.emit(owner.sessionId, event as EventInput);
+        const stamped = owner ? this.sessions.emit(owner.sessionId, event as EventInput) : undefined;
+        if (stamped && runtime) deliverSystemEvent(runtime.cdp, stamped);
       },
-      takeDialogDecision: () => this.#dialogDecisions.get(tabId)?.shift(),
+      // Daemon-level `wait{for:'dialog', dialogAction}` first, then WS-E's queue.
+      takeDialogDecision: () => this.#dialogDecisions.get(tabId)?.shift() ?? (runtime ? takePendingDialogAction(runtime.cdp) : undefined),
     });
     this.#runtimes.set(tabId, runtime);
     return runtime;
@@ -282,7 +374,13 @@ export class Daemon {
             sessionId,
             this.#artifactDir(sessionId),
             treeKey ? this.sessions.previousTree(sessionId, treeKeyFor(row.tabId, treeKey)) : undefined,
-            (event) => this.sessions.emit(sessionId, { ...(event as object), tabId: (event as { tabId?: TabId }).tabId ?? row.tabId } as EventInput),
+            (event) => {
+              // With browser-level download events (extension), those are authoritative;
+              // drop WS-E's CDP-derived duplicates.
+              if ((event.type === "download_started" || event.type === "download_finished") && this.#capabilities().downloads) return;
+              const stamped = this.sessions.emit(sessionId, { ...event, tabId: (event as { tabId?: TabId }).tabId ?? row.tabId } as EventInput);
+              if (stamped) deliverSystemEvent(runtime.cdp, stamped);
+            },
           );
           return await fn(page, runtime, row.tabId);
         });

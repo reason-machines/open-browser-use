@@ -34,7 +34,35 @@ export type BackendEvent =
   | { type: "lease_revoked"; tabId: TabId; reason: "dragged_out_of_group" | "user_closed" | "user_took_over" }
   | { type: "disconnected"; error?: string }
   /** The debugger (re)attached to a tab: per-tab CDP setup must be redone. */
-  | { type: "attached"; tabId: TabId };
+  | { type: "attached"; tabId: TabId }
+  /** The debugger detached from a tab (idle detach, infobar Cancel): CDP state is gone. */
+  | { type: "detached"; tabId: TabId; reason: string }
+  /**
+   * A browser-level download change (chrome.downloads), attributed to a tab when
+   * the backend can tell. Backends that emit these set `capabilities.downloads`.
+   */
+  | {
+      type: "download";
+      id: string;
+      tabId?: TabId;
+      url: string;
+      path: string;
+      status: "started" | "in_progress" | "complete" | "interrupted";
+      mime?: string;
+      bytes?: number;
+    }
+  /** The backend finalized a session on its own (e.g. extension lease backstop). */
+  | { type: "owner_expired"; ownerKey: string; closedTabIds: TabId[] };
+
+/** What a connected backend can do natively (feature-detected, never version-sniffed). */
+export interface BackendCapabilities {
+  /** Pushes tab_closed / lease_revoked / popup events: no polling needed. */
+  tabEvents: boolean;
+  /** Emits `download` events with the final file path. */
+  downloads: boolean;
+  /** Has a guarded closeTab RPC. */
+  closeTab: boolean;
+}
 
 export interface SendOptions {
   /** Flat child session (OOPIF) id from Target.attachedToTarget. */
@@ -47,6 +75,8 @@ export interface BrowserBackend {
   connect(): Promise<void>;
   isConnected(): boolean;
   version(): string | undefined;
+  /** Native capabilities of the connected browser side. */
+  capabilities(): BackendCapabilities;
   /** New background tab (never focused, never activates the user's tab), grouped for `owner`. */
   createTab(owner: BackendOwner, url: string): Promise<BackendTab>;
   closeTab(owner: BackendOwner, tabId: TabId): Promise<void>;

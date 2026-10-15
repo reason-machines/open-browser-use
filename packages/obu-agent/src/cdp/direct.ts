@@ -4,7 +4,7 @@
 // Tab ids are synthetic numbers mapped 1:1 to page targetIds.
 import type { TabId } from "../contract.js";
 import { ObuError } from "../errors.js";
-import { Emitter, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
+import { Emitter, type BackendCapabilities, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
 
 interface PendingCall {
   resolve: (value: any) => void;
@@ -76,6 +76,12 @@ export class DirectCdpBackend implements BrowserBackend {
 
   version(): string | undefined {
     return this.#version;
+  }
+
+  capabilities(): BackendCapabilities {
+    // Target events are pushed over the browser websocket; downloads come from
+    // CDP (Browser.downloadProgress carries the path), handled per tab by WS-E.
+    return { tabEvents: true, downloads: false, closeTab: true };
   }
 
   async createTab(_owner: BackendOwner, url: string): Promise<BackendTab> {

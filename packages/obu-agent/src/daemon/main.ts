@@ -71,8 +71,9 @@ function isAlive(pid: number): boolean {
 
 export async function runDaemon(argv: string[]): Promise<void> {
   const profile = flag(argv, "profile") ?? "Default";
-  const dir = agentDir(profile);
   const socketPath = flag(argv, "socket") ?? agentSocketPath(profile);
+  // State lives next to an explicit socket (supervised / tests), else in the profile's agent dir.
+  const dir = flag(argv, "state-dir") ?? (flag(argv, "socket") ? dirname(socketPath) : agentDir(profile));
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   mkdirSync(dirname(socketPath), { recursive: true, mode: 0o700 });
   const releaseLock = acquireProfileLock(flag(argv, "lock") ?? join(dirname(socketPath), "agent.lock"));
