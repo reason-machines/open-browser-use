@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { createConnection, createServer, type Server, type Socket } from "node:net";
 import type { JsonRpcError, JsonRpcRequest, JsonRpcSuccess, MethodName, ParamsOf, ResultOf } from "../contract.js";
 import { ObuError, toJsonRpcError } from "../errors.js";
@@ -24,12 +25,43 @@ export interface RequestContext {
 export type Handler = (params: unknown, ctx: RequestContext) => Promise<unknown> | unknown;
 export type HandlerTable = Partial<Record<MethodName, Handler>>;
 
+export interface ServeOptions {
+  /**
+   * Shared secret (contents of agent.token). When set, the first line of every
+   * connection must be `{"auth":"<token>"}`; the server answers
+   * `{"jsonrpc":"2.0","id":"auth","result":{"ok":true}}` or closes the socket.
+   */
+  token?: string;
+}
+
 /** JSON-RPC 2.0 server over a unix socket (or any net path). WS-C owns everything past this framing. */
-export function serveJsonRpc(path: string, handlers: HandlerTable): Promise<Server> {
+export function serveJsonRpc(path: string, handlers: HandlerTable, options: ServeOptions = {}): Promise<Server> {
   let nextConnection = 1;
   const server = createServer((socket: Socket) => {
     const ctx: RequestContext = { connectionId: nextConnection++ };
-    socket.on("data", lineReader((line) => void dispatch(line, socket, handlers, ctx)));
+    let authed = !options.token;
+    socket.on(
+      "data",
+      lineReader((line) => {
+        if (!authed) {
+          let ok = false;
+          try {
+            ok = timingSafeEqualString((JSON.parse(line) as { auth?: unknown }).auth, options.token!);
+          } catch {
+            ok = false;
+          }
+          if (!ok) {
+            write(socket, { jsonrpc: "2.0", id: "auth", error: { code: -32001, message: "unauthorized: send {\"auth\":\"<agent.token>\"} first" } });
+            socket.end();
+            return;
+          }
+          authed = true;
+          write(socket, { jsonrpc: "2.0", id: "auth", result: { ok: true } });
+          return;
+        }
+        void dispatch(line, socket, handlers, ctx);
+      }),
+    );
     socket.on("error", () => socket.destroy());
   });
   return new Promise((resolve, reject) => {
@@ -57,6 +89,13 @@ async function dispatch(line: string, socket: Socket, handlers: HandlerTable, ct
   }
 }
 
+function timingSafeEqualString(value: unknown, expected: string): boolean {
+  if (typeof value !== "string") return false;
+  const a = Buffer.from(value);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 function write(socket: Socket, message: JsonRpcSuccess | JsonRpcError): void {
   if (!socket.destroyed) socket.write(`${JSON.stringify(message)}\n`);
 }
@@ -67,12 +106,23 @@ export class ObuAgentClient {
   #nextId = 1;
   #pending = new Map<string | number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
 
-  constructor(readonly path: string) {}
+  #connecting: Promise<this> | null = null;
 
-  async connect(): Promise<this> {
-    if (this.#socket) return this;
+  constructor(
+    readonly path: string,
+    readonly options: { token?: string; timeoutMs?: number } = {},
+  ) {}
+
+  connect(): Promise<this> {
+    if (this.#socket) return Promise.resolve(this);
+    if (!this.#connecting) {
+      this.#connecting = this.#connect().finally(() => (this.#connecting = null));
+    }
+    return this.#connecting;
+  }
+
+  async #connect(): Promise<this> {
     const socket = createConnection(this.path);
-    this.#socket = socket;
     socket.on(
       "data",
       lineReader((line) => {
@@ -100,15 +150,46 @@ export class ObuAgentClient {
       socket.once("connect", resolve);
       socket.once("error", reject);
     });
+    this.#socket = socket;
+    if (this.options.token) {
+      const ack = new Promise<unknown>((resolve, reject) => this.#pending.set("auth", { resolve, reject }));
+      socket.write(`${JSON.stringify({ auth: this.options.token })}\n`);
+      await ack;
+    }
     return this;
   }
 
   async call<M extends MethodName>(method: M, params: ParamsOf<M>): Promise<ResultOf<M>> {
     await this.connect();
     const id = this.#nextId++;
-    const promise = new Promise<unknown>((resolve, reject) => this.#pending.set(id, { resolve, reject }));
+    const timeoutMs = this.options.timeoutMs;
+    const promise = new Promise<unknown>((resolve, reject) => {
+      const timer = timeoutMs ? setTimeout(() => {
+        this.#pending.delete(id);
+        reject(new ObuError("timeout", `${method} timed out after ${timeoutMs} ms (client)`, { stage: "client" }));
+      }, timeoutMs) : undefined;
+      this.#pending.set(id, {
+        resolve: (value) => {
+          if (timer) clearTimeout(timer);
+          resolve(value);
+        },
+        reject: (error) => {
+          if (timer) clearTimeout(timer);
+          reject(error);
+        },
+      });
+    });
     this.#socket!.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
     return (await promise) as ResultOf<M>;
+  }
+
+  /** Untyped call (MCP proxy, CLI). */
+  request(method: string, params: unknown): Promise<unknown> {
+    return this.call(method as MethodName, params as never);
+  }
+
+  get connected(): boolean {
+    return this.#socket !== null;
   }
 
   close(): void {

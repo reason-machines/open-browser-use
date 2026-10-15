@@ -1,9 +1,11 @@
-// WS-C: method -> implementation wiring. Scaffold: daemon.info works, everything else is not_implemented.
+// WS-C: scaffold handler table (no browser): daemon.info works, everything else is not_implemented.
+// The real table is Daemon.handlers() (src/daemon/daemon.ts).
 import { CONTRACT_VERSION, METHODS, type DaemonInfoResult, type MethodName } from "../contract.js";
 import { notImplemented } from "../errors.js";
 import type { HandlerTable } from "./rpc.js";
 
-export const DAEMON_VERSION = "0.0.1";
+export { DAEMON_VERSION } from "../daemon/daemon.js";
+import { DAEMON_VERSION } from "../daemon/daemon.js";
 
 const OWNERS: Partial<Record<MethodName, string>> = {
   snapshot: "WS-D",
