@@ -49,7 +49,11 @@ func main() {
 
 func run(args []string) error {
 	if isNativeMessagingLaunch(args) {
-		return runHost(host.DefaultSocketDir, "")
+		socketDir := host.DefaultSocketDir
+		if dir := strings.TrimSpace(os.Getenv("OBU_SOCKET_DIR")); dir != "" {
+			socketDir = dir
+		}
+		return runHost(socketDir, "")
 	}
 	cmd := newRootCommand()
 	cmd.SetArgs(args)
@@ -132,10 +136,22 @@ func newHostCommand() *cobra.Command {
 
 func runHost(socketDir string, socketPath string) error {
 	relay := host.NewRelay(host.Config{
-		SocketDir:  socketDir,
-		SocketPath: socketPath,
+		SocketDir:    socketDir,
+		SocketPath:   socketPath,
+		RequireToken: relayRequiresToken(),
 	}, os.Stdin, os.Stdout)
-	return relay.Serve(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	supervisor := newAgentSupervisor(relay, socketDir)
+	go supervisor.run(ctx)
+	defer supervisor.stop()
+	return relay.Serve(ctx)
+}
+
+// relayRequiresToken: OBU_RELAY_AUTH=uid keeps peer-uid-only auth for SDK
+// clients that cannot send the token handshake yet; the default is token.
+func relayRequiresToken() bool {
+	return strings.TrimSpace(strings.ToLower(os.Getenv("OBU_RELAY_AUTH"))) != "uid"
 }
 
 func newSetupCommand() *cobra.Command {
@@ -1650,7 +1666,7 @@ func probeConnectedProfiles(socketDir string) []connectedProfileInfo {
 	probeTimeout := connectedProbeTimeout
 	var out []connectedProfileInfo
 	for _, candidate := range candidates {
-		conn, err := net.DialTimeout("unix", candidate.path, probeTimeout)
+		conn, err := host.DialRelay(candidate.path, probeTimeout)
 		if err != nil {
 			continue
 		}
@@ -2354,6 +2370,7 @@ func invokeWithProfile(socketPath string, socketDir string, browser string, prof
 	defer conn.Close()
 	_ = conn.SetDeadline(time.Now().Add(timeout))
 	applySessionDefaults(params, defaultCLISessionID)
+	applyTimeoutDefault(params, timeout)
 	requestID := "cli-1"
 	request := map[string]any{
 		"jsonrpc": "2.0",
@@ -2381,6 +2398,24 @@ func readResponseForID(conn net.Conn, requestID string) (map[string]any, error) 
 	}
 }
 
+// applyTimeoutDefault passes the CLI --timeout through to the extension as
+// params.timeoutMs (upstream ignored it and always used 10 s), leaving 250 ms
+// of headroom so the extension's specific timeout error beats the socket
+// deadline.
+func applyTimeoutDefault(params map[string]any, timeout time.Duration) {
+	if params == nil || timeout <= 0 {
+		return
+	}
+	if _, ok := params["timeoutMs"]; ok {
+		return
+	}
+	ms := timeout.Milliseconds() - 250
+	if ms < 100 {
+		ms = timeout.Milliseconds()
+	}
+	params["timeoutMs"] = ms
+}
+
 func applySessionDefaults(params map[string]any, sessionID string) {
 	if sessionID == "" {
 		sessionID = defaultCLISessionID
@@ -2401,7 +2436,7 @@ func dialBrowserSocketForProfile(socketPath string, socketDir string, browser st
 	// is the right browser/profile. This protects the user from accidentally
 	// talking to the wrong browser.
 	if socketPath != "" {
-		conn, err := net.DialTimeout("unix", socketPath, timeout)
+		conn, err := host.DialRelay(socketPath, timeout)
 		if err != nil {
 			return nil, err
 		}
@@ -2425,12 +2460,12 @@ func dialBrowserSocketForProfile(socketPath string, socketDir string, browser st
 
 func dialBrowserSocket(socketPath string, socketDir string, timeout time.Duration) (net.Conn, error) {
 	if socketPath != "" {
-		return net.DialTimeout("unix", socketPath, timeout)
+		return host.DialRelay(socketPath, timeout)
 	}
 
 	record, err := host.ReadActiveSocketRecord(socketDir)
 	if err == nil {
-		conn, dialErr := net.DialTimeout("unix", record.SocketPath, timeout)
+		conn, dialErr := host.DialRelay(record.SocketPath, timeout)
 		if dialErr == nil {
 			return conn, nil
 		}
@@ -2597,7 +2632,7 @@ func pickSocketForProfile(socketDir string, browserSelector string, profileSelec
 	var seen []connectedProfileInfo
 	var dialErrors error
 	for _, candidate := range candidates {
-		conn, err := net.DialTimeout("unix", candidate.path, probeTimeout)
+		conn, err := host.DialRelay(candidate.path, probeTimeout)
 		if err != nil {
 			if !isStaleSocketError(err) {
 				dialErrors = errors.Join(dialErrors, fmt.Errorf("connect to socket %q: %w", candidate.path, err))
@@ -2694,7 +2729,7 @@ func scanSocketDir(socketDir string, skipPath string, timeout time.Duration) (ne
 		if candidate.path == skipPath {
 			continue
 		}
-		conn, err := net.DialTimeout("unix", candidate.path, probeTimeout)
+		conn, err := host.DialRelay(candidate.path, probeTimeout)
 		if err == nil {
 			repairActiveSocketRecord(dir, candidate)
 			cleanupStaleSocketCandidates(dir, candidates, candidate.path, probeTimeout)
@@ -2725,7 +2760,7 @@ func cleanupStaleSocketCandidates(socketDir string, candidates []socketCandidate
 		if candidate.path == keepPath {
 			continue
 		}
-		conn, err := net.DialTimeout("unix", candidate.path, cleanupTimeout)
+		conn, err := host.DialRelay(candidate.path, cleanupTimeout)
 		if err == nil {
 			_ = conn.Close()
 			continue

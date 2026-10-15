@@ -1171,7 +1171,7 @@ func TestCobraUnknownCommand(t *testing.T) {
 }
 
 func TestInvokeRemovesStaleActiveSocketRecord(t *testing.T) {
-	socketDir := t.TempDir()
+	socketDir := shortTestDir(t)
 	socketPath := filepath.Join(socketDir, "missing.sock")
 	if err := host.WriteActiveSocketRecord(socketDir, socketPath); err != nil {
 		t.Fatal(err)
@@ -1773,7 +1773,7 @@ func TestIsStaleSocketError(t *testing.T) {
 func TestSocketDiscoveryPreservesLiveSocketOnTimeout(t *testing.T) {
 	for _, route := range []string{"active registry", "profile selection", "directory scan", "cleanup"} {
 		t.Run(route, func(t *testing.T) {
-			dir := t.TempDir()
+			dir := shortTestDir(t)
 			path := filepath.Join(dir, "live.sock")
 			listener, err := net.Listen("unix", path)
 			if err != nil {
@@ -1821,4 +1821,16 @@ func TestSocketDiscoveryPreservesLiveSocketOnTimeout(t *testing.T) {
 			conn.Close()
 		})
 	}
+}
+
+// shortTestDir keeps Unix socket paths under macOS's 104-byte sun_path limit
+// (t.TempDir() under the default $TMPDIR is too long).
+func shortTestDir(t *testing.T) string {
+	t.Helper()
+	dir, err := os.MkdirTemp("/tmp", "obu-t-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+	return dir
 }

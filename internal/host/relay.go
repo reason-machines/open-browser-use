@@ -34,6 +34,8 @@ const hostIDPrefix = "obu:"
 // more specific) wins whenever it arrives.
 const relayTimeoutGrace = 2 * time.Second
 
+var authPrefix = []byte(`{"auth":`)
+
 type Config struct {
 	SocketDir  string
 	SocketPath string
@@ -290,6 +292,10 @@ func (r *Relay) readClientLoop(client *clientConn) {
 		payload, err := wire.ReadFrame(client.conn, wire.DefaultMaxFrame)
 		if err != nil {
 			return
+		}
+		if bytes.HasPrefix(payload, authPrefix) {
+			// Handshake sent to a relay that does not require one.
+			continue
 		}
 		r.forwardClientRequest(client, payload)
 	}
