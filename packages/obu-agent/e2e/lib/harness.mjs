@@ -188,7 +188,8 @@ export async function teardown() {
   for (const p of started.procs.reverse()) { await killProc(p); dbg("killed", p.pid, p.exitCode, p.signalCode); }
   started.procs.length = 0;
   await Promise.race([started.fixtures?.close().catch(() => {}), sleep(1000)]);
-  if (started.tmp && process.env.E2E_KEEP_TMP !== "1") rmSync(started.tmp, { recursive: true, force: true });
+  // Chrome helpers may still be flushing the profile for a moment after exit: retry.
+  if (started.tmp && process.env.E2E_KEEP_TMP !== "1") rmSync(started.tmp, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   dbg("teardown done");
 }
 
