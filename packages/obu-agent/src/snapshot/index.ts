@@ -272,13 +272,22 @@ const closedRootPass = new WeakMap<object, { doc: string; candidates: number; at
 async function registerClosedRoots(page: PageContext, frames: FrameHandle[]): Promise<void> {
   const main = frames.find((f) => f.ordinal === 0);
   if (!main) return;
-  const candidates = await page.callInjected<number>(main, "closedRootCandidates", []).catch(() => 0);
-  if (!candidates) return;
   // Once per document; again only when new candidates appear (SPAs), at most every 5 s.
+  // The throttle is checked before the candidate scan: the scan walks every element (layout
+  // reads on empty ones) and would otherwise tax every snapshot of the same document.
   const docKey = `${main.frameId}|${main.utilityContextId}`;
   const prev = closedRootPass.get(page.cdp);
   const now = Date.now();
-  if (prev && prev.doc === docKey && (candidates <= prev.candidates || now - prev.at < 5_000)) return;
+  if (prev && prev.doc === docKey && now - prev.at < 5_000) return;
+  const candidates = await page.callInjected<number>(main, "closedRootCandidates", []).catch(() => 0);
+  if (!candidates) {
+    closedRootPass.set(page.cdp, { doc: docKey, candidates: 0, at: now });
+    return;
+  }
+  if (prev && prev.doc === docKey && candidates <= prev.candidates) {
+    closedRootPass.set(page.cdp, { ...prev, at: now });
+    return;
+  }
   closedRootPass.set(page.cdp, { doc: docKey, candidates, at: now });
   // Group frames by CDP session (main session = undefined; OOPIFs have their own).
   const bySession = new Map<string | undefined, FrameHandle[]>();

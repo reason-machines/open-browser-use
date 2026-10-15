@@ -9,7 +9,7 @@ import { performActionAndWait, tabActivity } from "../wait/index.js";
 import { downloadTracker, uploadFiles } from "../files/index.js";
 import {
   fnBox, fnDomClick, fnDragDrop, fnFocusSelectAll, fnHitTest, fnPageFocusState, fnReadValue, fnReadiness, fnScroll,
-  fnSelectOptions, fnSetValue, fnState, fnSynthPointer, fnVisibleLabel, type ElementState,
+  fnSelectOptions, fnSetValue, fnState, fnSynthPointer, fnVisibleLabel, fnComboboxEditable, type ElementState,
 } from "./page-fns.js";
 import {
   callInFrame, callOn, callOnForObject, callOnWithObjects, elementCenter, mainFrame, resolveTarget, scrollIntoView,
@@ -93,6 +93,8 @@ interface ClickOpts {
 
 /** Click an element: point, hit test, CDP mouse, verify + fallbacks. */
 async function clickElement(page: PageContext, target: ElementTarget, o: ClickOpts, timeoutMs: number, warnings: string[]): Promise<void> {
+  const editable = await callOnForObject(page, target.frame, target.objectId, fnComboboxEditable);
+  if (editable) return clickElement(page, { ...target, objectId: editable, label: `text field of ${target.label}` }, o, timeoutMs, warnings);
   const st = await waitActionable(page, target, { enabled: true, timeoutMs });
   if ("useLabel" in st) {
     const labelId = await callOnForObject(page, target.frame, target.objectId, fnVisibleLabel);

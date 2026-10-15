@@ -64,6 +64,18 @@ export function installObu(): void {
 
   let styleCache = new Map<Element, CSSStyleDeclaration>();
   let hiddenCache = new Map<Element, boolean>();
+  // Element boxes read during the walk, reused by budget fitting (no DOM writes in between).
+  let rectCache = new Map<Element, DOMRect>();
+  function cachedRect(el: Element): DOMRect {
+    let r = rectCache.get(el);
+    if (!r) {
+      r = el.getBoundingClientRect();
+      rectCache.set(el, r);
+    }
+    return r;
+  }
+  // href → short form; links repeat across snapshots of the same document.
+  const urlCache = new Map<string, string>();
   let nameCache = new Map<Element, string>();
   let roleCache = new Map<Element, string>();
 
@@ -73,6 +85,7 @@ export function installObu(): void {
     nameCache = new Map();
     roleCache = new Map();
     textVisCache = new Map();
+    rectCache = new Map();
   }
 
   function style(el: Element): CSSStyleDeclaration {
@@ -159,12 +172,12 @@ export function installObu(): void {
     if (s.visibility !== "visible") hidden = true;
     else if (s.display === "contents") hidden = false;
     else {
-      const r = el.getBoundingClientRect();
+      const r = cachedRect(el);
       if (r.width === 0 && r.height === 0) {
         // Zero-size boxes can still show overflow children; treat as visible
         // only if a child has a box.
         hidden = !Array.from(el.children).some((c) => {
-          const cr = c.getBoundingClientRect();
+          const cr = cachedRect(c);
           return cr.width > 0 || cr.height > 0;
         });
       }
@@ -345,7 +358,27 @@ export function installObu(): void {
     if (ti !== null && ti !== "" && Number(ti) >= 0) return true;
     if ((el as HTMLElement).isContentEditable && !parentIsEditable(el)) return true;
     if (hasOwnPointerCursor(el)) return true;
+    if (isDropTarget(el)) return true;
     return false;
+  }
+
+  // Drop zones take files via drag-and-drop listeners the isolated world cannot see; give
+  // them a ref (act({action:'upload'}) dispatches a synthetic drop) when the markup says so:
+  // drop handler attributes, a dropzone class/attribute, or a short "drop/drag … here" label.
+  const DROP_TEXT = /\b(drop|drag)\b[^.]{0,40}\b(here|files?|zone|area|images?|photos?)\b|\bdrop ?zone\b/i;
+  function isDropTarget(el: Element): boolean {
+    if (el.hasAttribute("ondrop") || el.hasAttribute("ondragover") || el.hasAttribute("dropzone") || el.hasAttribute("data-dropzone")) return true;
+    const cls = typeof (el as HTMLElement).className === "string" ? (el as HTMLElement).className : "";
+    const label = el.getAttribute("aria-label") || "";
+    if (!/dropzone|drop-zone|drop_zone/i.test(cls) && !DROP_TEXT.test(label)) {
+      // textContent (no layout) keeps this cheap on every visited element.
+      const t = el.textContent;
+      if (!t || t.length > 120 || !DROP_TEXT.test(t)) return false;
+      // Only the innermost box whose text says so (not every ancestor of the text).
+      for (const c of Array.from(el.children)) if (DROP_TEXT.test(c.textContent || "")) return false;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width >= 40 && r.height >= 20;
   }
 
   function isScrollable(el: Element): boolean {
@@ -639,6 +672,17 @@ export function installObu(): void {
   }
 
   function shortUrl(href: string): string {
+    const key = location.href + "\n" + href;
+    let v = urlCache.get(key);
+    if (v === undefined) {
+      if (urlCache.size > 5000) urlCache.clear();
+      v = shortUrlUncached(href);
+      urlCache.set(key, v);
+    }
+    return v;
+  }
+
+  function shortUrlUncached(href: string): string {
     try {
       const u = new URL(href, location.href);
       if (u.protocol === "javascript:") return "";
@@ -703,6 +747,10 @@ export function installObu(): void {
       if (interactive) {
         me.ref = assignRef(el, effRole, name);
         ctx.refNodes.push({ ref: me.ref, role: effRole, name });
+        // Interactive snapshots drop text runs, so an unnamed clickable generic (cursor:pointer /
+        // onclick div) would render as a bare `generic [ref]`. Show its own text as the name —
+        // display only: the ref fingerprint keeps the accessible name, so refs match full mode.
+        if (!name && ctx.interactiveOnly && effRole === "generic") me.name = cut(normalizeWs((el as HTMLElement).innerText || el.textContent || ""), 80);
       }
       fillProps(el, me, ctx);
       target = me;
@@ -776,6 +824,7 @@ export function installObu(): void {
       }
     }
     if (n.interactive && role === "generic" && hasOwnPointerCursor(el)) n.props.push("cursor=pointer");
+    if (n.interactive && !isNativeInteractive(el) && isDropTarget(el)) n.props.push("droptarget");
     if (isScrollableCached(el)) n.props.push("scrollable");
 
     // Values
@@ -1007,13 +1056,13 @@ export function installObu(): void {
 
   function nodeRect(n: AriaNode): DOMRect | null {
     if (!n.el) return null;
-    const r = n.span ? new DOMRect(0, 0, 0, 0) : n.el.getBoundingClientRect();
+    const r = n.span ? new DOMRect(0, 0, 0, 0) : cachedRect(n.el);
     if (r.width || r.height) return r;
     // display:contents wrappers → union of first/last element children with boxes.
     const kids = n.children.filter((c): c is AriaNode => typeof c !== "string" && !!c.el);
     if (!kids.length) return null;
-    const a = kids[0].el!.getBoundingClientRect();
-    const b = kids[kids.length - 1].el!.getBoundingClientRect();
+    const a = cachedRect(kids[0].el!);
+    const b = cachedRect(kids[kids.length - 1].el!);
     return new DOMRect(Math.min(a.left, b.left), Math.min(a.top, b.top), Math.max(a.right, b.right) - Math.min(a.left, b.left), Math.max(a.bottom, b.bottom) - Math.min(a.top, b.top));
   }
 

@@ -11,7 +11,7 @@ import { createServer } from "node:net";
 export const REPO_ROOT = resolve(new URL("../../../../", import.meta.url).pathname);
 export const EXTENSION_DIR = join(REPO_ROOT, "apps/chrome-extension");
 export const NATIVE_HOST_NAME = process.env.OBU_NATIVE_HOST_NAME ?? "com.ifuryst.open_browser_use.extension";
-export const PORT_RANGE = [9460, 9469];
+export const PORT_RANGE = process.env.E2E_PORT_RANGE ? process.env.E2E_PORT_RANGE.split("-").map(Number) : [9460, 9469];
 
 /** Chrome's id for an unpacked extension without a manifest "key": sha256(abs path) -> a..p. */
 export function unpackedExtensionId(dir) {

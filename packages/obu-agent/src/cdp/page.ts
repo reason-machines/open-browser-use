@@ -536,9 +536,12 @@ export class TabRuntime {
       }
       return await fn();
     } finally {
-      await Promise.all(
-        focusedSessions.map((sessionId) => this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { sessionId, timeoutMs: 3_000 }).catch(() => undefined)),
-      );
+      // Not awaited: the result is already computed, and commands on a CDP session are
+      // delivered in order, so the next call's enable cannot overtake this disable.
+      // Saves one browser round trip per act/navigate/snapshot.
+      for (const sessionId of focusedSessions) {
+        this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { sessionId, timeoutMs: 3_000 }).catch(() => undefined);
+      }
       this.#inCall--;
     }
   }
