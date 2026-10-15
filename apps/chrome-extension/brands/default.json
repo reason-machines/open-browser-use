@@ -1,0 +1,10 @@
+{
+  "id": "default",
+  "displayName": "Open Browser Use",
+  "description": "Open Browser Use Chrome automation extension.",
+  "nativeHostName": "com.ifuryst.open_browser_use.extension",
+  "groupTitle": "OBU",
+  "groupColor": "grey",
+  "deliverableGroupTitle": "OBU",
+  "deliverableGroupColor": "grey"
+}

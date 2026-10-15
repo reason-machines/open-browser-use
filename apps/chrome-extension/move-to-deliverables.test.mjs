@@ -15,7 +15,10 @@ import assert from "node:assert/strict";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BG_PATH = path.join(HERE, "background.js");
-const DELIVERABLE_TITLE = "✅ Open Browser Use";
+// Deliverable group title comes from the default brand (brand-mark only).
+const DELIVERABLE_TITLE = JSON.parse(
+  await readFile(path.join(HERE, "brands", "default.json"), "utf8")
+).deliverableGroupTitle;
 
 function createChromeFake() {
   const state = {

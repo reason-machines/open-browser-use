@@ -14,6 +14,13 @@ behaviour spec. Change both in the same commit.
   `{"auth":"<token>"}` from `agent.token` (0600). (Token check: WS-C.)
 - JSON-RPC 2.0, newline-delimited JSON. MCP stdio: `obu-agent mcp --attach`
   proxies onto the socket with static tool schemas.
+- Daemon ⇄ extension (through the native host): **extension wire v2**, spec in
+  `apps/chrome-extension/WIRE.md` — implicit attach, `target.sessionId` child
+  sessions, `subscribe`, chunked host→extension frames, `route{profileId}`,
+  notifications `debuggerAttached/Detached`, `leaseRevoked`, `popupOpened`,
+  `tabClosed`, `sessionExpired`, correlated `onDownloadChange`. On
+  `debuggerAttached` the daemon re-runs its attach sequence (the extension
+  idle-detaches after 30 s to clear Chrome's debugging infobar).
 
 ### Native host (relay) — WS-B
 

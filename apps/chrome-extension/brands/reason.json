@@ -1,0 +1,10 @@
+{
+  "id": "reason",
+  "displayName": "Reason",
+  "description": "Lets Reason agents work in your Chrome, in their own tab groups.",
+  "nativeHostName": "com.reasonmachines.browser_use.extension",
+  "groupTitle": "Reason",
+  "groupColor": "grey",
+  "deliverableGroupTitle": "Reason",
+  "deliverableGroupColor": "grey"
+}
