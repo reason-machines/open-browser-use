@@ -24,6 +24,8 @@ export class FakeBackend {
   async connect() { this.connectedFlag = true; }
   isConnected() { return this.connectedFlag; }
   version() { return "fake/1"; }
+  caps = { tabEvents: true, downloads: false, closeTab: true };
+  capabilities() { return this.caps; }
   async createTab(owner, url) {
     const tab = { tabId: this.#next++, url, title: "", owner: owner.key, active: false };
     this.tabs.set(tab.tabId, tab);

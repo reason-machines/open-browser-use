@@ -10,9 +10,9 @@
 // mode, extension_disconnected / daemon unavailable) is reported as TODO, not failure.
 // E2E_STRICT=1 turns every pending into a failure — that is the Round-1 merge gate.
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync, existsSync, mkdirSync, writeSync } from "node:fs";
+import { appendFileSync, writeFileSync, mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { ObuAgentClient, agentSocketPath } from "../../dist/index.js";
 import { startFixtures } from "../../fixtures/server.mjs";
 import { Cdp, attachPage, browserWsUrl, listTargets } from "./cdp.mjs";
@@ -49,13 +49,16 @@ async function setup() {
     // Native host manifest must exist BEFORE Chrome starts so the extension's first connectNative succeeds.
     const userDataDir = join(tmp, "profile");
     installNativeHost({ userDataDir, hostBin, hostSocket: env.hostSocket, extensionId, tmp });
+    mkdirSync(join(userDataDir, "Default"), { recursive: true });
+    writeFileSync(join(userDataDir, "Default", "Preferences"), JSON.stringify({ download: { default_directory: env.downloadsDir, prompt_for_download: false, directory_upgrade: true }, savefile: { default_directory: env.downloadsDir } }));
     const chrome = await launchChrome({ tmp, port: env.cdpPort, userDataDir });
     started.procs.push(chrome.proc);
     dbg("chrome up", chrome.bin, env.cdpPort);
     env.chrome = chrome; env.extensionId = extensionId;
     env.cdp = started.cdp = await Cdp.connect(await browserWsUrl(env.cdpPort));
-    // Point downloads at our temp dir (ground truth for per-tab download tests).
-    await env.cdp.send("Browser.setDownloadBehavior", { behavior: "allowAndName", downloadPath: env.downloadsDir, eventsEnabled: true }).catch(() => {});
+    // Downloads go to our temp dir via the profile's own preference (set before launch), NOT
+    // Browser.setDownloadBehavior: a CDP download override makes Chrome skip its
+    // "name (1).ext" uniquifying, so concurrent same-name downloads overwrite each other.
     env.extensionLoaded = await waitForExtension(env);
     dbg("extension loaded", env.extensionLoaded, env.extensionId);
     if (!env.extensionLoaded) env.notes.push(`extension service worker not found (id ${extensionId})`);
@@ -75,7 +78,7 @@ async function setup() {
     if (why) { env.unavailable = why; return env; }
   }
   try {
-    env.client = await new ObuAgentClient(socket).connect();
+    env.client = await new ObuAgentClient(socket, { token: agentToken(socket) }).connect();
     env.info = await env.client.call("daemon.info", {});
     dbg("daemon", JSON.stringify(env.info));
   } catch (e) { env.unavailable = `daemon unreachable at ${socket}: ${e.message}`; return env; }
@@ -89,13 +92,19 @@ async function setup() {
   return env;
 }
 
+/** The daemon's client token: agent.token next to its socket (0600), absent with --no-auth. */
+function agentToken(socket) {
+  const path = join(dirname(socket), "agent.token");
+  return existsSync(path) ? readFileSync(path, "utf8").trim() : undefined;
+}
+
 async function spawnDaemon(env) {
   const socket = env.socket;
   const cmd = process.env.E2E_DAEMON_CMD
     ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
-    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--host-socket", env.hostSocket]];
-  const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_HOST_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
-  let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); });
+    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--obu-socket", env.hostSocket]];
+  const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_RELAY_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
+  let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); if (process.env.E2E_DAEMON_LOG) appendFileSync(process.env.E2E_DAEMON_LOG, d); });
   started.procs.push(daemon); env.daemon = daemon; env.daemonStderr = () => err;
   const t = Date.now();
   while (!existsSync(socket) && Date.now() - t < 10_000) {
@@ -114,7 +123,7 @@ export async function restartDaemon(env) {
   rmSync(env.socket, { force: true });
   const why = await spawnDaemon(env);
   if (why) throw new Error(why);
-  env.client = await new ObuAgentClient(env.socket).connect();
+  env.client = await new ObuAgentClient(env.socket, { token: agentToken(env.socket) }).connect();
   env.info = await env.client.call("daemon.info", {});
   return env.client;
 }

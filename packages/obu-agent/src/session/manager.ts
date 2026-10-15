@@ -20,7 +20,8 @@ import { ObuError } from "../errors.js";
 import type { LeaseClock } from "../lease/index.js";
 import type { SessionRow, SessionTabRow, Store } from "../store/index.js";
 
-export type EventInput = SystemEvent extends infer E ? (E extends SystemEvent ? Omit<E, "seq" | "at" | "sessionId"> : never) : never;
+import type { SystemEventInput as EventInput } from "../seams.js";
+export type { EventInput };
 
 /** Browser side effects the manager needs when sessions end. */
 export interface TabCloser {
@@ -137,6 +138,14 @@ export class SessionManager {
     row.expiresAt = now + this.ttlMs;
     this.store.upsertSession(row);
     return row;
+  }
+
+  /** Cap a session's lease at `expiresAt` (never extends it). */
+  capLease(sessionId: SessionId, expiresAt: number): void {
+    const row = this.store.getSession(sessionId);
+    if (!row || row.expiresAt <= expiresAt) return;
+    row.expiresAt = expiresAt;
+    this.store.upsertSession(row);
   }
 
   get(sessionId: SessionId): SessionRow | undefined {

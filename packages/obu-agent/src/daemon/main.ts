@@ -2,14 +2,15 @@
 // obu-agent entry.
 //
 //   obu-agent [--profile P] [--socket PATH] [--backend obu|direct] [--cdp-endpoint URL]
-//             [--obu-socket PATH] [--state PATH] [--no-auth] [--lease-ttl-ms N] [--sweep-ms N]
+//             [--obu-socket PATH] [--state PATH] [--state-dir DIR] [--downloads-dir DIR (direct)]
+//             [--no-auth] [--lease-ttl-ms N] [--sweep-ms N]
 //       Run the resident daemon (one per Chrome profile; refuses to start twice).
 //   obu-agent mcp --attach [--profile P] [--socket PATH] [--session ID] [--parent ID] [--label L]
 //       MCP stdio proxy onto the daemon socket (spawns the daemon if it is not running).
 //   obu-agent call <method> [json-params] [--profile P] [--socket PATH]
 //       One JSON-RPC call; prints the result as JSON (scripts, bench, debugging).
 import { randomBytes } from "node:crypto";
-import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DirectCdpBackend } from "../cdp/direct.js";
@@ -71,8 +72,9 @@ function isAlive(pid: number): boolean {
 
 export async function runDaemon(argv: string[]): Promise<void> {
   const profile = flag(argv, "profile") ?? "Default";
-  const dir = agentDir(profile);
   const socketPath = flag(argv, "socket") ?? agentSocketPath(profile);
+  // State lives next to an explicit socket (supervised / tests), else in the profile's agent dir.
+  const dir = flag(argv, "state-dir") ?? (flag(argv, "socket") ? dirname(socketPath) : agentDir(profile));
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   mkdirSync(dirname(socketPath), { recursive: true, mode: 0o700 });
   const releaseLock = acquireProfileLock(flag(argv, "lock") ?? join(dirname(socketPath), "agent.lock"));
@@ -81,7 +83,10 @@ export async function runDaemon(argv: string[]): Promise<void> {
   const backendKind = flag(argv, "backend") ?? (flag(argv, "cdp-endpoint") ? "direct" : "obu");
   const backend: BrowserBackend =
     backendKind === "direct"
-      ? new DirectCdpBackend({ endpoint: flag(argv, "cdp-endpoint") ?? "http://127.0.0.1:9222" })
+      ? new DirectCdpBackend({
+          endpoint: flag(argv, "cdp-endpoint") ?? "http://127.0.0.1:9222",
+          downloadDir: flag(argv, "downloads-dir") ?? process.env.OBU_DOWNLOADS_DIR,
+        })
       : new ObuHostBackend({ socketPath: flag(argv, "obu-socket") });
   const store = openStore(flag(argv, "state") ?? join(dir, "state.sqlite"));
   const log = (line: string) => process.stderr.write(`[obu-agent] ${line}\n`);
@@ -158,7 +163,19 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<void
   return runDaemon(argv);
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("/obu-agent")) {
+/** Run as a program (not imported)? Compare canonical paths: argv[1] may be a symlink or contain spaces. */
+function isEntry(): boolean {
+  const script = process.argv[1];
+  if (!script) return false;
+  if (script.endsWith("/obu-agent")) return true;
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(script);
+  } catch {
+    return false;
+  }
+}
+
+if (isEntry()) {
   main().catch((error) => {
     process.stderr.write(`obu-agent failed: ${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
     process.exit(1);

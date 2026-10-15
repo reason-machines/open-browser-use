@@ -13,7 +13,7 @@ import { createConnection, type Socket } from "node:net";
 import { endianness } from "node:os";
 import type { TabId } from "../contract.js";
 import { ObuError } from "../errors.js";
-import { Emitter, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
+import { Emitter, type BackendCapabilities, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
 
 const HEADER_BYTES = 4;
 
@@ -87,6 +87,10 @@ export class ObuHostBackend implements BrowserBackend {
   #attached = new Set<TabId>();
   #owners = new Map<TabId, BackendOwner>();
   #version: string | undefined;
+  /** Extension wire v2 features (`getInfo().capabilities.wire`); empty = legacy extension. */
+  #wire = new Set<string>();
+  /** Chrome profile id of the extension (`route.profileId` on every request). */
+  #profileId: string | undefined;
   #poll: NodeJS.Timeout | null = null;
   readonly #timeoutMs: number;
 
@@ -110,9 +114,12 @@ export class ObuHostBackend implements BrowserBackend {
       // WS-B relay auth: first frame. Relays that don't require it drop it.
       socket.write(encodeFrame({ auth: readFileSync(tokenPath, "utf8").trim() }));
     }
-    const info = (await this.#request("getInfo", { session_id: "obu-agent" }).catch(() => undefined)) as any;
+    const info = (await this.#request("getInfo", { session_id: "obu-agent", turn_id: "obu-agent" }).catch(() => undefined)) as any;
     this.#version = info?.version ?? info?.extensionVersion ?? info?.metadata?.version;
-    const pollMs = this.options.pollMs ?? 3_000;
+    this.#wire = new Set(Array.isArray(info?.capabilities?.wire) ? info.capabilities.wire.map(String) : []);
+    this.#profileId = typeof info?.metadata?.profileId === "string" ? info.metadata.profileId : undefined;
+    // Wire v2 pushes tabClosed / leaseRevoked / popupOpened: no polling.
+    const pollMs = this.#wire.has("lease-events") ? 0 : (this.options.pollMs ?? 3_000);
     if (pollMs > 0) {
       this.#poll = setInterval(() => void this.#pollClosed(), pollMs);
       this.#poll.unref();
@@ -127,19 +134,46 @@ export class ObuHostBackend implements BrowserBackend {
     return this.#version;
   }
 
+  capabilities(): BackendCapabilities {
+    return {
+      tabEvents: this.#wire.has("lease-events"),
+      downloads: this.#wire.has("download-correlation"),
+      closeTab: this.#wire.has("close-guard"),
+    };
+  }
+
+  /** Extension wire v2 feature flags (diagnostics). */
+  wireFeatures(): string[] {
+    return [...this.#wire];
+  }
+
   async createTab(owner: BackendOwner, url: string): Promise<BackendTab> {
-    const tab = (await this.#request("createTab", this.#params(owner))) as { id: number; url?: string; title?: string };
+    const direct = this.#wire.has("implicit-attach") && url && url !== "about:blank";
+    const tab = (await this.#request("createTab", { ...this.#params(owner), ...(direct ? { url } : {}) })) as {
+      id: number;
+      url?: string;
+      title?: string;
+      targetId?: string;
+    };
     this.#owners.set(tab.id, owner);
     if (owner.label) await this.#request("nameSession", { ...this.#params(owner), name: `${owner.label} · Reason` }).catch(() => undefined);
-    if (url && url !== "about:blank") {
+    if (url && url !== "about:blank" && !direct) {
       await this.attach(owner, tab.id);
       await this.send(owner, tab.id, "Page.navigate", { url });
     }
-    return { tabId: tab.id, url: url || tab.url || "about:blank", title: tab.title ?? "" };
+    return { tabId: tab.id, ...(tab.targetId ? { targetId: tab.targetId } : {}), url: url || tab.url || "about:blank", title: tab.title ?? "" };
   }
 
-  async closeTab(owner: BackendOwner, tabId: TabId): Promise<void> {
-    // No closeTab RPC upstream: Page.close through the debugger closes the tab.
+  async closeTab(owner: BackendOwner, tabId: TabId, opts: { force?: boolean } = {}): Promise<void | { closed: boolean; reason?: string }> {
+    if (this.#wire.has("close-guard")) {
+      // Guarded close: a tab the user is looking at is released, not closed.
+      const result = (await this.#request("closeTab", { ...this.#params(owner), tabId, ...(opts.force ? { force: true } : {}) }).catch((error) => ({ closed: false, reason: String((error as Error).message) }))) as
+        | { closed?: boolean; released?: boolean; reason?: string }
+        | null;
+      this.#forget(tabId);
+      return { closed: result?.closed !== false, ...(result?.reason ? { reason: result.reason } : {}) };
+    }
+    // Legacy extension: Page.close through the debugger closes the tab.
     await this.attach(owner, tabId).catch(() => undefined);
     await this.send(owner, tabId, "Page.close", {}).catch(() => undefined);
     this.#forget(tabId);
@@ -184,7 +218,7 @@ export class ObuHostBackend implements BrowserBackend {
   }
 
   async listBrowserTabs(): Promise<BackendTab[]> {
-    const tabs = (await this.#request("getUserTabs", { session_id: "obu-agent-readonly" })) as any[];
+    const tabs = (await this.#request("getUserTabs", { session_id: "obu-agent-readonly", turn_id: "obu-agent", ...this.#route() })) as any[];
     return tabs.map((tab) => ({
       tabId: tab.id,
       url: tab.url ?? "",
@@ -199,7 +233,9 @@ export class ObuHostBackend implements BrowserBackend {
     await this.#request("attach", { ...this.#params(owner), tabId });
     this.#attached.add(tabId);
     this.#owners.set(tabId, owner);
-    this.#events.emit({ type: "attached", tabId });
+    // Wire v2 announces fresh attachments itself (`debuggerAttached`); an
+    // idempotent re-attach must not wipe the tab's CDP setup.
+    if (!this.#wire.has("implicit-attach")) this.#events.emit({ type: "attached", tabId });
   }
 
   async send<T>(owner: BackendOwner, tabId: TabId, method: string, params: Record<string, unknown> = {}, opts: SendOptions = {}): Promise<T> {
@@ -237,7 +273,17 @@ export class ObuHostBackend implements BrowserBackend {
   // -------------------------------------------------------------------------
 
   #params(owner: BackendOwner): Record<string, unknown> {
-    return { session_id: owner.key, turn_id: "obu-agent" };
+    return {
+      session_id: owner.key,
+      turn_id: "obu-agent",
+      ...(owner.label ? { label: owner.label } : {}),
+      ...this.#route(),
+    };
+  }
+
+  /** Guards against a host fronting another Chrome profile (profile_mismatch). */
+  #route(): Record<string, unknown> {
+    return this.#profileId && this.#wire.has("route") ? { route: { profileId: this.#profileId } } : {};
   }
 
   #forget(tabId: TabId): void {
@@ -323,7 +369,40 @@ export class ObuHostBackend implements BrowserBackend {
       case "onCDPEvent": {
         const source = params.source ?? {};
         if (typeof source.tabId !== "number") return;
-        this.#events.emit({ type: "cdp", tabId: source.tabId, method: params.method, params: params.params ?? {}, ...(source.sessionId ? { sessionId: source.sessionId } : {}) });
+        const sessionId = params.sessionId ?? source.sessionId;
+        this.#events.emit({ type: "cdp", tabId: source.tabId, method: params.method, params: params.params ?? {}, ...(sessionId ? { sessionId } : {}) });
+        return;
+      }
+      case "debuggerAttached":
+        if (typeof params.tabId === "number") {
+          this.#attached.add(params.tabId);
+          this.#events.emit({ type: "attached", tabId: params.tabId });
+        }
+        return;
+      case "debuggerDetached":
+        if (typeof params.tabId === "number") {
+          this.#attached.delete(params.tabId);
+          this.#events.emit({ type: "detached", tabId: params.tabId, reason: String(params.reason ?? "detached") });
+        }
+        return;
+      case "sessionExpired": {
+        const closed: TabId[] = Array.isArray(params.closedTabIds) ? params.closedTabIds.filter((id: unknown) => typeof id === "number") : [];
+        for (const tabId of closed) this.#forget(tabId);
+        if (typeof params.sessionId === "string") this.#events.emit({ type: "owner_expired", ownerKey: params.sessionId, closedTabIds: closed });
+        return;
+      }
+      case "onDownloadChange": {
+        const status = params.status === "complete" ? "complete" : params.status === "started" ? "started" : params.status === "failed" || params.status === "canceled" || params.status === "interrupted" ? "interrupted" : "in_progress";
+        this.#events.emit({
+          type: "download",
+          id: String(params.id ?? ""),
+          ...(typeof params.tabId === "number" ? { tabId: params.tabId } : {}),
+          url: String(params.url ?? ""),
+          path: String(params.filename ?? ""),
+          status,
+          ...(typeof params.mime === "string" ? { mime: params.mime } : {}),
+          ...(typeof params.totalBytes === "number" && params.totalBytes >= 0 ? { bytes: params.totalBytes } : {}),
+        });
         return;
       }
       // Emitted by the WS-A extension; harmless no-ops against older builds.
@@ -337,7 +416,8 @@ export class ObuHostBackend implements BrowserBackend {
       case "leaseRevoked":
         if (typeof params.tabId === "number") {
           this.#forget(params.tabId);
-          this.#events.emit({ type: "lease_revoked", tabId: params.tabId, reason: params.reason ?? "dragged_out_of_group" });
+          const reason = params.reason === "user_closed" || params.reason === "user_took_over" ? params.reason : "dragged_out_of_group";
+          this.#events.emit({ type: "lease_revoked", tabId: params.tabId, reason });
         }
         return;
       case "tabClosed":

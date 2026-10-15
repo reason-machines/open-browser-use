@@ -140,16 +140,30 @@ export async function resolveTarget(page: PageContext, t: { ref?: Ref; selector?
 }
 
 /**
- * Offset of a frame's viewport inside the main-frame viewport. Same-process
- * frames report root coordinates from DOM.getContentQuads already, so only
- * OOPIFs (frames with a child session) need their owner's content box.
+ * Offset of a frame's viewport inside the main-frame viewport.
+ * DOM.getContentQuads reports coordinates relative to the frame's LOCAL ROOT
+ * (the outermost frame of the same process/session). Main-process frames need
+ * nothing; a frame in a child session is offset by its local root's <iframe>
+ * owner box (read in the parent's session), plus that parent's own offset when
+ * OOPIFs nest.
  */
-export async function frameOffset(page: PageContext, frame: FrameHandle): Promise<Point> {
+export async function frameOffset(page: PageContext, frame: FrameHandle, frames?: FrameHandle[]): Promise<Point> {
   if (!frame.sessionId || frame.ordinal === 0) return { x: 0, y: 0 };
   try {
-    const owner = await page.cdp.send<{ backendNodeId: number }>("DOM.getFrameOwner", { frameId: frame.frameId });
-    const box = await page.cdp.send<{ model: { content: number[] } }>("DOM.getBoxModel", { backendNodeId: owner.backendNodeId });
-    return { x: box.model.content[0], y: box.model.content[1] };
+    const all = frames ?? (await page.frames());
+    const byId = new Map(all.map((f) => [f.frameId, f]));
+    let root = frame;
+    for (;;) {
+      const parent = root.parentFrameId ? byId.get(root.parentFrameId) : undefined;
+      if (!parent || parent.sessionId !== frame.sessionId) break;
+      root = parent;
+    }
+    const parent = root.parentFrameId ? byId.get(root.parentFrameId) : undefined;
+    const opts = { sessionId: parent?.sessionId };
+    const owner = await page.cdp.send<{ backendNodeId: number }>("DOM.getFrameOwner", { frameId: root.frameId }, opts);
+    const box = await page.cdp.send<{ model: { content: number[] } }>("DOM.getBoxModel", { backendNodeId: owner.backendNodeId }, opts);
+    const base = parent ? await frameOffset(page, parent, all) : { x: 0, y: 0 };
+    return { x: base.x + box.model.content[0], y: base.y + box.model.content[1] };
   } catch {
     return { x: 0, y: 0 };
   }

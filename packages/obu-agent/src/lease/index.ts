@@ -54,13 +54,22 @@ export function startLeaseSweeper(sessions: SessionManager, intervalMs = 1_000):
 }
 
 /**
+ * After a daemon restart every client connection is gone. A live agent
+ * reconnects (any call renews its lease) well within this window; sessions
+ * nobody comes back for are finalized after it instead of a full lease TTL.
+ */
+export const RECONNECT_GRACE_MS = 10_000;
+
+/**
  * I5 reconcile at daemon start: sessions persisted by a previous daemon whose
  * lease has expired are finalized (owned tabs closed unless the user is looking
- * at them; borrowed released). Live leases survive a daemon restart.
+ * at them; borrowed released). Leases still live get RECONNECT_GRACE_MS to be
+ * renewed by their (reconnecting) agent before they are finalized too.
  */
-export async function reconcileOnStart(sessions: SessionManager): Promise<{ finalized: string[]; kept: string[] }> {
+export async function reconcileOnStart(sessions: SessionManager, graceMs: number = RECONNECT_GRACE_MS): Promise<{ finalized: string[]; kept: string[] }> {
   const now = sessions.clock.now();
   const finalized = await sweepExpired(sessions, now);
   const kept = sessions.list().map((row) => row.id);
+  for (const id of kept) sessions.capLease(id, now + graceMs);
   return { finalized, kept };
 }

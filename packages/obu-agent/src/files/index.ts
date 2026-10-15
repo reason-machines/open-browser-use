@@ -171,7 +171,7 @@ export interface DownloadTrackerOptions {
 
 let nextDownloadId = 1;
 
-/** PageContext.emit takes a non-distributive Omit<SystemEvent,…>; cast through it (BACKLOG: make it distributive). */
+/** PageContext.emit input (distributive SystemEventInput). */
 type EmitArg = Parameters<PageContext["emit"]>[0];
 
 /** Per-tab download tracker built on the tab's own CDP session. */

@@ -1,0 +1,10 @@
+{
+  "id": "reason-agent",
+  "displayName": "Reason Agent",
+  "description": "Lets Reason agents work in your Chrome, in their own tab groups (obu-agent daemon build).",
+  "nativeHostName": "com.reasonmachines.browser_agent.extension",
+  "groupTitle": "Reason",
+  "groupColor": "grey",
+  "deliverableGroupTitle": "Reason",
+  "deliverableGroupColor": "grey"
+}

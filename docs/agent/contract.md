@@ -208,7 +208,7 @@ The message reaches the agent verbatim and says what to do next.
 ## Seams (between streams) — `src/seams.ts`
 
 - `TabCdp{tabId, targetId, send(method, params, {sessionId?, timeoutMs?}), on(event, handler)}` — WS-C.
-- `FrameHandle{ordinal, frameId, sessionId?, utilityContextId, origin}` — WS-C.
+- `FrameHandle{ordinal, frameId, sessionId?, parentFrameId?, utilityContextId, origin}` — WS-C. `parentFrameId` lets actions map coordinates through nested OOPIFs (quads are relative to the frame's local root).
 - `PageContext{sessionId, cdp, frames(), callInjected(frame, method, args), resolveRef(ref), emit(event), artifactDir, previousTree?}` — WS-C builds one per call under the tab mutex; WS-D (`snapshot/`) and WS-E (`actions/ wait/ input/ screenshot/ files/`) consume it.
 - Module entry points: `takeSnapshot(page, params)` (WS-D), `act(page, params)`,
   `performActionAndWait(page, action)`, `screenshot(page, params)` (WS-E).

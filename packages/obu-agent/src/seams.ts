@@ -5,6 +5,9 @@
  */
 import type { SystemEvent, TabId, TargetId } from "./contract.js";
 
+/** A SystemEvent before the session stamps it (distributive: keeps each variant's fields). */
+export type SystemEventInput = SystemEvent extends infer E ? (E extends SystemEvent ? Omit<E, "seq" | "at" | "sessionId"> : never) : never;
+
 /** Raw CDP access to one tab, already attached. Implemented by WS-C over the native host. */
 export interface TabCdp {
   readonly tabId: TabId;
@@ -23,8 +26,10 @@ export interface FrameHandle {
   /** 0 = main frame; K = K-th iframe in stitch order (refs `fKeN`). */
   ordinal: number;
   frameId: string;
-  /** Child session for OOPIFs; undefined for same-process frames. */
+  /** Child session for OOPIFs (and frames nested in them); undefined for main-process frames. */
   sessionId?: string;
+  /** Parent frame id; undefined for the main frame. Used to map coordinates through nested OOPIFs. */
+  parentFrameId?: string;
   /** Isolated world execution context id where `__obu` lives. */
   utilityContextId: number;
   origin: string;
@@ -45,7 +50,7 @@ export interface PageContext {
   /** Resolve a ref (`eN` / `fKeN`) to its frame + the CDP RemoteObjectId of the element. */
   resolveRef(ref: string): Promise<{ frame: FrameHandle; objectId: string } | null>;
   /** Queue a steering event for the session (appears in this call's result). */
-  emit(event: Omit<SystemEvent, "seq" | "at" | "sessionId">): void;
+  emit(event: SystemEventInput): void;
   /** Directory for artefacts (screenshots, downloads, fetched bodies) for this session. */
   readonly artifactDir: string;
   /** Previous snapshot tree of this (session, tab), for diffing. */

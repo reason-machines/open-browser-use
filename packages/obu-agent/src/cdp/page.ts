@@ -62,6 +62,7 @@ export class TabRuntime {
   readonly cdp: TabCdp;
   #opts: TabRuntimeOptions;
   #setup: Promise<string[]> | null = null;
+  #setupRunning = false;
   #children = new Map<string, ChildTarget>(); // sessionId -> child
   #frames = new Map<string, FrameState>(); // frameId -> state
   #nextOrdinal = 1;
@@ -89,7 +90,11 @@ export class TabRuntime {
       on: (event, handler) => this.on(event, handler),
     } as TabCdp;
     this.#unsubscribe = opts.backend.onEvent((event) => {
-      if (event.type === "attached" && event.tabId === this.tabId) {
+      if ((event.type === "attached" || event.type === "detached") && event.tabId === this.tabId) {
+        // A fresh attachment while our own setup is running is the attach that
+        // setup itself triggered: the setup configures it. Anything else (idle
+        // detach, infobar Cancel, re-attach by another call) wipes CDP state.
+        if (event.type === "attached" && this.#setupRunning) return;
         this.#resetSetup();
         return;
       }
@@ -128,10 +133,16 @@ export class TabRuntime {
   /** Idempotent per attach generation. Returns setup warnings (non-fatal steps that failed). */
   ensureSetup(): Promise<string[]> {
     if (!this.#setup) {
-      this.#setup = this.#runSetup().catch((error) => {
-        this.#setup = null;
-        throw error;
-      });
+      this.#setupRunning = true;
+      const setup = this.#runSetup()
+        .catch((error) => {
+          if (this.#setup === setup) this.#setup = null;
+          throw error;
+        })
+        .finally(() => {
+          this.#setupRunning = false;
+        });
+      this.#setup = setup;
     }
     return this.#setup;
   }
@@ -341,7 +352,14 @@ export class TabRuntime {
     } catch {
       origin = "";
     }
-    return { ordinal: state.ordinal, frameId: state.frameId, sessionId: state.sessionId, utilityContextId: contextId, origin };
+    return {
+      ordinal: state.ordinal,
+      frameId: state.frameId,
+      sessionId: state.sessionId,
+      ...(state.parentId ? { parentFrameId: state.parentId } : {}),
+      utilityContextId: contextId,
+      origin,
+    };
   }
 
   /** Create (or find) the utility world of a frame and make sure `__obu` is installed. */
@@ -500,17 +518,27 @@ export class TabRuntime {
   async run<T>(focus: boolean, fn: () => Promise<T>): Promise<T> {
     await this.ensureSetup();
     this.#inCall++;
-    let focused = false;
+    // Focus emulation on the tab AND every OOPIF child session: focusing an
+    // element inside a cross-process frame without it makes Chrome move real
+    // (OS-level) focus to the frame, which brings Chrome to the front.
+    const focusedSessions: (string | undefined)[] = [];
     try {
       if (focus) {
-        focused = await this.send("Emulation.setFocusEmulationEnabled", { enabled: true }, { timeoutMs: 3_000 }).then(
-          () => true,
-          () => false,
+        const sessions = [undefined, ...[...this.#children.keys()]];
+        await Promise.all(
+          sessions.map((sessionId) =>
+            this.send("Emulation.setFocusEmulationEnabled", { enabled: true }, { sessionId, timeoutMs: 3_000 }).then(
+              () => void focusedSessions.push(sessionId),
+              () => undefined,
+            ),
+          ),
         );
       }
       return await fn();
     } finally {
-      if (focused) await this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { timeoutMs: 3_000 }).catch(() => undefined);
+      await Promise.all(
+        focusedSessions.map((sessionId) => this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { sessionId, timeoutMs: 3_000 }).catch(() => undefined)),
+      );
       this.#inCall--;
     }
   }

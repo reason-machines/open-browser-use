@@ -41,6 +41,7 @@ const LEASE_SWEEP_ALARM_NAME = "open-browser-use-lease-sweep";
 // splits larger JSON payloads into {chunk:{id,i,n,data}} slices (WS-B pairs).
 const CHUNK_TTL_MS = 30_000;
 const TARGET_ID_RETRY_DELAYS_MS = [0, 50, 100, 200, 400];
+const WINDOW_OPEN_WINDOW_MS = 3_000;
 const DOWNLOAD_CORRELATION_WINDOW_MS = 15_000;
 // Events the daemon must always see for a tab, regardless of its subscriptions:
 // dialogs would hang the tab, child sessions/downloads/file choosers drive state.
@@ -507,6 +508,10 @@ class BrowserBackend {
     this.activationHistory = new Map();
     this.sessionLeaseMs = DEFAULT_SESSION_LEASE_MS;
     this.lastAgentAction = null;
+    // Page.windowOpen seen on agent tabs (tabId, url, at): the only reliable
+    // evidence that a new tab was opened BY an agent page. Chrome also sets
+    // openerTabId for the user's own Cmd+T / link opens from an agent tab.
+    this.recentWindowOpens = [];
     this.idleTimers = new Map();
     this.inflightByTab = new Map();
     chrome.debugger.onDetach.addListener((source, reason) => {
@@ -683,7 +688,10 @@ class BrowserBackend {
       throw new ExtensionError(ERROR_CODES.tab_not_owned, `tab_not_owned: tab ${tabId} is not owned by browser session ${session.sessionId}`, { code: "tab_not_owned", tabId });
     }
     const tab = await chrome.tabs.get(tabId).catch(() => null);
-    const guard = tab ? await this.closeGuard(session.sessionId, tab, owner.origin) : null;
+    // `force` (agent-initiated close of its own tab): skip the on-screen guard,
+    // but never close a tab the user took out of the agent group.
+    let guard = tab ? await this.closeGuard(session.sessionId, tab, owner.origin) : null;
+    if (params.force === true && guard === "user_viewing") guard = null;
     delete owner.session.tabOrigins[String(tabId)];
     this.dropTabState(session.sessionId, tabId);
     await this.store.save();
@@ -1536,26 +1544,51 @@ class BrowserBackend {
   // tab's group); an agent acted on a tab in the last 2 s (Chrome may report
   // the window's active tab as opener for background-tab popups).
   async attributePopup(tab) {
-    if (Number.isInteger(tab.openerTabId)) {
-      const owner = await this.store.findTabOwner(tab.openerTabId);
-      if (owner) return { sessionId: owner.sessionId, openerTabId: tab.openerTabId };
-    }
-    const recent = this.lastAgentAction && Date.now() - this.lastAgentAction.at < 2_000 ? this.lastAgentAction : null;
-    if (typeof tab.groupId === "number" && tab.groupId !== -1) {
-      const owner = await this.store.findSessionByGroup(tab.groupId);
-      if (owner) {
-        if (recent) {
-          const { rootSessionId } = await this.store.getRoot(recent.sessionId);
-          if (rootSessionId === owner.sessionId) return { sessionId: recent.sessionId, openerTabId: recent.tabId };
-        }
-        return { sessionId: owner.sessionId, openerTabId: tab.openerTabId ?? null };
+    const evidence = await this.waitForWindowOpen(tab);
+    if (!evidence) {
+      // Not opened by an agent page (e.g. the user's Cmd+T while an agent tab
+      // was active): never adopt it. Chrome may have dropped it into the agent
+      // group next to its opener; hand it back to the user ungrouped.
+      if (typeof tab.groupId === "number" && tab.groupId !== -1 && (await this.store.findSessionByGroup(tab.groupId))) {
+        await this.queueGroupOp(() => chrome.tabs.ungroup?.(tab.id)).catch(() => {});
       }
+      return null;
     }
-    if (recent && Number.isInteger(tab.openerTabId) && !(await this.store.findTabOwner(tab.openerTabId))) {
-      return { sessionId: recent.sessionId, openerTabId: recent.tabId };
-    }
-    return null;
+    const owner = await this.store.findTabOwner(evidence.tabId);
+    return owner ? { sessionId: owner.sessionId, openerTabId: evidence.tabId } : null;
   }
+
+  recordWindowOpen(tabId, url) {
+    const now = Date.now();
+    this.recentWindowOpens = this.recentWindowOpens.filter((entry) => now - entry.at < WINDOW_OPEN_WINDOW_MS);
+    this.recentWindowOpens.push({ tabId, url: typeof url === "string" ? url : "", at: now });
+  }
+
+  // The newest unconsumed Page.windowOpen from an agent-owned tab that can
+  // explain this new tab: same opener when Chrome reports one, else any agent
+  // tab (rel=noopener). Debugger events and tabs.onCreated race, so wait a bit.
+  async waitForWindowOpen(tab, waitMs = 400) {
+    const deadline = Date.now() + waitMs;
+    // An agent-owned opener must be the tab that called window.open. A user
+    // opener is what Chrome reports for popups from background tabs, so then
+    // any agent tab's recent windowOpen may explain it.
+    const openerIsAgent = Number.isInteger(tab.openerTabId) && Boolean(await this.store.findTabOwner(tab.openerTabId));
+    for (;;) {
+      const now = Date.now();
+      const candidates = this.recentWindowOpens.filter(
+        (entry) => now - entry.at < WINDOW_OPEN_WINDOW_MS && (!openerIsAgent || entry.tabId === tab.openerTabId)
+      );
+      for (const entry of candidates.reverse()) {
+        if (await this.store.findTabOwner(entry.tabId)) {
+          this.recentWindowOpens = this.recentWindowOpens.filter((other) => other !== entry);
+          return entry;
+        }
+      }
+      if (Date.now() >= deadline) return null;
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+  }
+
 
   async handleTabCreated(tab) {
     if (!hasTabId(tab) || (await this.store.findTabOwner(tab.id))) {
@@ -2437,6 +2470,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 backend.notify = (method, params) => safeSendNotification(peer, method, params);
 chrome.debugger.onEvent.addListener((source, method, params) => {
+  if (method === "Page.windowOpen" && typeof source.tabId === "number") {
+    backend.recordWindowOpen(source.tabId, params?.url);
+  }
   const routed = backend.routeCdpEvent(source, method, params);
   if (routed) {
     safeSendNotification(peer, "onCDPEvent", routed);

@@ -52,12 +52,16 @@ import type { Store, SessionRow } from "../store/index.js";
 import type { HandlerTable } from "../server/rpc.js";
 import { takeSnapshot as wsdTakeSnapshot } from "../snapshot/index.js";
 import { act as wseAct } from "../actions/index.js";
-import { performActionAndWait as wsePerformActionAndWait } from "../wait/index.js";
+import { deliverSystemEvent, performActionAndWait as wsePerformActionAndWait, takePendingDialogAction } from "../wait/index.js";
+import { configureDownloads, type PendingDownload } from "../files/index.js";
 import { screenshot as wseScreenshot } from "../screenshot/index.js";
 import { INJECTED_BUNDLE_SOURCE, INJECTED_VERSION } from "../injected/index.js";
 import { ReplManager } from "../repl/index.js";
 
 export const DAEMON_VERSION = "0.1.0";
+
+/** `wait{for: download|popup|dialog}` also matches unclaimed events this recent. */
+export const WAIT_LOOKBACK_MS = 10_000;
 
 /** Page-operation modules (WS-D / WS-E). Injectable so tests can mock them. */
 export interface PageModules {
@@ -95,6 +99,12 @@ export class Daemon {
   #mutex = new KeyedMutex<TabId>();
   #runtimes = new Map<TabId, TabRuntime>();
   #dialogDecisions = new Map<TabId, DialogDecision[]>();
+  /** Browser-level downloads (chrome.downloads via the extension), by backend id. */
+  #downloads = new Map<string, { downloadId: number; tabId?: TabId; url: string; path: string; finishedAt?: number; state: "in_progress" | "complete" | "interrupted" }>();
+  #downloadWaiters = new Set<() => void>();
+  /** Per session: seq of the last event each `wait{for}` returned (so one event satisfies one wait). */
+  #claimedSeq = new Map<string, Partial<Record<WaitParams["for"], number>>>();
+  #nextDownloadId = 1;
   #artifactRoot: string;
   #bundle: { source: string; version: string };
   #stopSweeper: (() => void) | null = null;
@@ -139,6 +149,9 @@ export class Daemon {
   /** Connect the backend (best effort), reconcile (I5), start the lease sweeper. */
   async start(): Promise<void> {
     this.#unsubscribe = this.backend.onEvent((event) => this.#onBackendEvent(event));
+    // WS-E's per-tab tracker sees Page.downloadWillBegin but (through the
+    // extension) never the final path: resolve it from chrome.downloads.
+    configureDownloads({ resolvePath: (d) => this.#resolveDownloadPath(d) });
     await this.backend.connect().catch((error) => {
       this.#log(`browser backend not connected yet: ${(error as Error).message}`);
       this.#scheduleReconnect();
@@ -169,6 +182,7 @@ export class Daemon {
   // Backend events → session events
 
   #onBackendEvent(event: BackendEvent): void {
+    if (event.type !== "cdp" && event.type !== "download") this.#log(`backend ${JSON.stringify(event)}`);
     switch (event.type) {
       case "tab_closed": {
         this.#forgetRuntime(event.tabId);
@@ -190,6 +204,18 @@ export class Daemon {
         this.sessions.emit(opener.sessionId, { type: "popup_opened", tabId: event.tabId, tab, openerTabId: event.openerTabId });
         break;
       }
+      case "download":
+        this.#onDownload(event);
+        break;
+      case "owner_expired": {
+        // The extension's lease backstop finalized a session we still hold.
+        for (const tabId of event.closedTabIds) {
+          this.#forgetRuntime(tabId);
+          const dropped = this.sessions.dropTab(tabId);
+          if (dropped) this.sessions.emit(dropped.sessionId, { type: "tab_closed", tabId, reason: "lease_expired", activeTabId: dropped.activeTabId });
+        }
+        break;
+      }
       case "disconnected":
         for (const runtime of this.#runtimes.values()) runtime.dispose();
         this.#runtimes.clear();
@@ -197,6 +223,77 @@ export class Daemon {
         this.#scheduleReconnect();
         break;
     }
+  }
+
+  #capabilities() {
+    return this.backend.capabilities?.() ?? { tabEvents: false, downloads: false, closeTab: false };
+  }
+
+  #onDownload(event: Extract<BackendEvent, { type: "download" }>): void {
+    this.#log(`download ${event.id} ${event.status} tab=${event.tabId ?? "?"} ${event.url} -> ${event.path}`);
+    let entry = this.#downloads.get(event.id);
+    const firstSight = !entry;
+    if (!entry) {
+      entry = { downloadId: this.#nextDownloadId++, tabId: event.tabId, url: event.url, path: event.path, state: "in_progress" };
+      this.#downloads.set(event.id, entry);
+      // Bounded memory: forget the oldest finished downloads.
+      if (this.#downloads.size > 200) {
+        for (const [id, old] of this.#downloads) {
+          if (old.state !== "in_progress") {
+            this.#downloads.delete(id);
+            break;
+          }
+        }
+      }
+    }
+    entry.path = event.path || entry.path;
+    entry.tabId ??= event.tabId;
+    const owner = entry.tabId !== undefined ? this.sessions.store.ownerOf(entry.tabId) : undefined;
+    const info = (): import("../contract.js").DownloadInfo => ({
+      downloadId: entry!.downloadId,
+      url: entry!.url,
+      path: entry!.path,
+      ...(event.mime ? { mime: event.mime } : {}),
+      ...(event.bytes !== undefined ? { bytes: event.bytes } : {}),
+      state: entry!.state,
+      ...(entry!.tabId !== undefined ? { tabId: entry!.tabId } : {}),
+    });
+    if (firstSight && owner && this.#capabilities().downloads) {
+      this.sessions.emit(owner.sessionId, { type: "download_started", tabId: entry.tabId, download: info() });
+    }
+    if (event.status === "complete" || event.status === "interrupted") {
+      if (entry.state !== "in_progress") return;
+      entry.state = event.status;
+      entry.finishedAt = Date.now();
+      if (owner && this.#capabilities().downloads) {
+        this.sessions.emit(owner.sessionId, { type: "download_finished", tabId: entry.tabId, download: info() });
+      }
+      for (const wake of [...this.#downloadWaiters]) wake();
+    }
+  }
+
+  /** Final path of a CDP-observed download, from the matching chrome.downloads item. */
+  async #resolveDownloadPath(d: PendingDownload): Promise<string | undefined> {
+    const match = () =>
+      [...this.#downloads.values()].find(
+        (entry) => entry.state === "complete" && entry.url === d.url && (entry.tabId === undefined || entry.tabId === d.tabId) && (entry.finishedAt ?? 0) >= d.startedAt - 1_000,
+      );
+    const found = match();
+    if (found) return found.path;
+    return new Promise((resolve) => {
+      const wake = () => {
+        const hit = match();
+        if (hit) done(hit.path);
+      };
+      const done = (path: string | undefined) => {
+        clearTimeout(timer);
+        this.#downloadWaiters.delete(wake);
+        resolve(path);
+      };
+      const timer = setTimeout(() => done(undefined), 10_000);
+      timer.unref();
+      this.#downloadWaiters.add(wake);
+    });
   }
 
   #scheduleReconnect(): void {
@@ -233,9 +330,11 @@ export class Daemon {
       bundleVersion: () => this.#bundle.version,
       emit: (event) => {
         const owner = this.sessions.store.ownerOf(tabId);
-        if (owner) this.sessions.emit(owner.sessionId, event as EventInput);
+        const stamped = owner ? this.sessions.emit(owner.sessionId, event as EventInput) : undefined;
+        if (stamped && runtime) deliverSystemEvent(runtime.cdp, stamped);
       },
-      takeDialogDecision: () => this.#dialogDecisions.get(tabId)?.shift(),
+      // Daemon-level `wait{for:'dialog', dialogAction}` first, then WS-E's queue.
+      takeDialogDecision: () => this.#dialogDecisions.get(tabId)?.shift() ?? (runtime ? takePendingDialogAction(runtime.cdp) : undefined),
     });
     this.#runtimes.set(tabId, runtime);
     return runtime;
@@ -253,7 +352,12 @@ export class Daemon {
       if (tab?.active && tab.windowFocused !== false) return false; // the user is looking at it: leave it open
     }
     this.#forgetRuntime(tabId);
-    await this.backend.closeTab(this.ownerOf(session.id), tabId);
+    // guard=false: the agent itself is closing its own tab (session.close / tabs.close).
+    const result = await this.backend.closeTab(this.ownerOf(session.id), tabId, { force: !guard });
+    if (result && !result.closed) {
+      this.#log(`tab ${tabId} kept open by the browser on close: ${result.reason ?? "guarded"}`);
+      return false;
+    }
     return true;
   }
 
@@ -285,7 +389,13 @@ export class Daemon {
             sessionId,
             this.#artifactDir(sessionId),
             treeKey ? this.sessions.previousTree(sessionId, treeKeyFor(row.tabId, treeKey)) : undefined,
-            (event) => this.sessions.emit(sessionId, { ...(event as object), tabId: (event as { tabId?: TabId }).tabId ?? row.tabId } as EventInput),
+            (event) => {
+              // With browser-level download events (extension), those are authoritative;
+              // drop WS-E's CDP-derived duplicates.
+              if ((event.type === "download_started" || event.type === "download_finished") && this.#capabilities().downloads) return;
+              const stamped = this.sessions.emit(sessionId, { ...event, tabId: (event as { tabId?: TabId }).tabId ?? row.tabId } as EventInput);
+              if (stamped) deliverSystemEvent(runtime.cdp, stamped);
+            },
           );
           return await fn(page, runtime, row.tabId);
         });
@@ -403,13 +513,23 @@ export class Daemon {
   async #wait(params: WaitParams): Promise<WaitResult> {
     const sessionId = params.sessionId;
     const timeoutMs = Math.max(0, Math.min(params.timeoutMs ?? 30_000, 120_000));
-    const afterSeq = this.sessions.lastSeq(sessionId);
+    // Event waits also match events from the last few seconds that no earlier
+    // wait claimed: a fast download/popup often lands before the agent's
+    // `wait` call (e.g. right after the click that started it). A dialog with
+    // a dialogAction is about the NEXT dialog, so it only looks forward.
+    const claimed = this.#claimedSeq.get(sessionId) ?? {};
+    const lookBack = params.for === "dialog" && params.dialogAction ? this.sessions.lastSeq(sessionId) : await this.#recentFloor(sessionId);
+    const afterSeq = Math.max(claimed[params.for] ?? 0, lookBack);
+    const claim = (event: SystemEvent | undefined) => {
+      if (event) this.#claimedSeq.set(sessionId, { ...(this.#claimedSeq.get(sessionId) ?? {}), [params.for]: event.seq });
+      return event;
+    };
     const forEvent = async (predicate: (event: SystemEvent) => boolean): Promise<SystemEvent | undefined> => {
       // Keep the lease alive during long waits.
       const keepAlive = setInterval(() => this.sessions.touch(sessionId), 10_000);
       keepAlive.unref();
       try {
-        return await this.sessions.waitForEvent(sessionId, predicate, timeoutMs, afterSeq);
+        return claim(await this.sessions.waitForEvent(sessionId, predicate, timeoutMs, afterSeq));
       } finally {
         clearInterval(keepAlive);
       }
@@ -465,6 +585,15 @@ export class Daemon {
     }
   }
 
+  /** Seq of the newest event older than the wait look-back window. */
+  async #recentFloor(sessionId: string): Promise<number> {
+    const { events } = await this.sessions.events(sessionId, 0, 0);
+    const cutoff = Date.now() - WAIT_LOOKBACK_MS;
+    let floor = 0;
+    for (const event of events) if (event.at < cutoff) floor = event.seq;
+    return floor;
+  }
+
   // -------------------------------------------------------------------------
   // Handler table
 
@@ -505,6 +634,7 @@ export class Daemon {
     table["session.close"] = async (params) => {
       const p = params as SessionCloseParams;
       s.require(p.sessionId);
+      this.#claimedSeq.delete(p.sessionId);
       repl.reset(p.sessionId);
       return s.close(p.sessionId, p.keep ?? [], "agent");
     };
@@ -614,7 +744,7 @@ export class Daemon {
       await this.#mutex.run(row.tabId, async () => {
         this.#forgetRuntime(row.tabId);
         if (row.ownership === "borrowed") await this.backend.releaseTab(this.ownerOf(p.sessionId), row.tabId);
-        else await this.backend.closeTab(this.ownerOf(p.sessionId), row.tabId);
+        else await this.backend.closeTab(this.ownerOf(p.sessionId), row.tabId, { force: true });
       });
       const dropped = s.dropTab(row.tabId);
       return { activeTabId: dropped?.activeTabId };
@@ -647,13 +777,31 @@ export class Daemon {
     table.act = async (params) => {
       const p = params as ActParams;
       s.require(p.sessionId);
-      const result = await this.#onPage(p.sessionId, p.tabId, true, null, async (page, runtime, tabId) => {
-        const acted = await this.modules.act(page, p);
-        const warnings = [...(acted.warnings ?? []), ...runtime.setupWarnings.splice(0)];
-        const snapshot = await this.#snapshotAfter(page, p.sessionId, tabId, p.snapshot ?? "diff", warnings);
-        return { ...acted, ...(snapshot ? { snapshot } : {}), ...(warnings.length ? { warnings } : {}) };
-      });
-      return this.#withEvents(p.sessionId, result);
+      const target = s.resolveTab(p.sessionId, p.tabId).tabId;
+      const started = Date.now();
+      let acted = false;
+      try {
+        const result = await this.#onPage(p.sessionId, p.tabId, true, null, async (page, runtime, tabId) => {
+          const done = await this.modules.act(page, p);
+          acted = true;
+          const warnings = [...(done.warnings ?? []), ...runtime.setupWarnings.splice(0)];
+          const snapshot = await this.#snapshotAfter(page, p.sessionId, tabId, p.snapshot ?? "diff", warnings);
+          return { ...done, ...(snapshot ? { snapshot } : {}), ...(warnings.length ? { warnings } : {}) };
+        });
+        return this.#withEvents(p.sessionId, result);
+      } catch (error) {
+        // The action made its own tab go away (an OAuth/consent popup that
+        // window.close()s on submit): that is success, reported with tab_closed.
+        const gone = !s.store.ownerOf(target) || (error instanceof ObuError && error.code === "no_active_tab");
+        if (gone && (acted || isTabGoneError(error) || (error instanceof ObuError && (error.code === "tab_not_owned" || error.code === "no_active_tab")))) {
+          return this.#withEvents(p.sessionId, {
+            ok: true as const,
+            settled: { kind: "nav" as const, ms: Date.now() - started, warning: `tab ${target} closed during the action` },
+            warnings: [`tab ${target} closed itself during the action; check the [system] events for the new active tab`],
+          });
+        }
+        throw error;
+      }
     };
 
     table.navigate = async (params) => {

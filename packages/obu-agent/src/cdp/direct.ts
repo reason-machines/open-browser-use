@@ -4,7 +4,7 @@
 // Tab ids are synthetic numbers mapped 1:1 to page targetIds.
 import type { TabId } from "../contract.js";
 import { ObuError } from "../errors.js";
-import { Emitter, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
+import { Emitter, type BackendCapabilities, type BackendEvent, type BackendOwner, type BackendTab, type BrowserBackend, type SendOptions } from "./backend.js";
 
 interface PendingCall {
   resolve: (value: any) => void;
@@ -27,6 +27,12 @@ export interface DirectCdpOptions {
   /** http://127.0.0.1:<port> or ws://… browser endpoint. */
   endpoint: string;
   defaultTimeoutMs?: number;
+  /**
+   * Take over downloads for this browser connection: save into this dir and
+   * report each one (with its final path) as a `download` backend event.
+   * Opt-in, because it changes the browser's download behaviour.
+   */
+  downloadDir?: string;
 }
 
 export class DirectCdpBackend implements BrowserBackend {
@@ -42,6 +48,7 @@ export class DirectCdpBackend implements BrowserBackend {
   #nextTabId = 1;
   #version: string | undefined;
   #browserContextId: string | undefined;
+  #downloads = new Map<string, { tabId?: TabId; url: string; suggestedFilename: string }>();
   readonly #timeoutMs: number;
 
   constructor(private readonly options: DirectCdpOptions) {
@@ -68,6 +75,9 @@ export class DirectCdpBackend implements BrowserBackend {
     await this.#call("Target.setDiscoverTargets", { discover: true });
     const { targetInfos } = await this.#call("Target.getTargets", {});
     for (const info of targetInfos) if (info.type === "page") this.#trackTarget(info);
+    if (this.options.downloadDir) {
+      await this.#call("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: this.options.downloadDir, eventsEnabled: true });
+    }
   }
 
   isConnected(): boolean {
@@ -76,6 +86,12 @@ export class DirectCdpBackend implements BrowserBackend {
 
   version(): string | undefined {
     return this.#version;
+  }
+
+  capabilities(): BackendCapabilities {
+    // Target events are pushed over the browser websocket; downloads come from
+    // CDP (Browser.downloadProgress carries the path), handled per tab by WS-E.
+    return { tabEvents: true, downloads: Boolean(this.options.downloadDir), closeTab: true };
   }
 
   async createTab(_owner: BackendOwner, url: string): Promise<BackendTab> {
@@ -214,6 +230,29 @@ export class DirectCdpBackend implements BrowserBackend {
       this.#byTab.delete(page.tabId);
       if (page.sessionId) this.#bySession.delete(page.sessionId);
       this.#events.emit({ type: "tab_closed", tabId: page.tabId });
+      return;
+    }
+    if (!message.sessionId && method === "Browser.downloadWillBegin") {
+      // The main frame id of a page target is its target id.
+      const tabId = this.#targets.get(params.frameId)?.tabId;
+      this.#downloads.set(params.guid, { tabId, url: params.url, suggestedFilename: params.suggestedFilename ?? "" });
+      this.#events.emit({ type: "download", id: params.guid, ...(tabId !== undefined ? { tabId } : {}), url: params.url, path: "", status: "started" });
+      return;
+    }
+    if (!message.sessionId && method === "Browser.downloadProgress") {
+      const d = this.#downloads.get(params.guid);
+      if (!d || params.state === "inProgress") return;
+      this.#downloads.delete(params.guid);
+      const path = params.filePath ?? (this.options.downloadDir ? `${this.options.downloadDir}/${d.suggestedFilename}` : "");
+      this.#events.emit({
+        type: "download",
+        id: params.guid,
+        ...(d.tabId !== undefined ? { tabId: d.tabId } : {}),
+        url: d.url,
+        path,
+        status: params.state === "completed" ? "complete" : "interrupted",
+        ...(typeof params.totalBytes === "number" ? { bytes: params.totalBytes } : {}),
+      });
       return;
     }
     if (method === "Target.detachedFromTarget") {

@@ -194,7 +194,7 @@ describe("repl live (CfT)", { skip: findChrome() ? false : "Chrome for Testing n
     }
     daemon = new Daemon({
       profile: "Default",
-      backend: new DirectCdpBackend({ endpoint: `http://127.0.0.1:${cdpPort}` }),
+      backend: new DirectCdpBackend({ endpoint: `http://127.0.0.1:${cdpPort}`, downloadDir: join(tmp, "downloads") }),
       store: openStore(":memory:"),
       artifactRoot: join(tmp, "artifacts"),
     });
@@ -251,6 +251,8 @@ describe("repl live (CfT)", { skip: findChrome() ? false : "Chrome for Testing n
     assert.ok(facts.shotBytes > 1000);
     assert.match(r.output, /button "Added 2"/);
     assert.ok(existsSync(join(r.artifactsDir, "details.jpg")));
+    // The backend reports the download's real path: no in-page re-fetch fallback.
+    assert.ok(!JSON.stringify(r.warnings ?? []).includes("re-fetched"), JSON.stringify(r.warnings));
     // The repl owns no tab bookkeeping of its own: the session's tabs are the daemon's.
     const tabs = await call("tabs.list", { sessionId: "repl-live" });
     assert.equal(tabs.tabs.length, 1, JSON.stringify(tabs.tabs));
