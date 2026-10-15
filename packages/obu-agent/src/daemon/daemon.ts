@@ -35,6 +35,8 @@ import {
   type TabsOpenParams,
   type TabsSelectParams,
   type TabsTransferParams,
+  type ReplResetParams,
+  type ReplRunParams,
   type WaitParams,
   type WaitResult,
 } from "../contract.js";
@@ -53,6 +55,7 @@ import { act as wseAct } from "../actions/index.js";
 import { performActionAndWait as wsePerformActionAndWait } from "../wait/index.js";
 import { screenshot as wseScreenshot } from "../screenshot/index.js";
 import { INJECTED_BUNDLE_SOURCE, INJECTED_VERSION } from "../injected/index.js";
+import { ReplManager } from "../repl/index.js";
 
 export const DAEMON_VERSION = "0.1.0";
 
@@ -472,6 +475,16 @@ export class Daemon {
     };
     const s = this.sessions;
 
+    // Code mode (r2-repl): the sandbox calls straight back into this table.
+    const repl = new ReplManager({
+      callFor: (sessionId) => async (method, callParams) => {
+        const handler = table[method as MethodName];
+        if (!handler || method.startsWith("repl.") || method === "session.close") throw new ObuError("invalid_params", `${method} is not available inside the REPL`);
+        s.touch(sessionId);
+        return handler({ ...callParams, sessionId }, { connectionId: 0 });
+      },
+      artifactsDirFor: (sessionId) => join(this.#artifactDir(sessionId), "artifacts"),
+    });
     table["daemon.info"] = (): DaemonInfoResult => ({
       contractVersion: CONTRACT_VERSION,
       daemonVersion: DAEMON_VERSION,
@@ -492,6 +505,7 @@ export class Daemon {
     table["session.close"] = async (params) => {
       const p = params as SessionCloseParams;
       s.require(p.sessionId);
+      repl.reset(p.sessionId);
       return s.close(p.sessionId, p.keep ?? [], "agent");
     };
 
@@ -688,6 +702,20 @@ export class Daemon {
       const p = params as WaitParams;
       s.require(p.sessionId);
       return this.#wait(p);
+    };
+
+    table["repl.run"] = async (params) => {
+      const p = params as ReplRunParams;
+      s.require(p.sessionId);
+      for (const id of repl.sessions()) if (!s.list().some((row) => row.id === id)) repl.reset(id);
+      const result = await repl.run(p.sessionId, p.code, p.timeoutMs);
+      return { ...result, events: [...result.events, ...this.sessions.drain(p.sessionId)] };
+    };
+    table["repl.reset"] = (params) => {
+      const p = params as ReplResetParams;
+      s.require(p.sessionId);
+      repl.reset(p.sessionId);
+      return { ok: true as const };
     };
 
     return table;
