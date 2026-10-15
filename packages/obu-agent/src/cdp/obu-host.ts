@@ -8,6 +8,7 @@
 // act on tabs in the root's group and the daemon enforces I2. The owner key
 // is chosen by the session manager.
 import { existsSync, readFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { createConnection, type Socket } from "node:net";
 import { endianness } from "node:os";
 import type { TabId } from "../contract.js";
@@ -17,8 +18,10 @@ import { Emitter, type BackendEvent, type BackendOwner, type BackendTab, type Br
 const HEADER_BYTES = 4;
 
 export interface ObuHostOptions {
-  /** Explicit socket path; otherwise resolved from the registry dirs. */
+  /** Explicit socket path; otherwise OBU_RELAY_SOCKET, then the registry dirs. */
   socketPath?: string;
+  /** Relay token file; otherwise OBU_RELAY_TOKEN_PATH / active.json tokenPath / <socketDir>/relay.token. */
+  tokenPath?: string;
   /** Registry dirs to search for active.json (brand first). */
   registryDirs?: string[];
   defaultTimeoutMs?: number;
@@ -26,21 +29,45 @@ export interface ObuHostOptions {
   pollMs?: number;
 }
 
-export function resolveObuSocket(options: ObuHostOptions = {}): string {
-  if (options.socketPath) return options.socketPath;
+/**
+ * Where the native-host relay listens and the token it wants (WS-B: first
+ * frame `{"auth":"<token>"}` unless OBU_RELAY_AUTH=uid). Re-resolved on every
+ * (re)connect because the host rewrites active.json when it restarts.
+ */
+export function resolveRelay(options: ObuHostOptions = {}): { socketPath: string; tokenPath?: string } {
+  const envToken = process.env.OBU_RELAY_TOKEN_PATH;
+  if (options.socketPath) return { socketPath: options.socketPath, tokenPath: options.tokenPath ?? envToken ?? siblingToken(options.socketPath) };
+  // Supervised by the host: it tells us the relay socket directly.
+  const envSocket = process.env.OBU_RELAY_SOCKET;
+  if (envSocket && existsSync(envSocket)) return { socketPath: envSocket, tokenPath: envToken ?? siblingToken(envSocket) };
   const brand = process.env.OBU_BRAND ?? "reason";
-  const dirs = options.registryDirs ?? [`/tmp/${brand}-browser-use`, "/tmp/reason-browser-use", "/tmp/open-browser-use"];
+  const dirs = options.registryDirs ?? [
+    ...(process.env.OBU_SOCKET_DIR ? [process.env.OBU_SOCKET_DIR] : []),
+    `/tmp/${brand}-browser-use`,
+    "/tmp/reason-browser-use",
+    "/tmp/open-browser-use",
+  ];
   for (const dir of dirs) {
     const registry = `${dir}/active.json`;
     if (!existsSync(registry)) continue;
     try {
-      const { socketPath } = JSON.parse(readFileSync(registry, "utf8")) as { socketPath?: string };
-      if (socketPath && existsSync(socketPath)) return socketPath;
+      const { socketPath, tokenPath } = JSON.parse(readFileSync(registry, "utf8")) as { socketPath?: string; tokenPath?: string };
+      if (socketPath && existsSync(socketPath)) return { socketPath, tokenPath: envToken ?? tokenPath ?? siblingToken(socketPath) };
     } catch {
       // try the next registry
     }
   }
   throw new ObuError("extension_disconnected", "Open Browser Use native host is not running (no active.json registry). Open Chrome with the extension installed.");
+}
+
+/** Back-compat helper: just the socket path. */
+export function resolveObuSocket(options: ObuHostOptions = {}): string {
+  return resolveRelay(options).socketPath;
+}
+
+function siblingToken(socketPath: string): string | undefined {
+  const candidate = `${dirname(socketPath)}/relay.token`;
+  return existsSync(candidate) ? candidate : undefined;
 }
 
 interface Pending {
@@ -69,7 +96,7 @@ export class ObuHostBackend implements BrowserBackend {
 
   async connect(): Promise<void> {
     if (this.#socket) return;
-    const path = resolveObuSocket(this.options);
+    const { socketPath: path, tokenPath } = resolveRelay(this.options);
     const socket = createConnection(path);
     socket.on("data", (chunk) => this.#onData(chunk));
     socket.on("close", () => this.#onClose("native host socket closed"));
@@ -79,6 +106,10 @@ export class ObuHostBackend implements BrowserBackend {
       socket.once("error", reject);
     });
     this.#socket = socket;
+    if (process.env.OBU_RELAY_AUTH !== "uid" && tokenPath && existsSync(tokenPath)) {
+      // WS-B relay auth: first frame. Relays that don't require it drop it.
+      socket.write(encodeFrame({ auth: readFileSync(tokenPath, "utf8").trim() }));
+    }
     const info = (await this.#request("getInfo", { session_id: "obu-agent" }).catch(() => undefined)) as any;
     this.#version = info?.version ?? info?.extensionVersion ?? info?.metadata?.version;
     const pollMs = this.options.pollMs ?? 3_000;
@@ -245,11 +276,7 @@ export class ObuHostBackend implements BrowserBackend {
     const socket = this.#socket;
     if (!socket) return Promise.reject(new ObuError("extension_disconnected", "Open Browser Use native host is not connected"));
     const id = `a${this.#nextId++}`;
-    const payload = Buffer.from(JSON.stringify({ jsonrpc: "2.0", id, method, params }), "utf8");
-    const frame = Buffer.alloc(HEADER_BYTES + payload.length);
-    if (endianness() === "LE") frame.writeUInt32LE(payload.length, 0);
-    else frame.writeUInt32BE(payload.length, 0);
-    payload.copy(frame, HEADER_BYTES);
+    const frame = encodeFrame({ jsonrpc: "2.0", id, method, params });
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.#pending.delete(id);
@@ -278,6 +305,10 @@ export class ObuHostBackend implements BrowserBackend {
   }
 
   #onMessage(message: any): void {
+    if (message.id === null && message.error?.data?.type === "unauthorized") {
+      this.#onClose(`native host rejected the relay token: ${message.error.message ?? "unauthorized"}`);
+      return;
+    }
     if (message.id !== undefined && message.id !== null) {
       const pending = this.#pending.get(String(message.id));
       if (!pending) return;
@@ -329,4 +360,13 @@ export class ObuHostBackend implements BrowserBackend {
     this.#pending.clear();
     this.#events.emit({ type: "disconnected", error: reason });
   }
+}
+
+function encodeFrame(message: unknown): Buffer {
+  const payload = Buffer.from(JSON.stringify(message), "utf8");
+  const frame = Buffer.alloc(HEADER_BYTES + payload.length);
+  if (endianness() === "LE") frame.writeUInt32LE(payload.length, 0);
+  else frame.writeUInt32BE(payload.length, 0);
+  payload.copy(frame, HEADER_BYTES);
+  return frame;
 }

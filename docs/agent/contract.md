@@ -15,6 +15,56 @@ behaviour spec. Change both in the same commit.
 - JSON-RPC 2.0, newline-delimited JSON. MCP stdio: `obu-agent mcp --attach`
   proxies onto the socket with static tool schemas.
 
+### Daemon socket, CLI and state — WS-C
+
+- **Auth handshake:** first line `{"auth":"<agent.token>"}`; the daemon
+  answers `{"jsonrpc":"2.0","id":"auth","result":{"ok":true}}` or an error
+  (`-32001 unauthorized`) and closes. Peer check: Node has no `getpeereid`,
+  so same-uid is enforced by the socket being 0600 inside a 0700 dir
+  (departure from the original text). `--no-auth` disables the token (tests).
+  `ObuAgentClient(path, {token, timeoutMs})` does the handshake.
+- **CLI:** `obu-agent [--profile P] [--socket PATH] [--backend obu|direct]
+  [--cdp-endpoint URL] [--obu-socket PATH] [--state PATH] [--artifacts DIR]
+  [--lease-ttl-ms N] [--sweep-ms N] [--no-auth]`; `obu-agent mcp --attach
+  [--session ID] [--parent ID] [--label L] [--no-spawn]` (env
+  `OBU_SESSION_ID`, `OBU_PARENT_SESSION_ID`, `OBU_SESSION_LABEL`; spawns the
+  daemon when the socket is missing; heartbeats every 15 s; `session.close` on
+  stdin EOF); `obu-agent call <method> '<json>'` prints one result.
+- **One daemon per profile:** pid lock `agent.lock` next to the socket.
+- **State:** `node:sqlite` at `<agentDir>/state.sqlite` (WAL); JSON file
+  fallback when `node:sqlite` is unavailable (`OBU_AGENT_STORE=json` forces it).
+  Live leases survive a daemon restart; expired ones are finalized on start (I5).
+- **Backends:** `obu` (default) = native-host relay (`OBU_RELAY_SOCKET` →
+  `active.json` registries; relay token from `OBU_RELAY_TOKEN_PATH` /
+  `active.json.tokenPath` / `<socketDir>/relay.token`; re-resolved on every
+  reconnect, 2 s backoff). `direct` = a Chrome `--remote-debugging-port`
+  websocket (Chrome for Testing in tests; round-2 fast mode).
+- **Extension sessions:** one extension session (= one tab group) per ROOT
+  daemon session, key `obu-agent:<rootSessionId>`, group title
+  `<label> · Reason`. Children act on tabs in the root's group; the daemon
+  enforces I2. Tabs are closed with `Page.close` through the debugger;
+  `session.close` of a root also calls `finalizeTabs(keep)`.
+- **Events:** a result's `events` are the session's undelivered events
+  (delivered once). `session.events{afterSeq,waitMs≤30000}` returns events
+  with `seq > afterSeq` from a 500-event ring and marks them delivered.
+  `navigation` events are only emitted for navigations that happen outside an
+  agent call (steering), not for the agent's own `navigate`/`act`.
+  `orphans_closed` also goes to the parent when a child's lease expires.
+- **Waits:** `dialog`/`popup`/`download` wait on session events without
+  holding the tab mutex; `selector`/`text`/`url` poll every 100 ms in the
+  isolated world (`url`: `*`, `**`, `?` globs, else substring); `settled`
+  runs WS-E's `performActionAndWait` with a no-op action. Max 120 s.
+- **navigate `waitUntil`:** `settled` (default) = WS-E settle; `load` /
+  `domcontentloaded` = that event on the main frame, or a bfcache restore /
+  same-document history step; 30 s cap is a warning.
+- **Snapshot trees for diffs** are kept per (session, tab, full|interactive);
+  scoped (`ref`/`selector`) snapshots don't replace them. `act` (default
+  `snapshot:'diff'`) returns `{tree}` when there is no previous full tree.
+- **Frame ordinals** restart at 1 on every main-frame document (refs are per
+  document); OOPIF frames keep their ordinal across the process swap.
+- **Known platform limit:** background tabs clamp page timers to ≥ 1 s (Chrome
+  throttling); lifecycle `active` does not lift it.
+
 ### Native host (relay) — WS-B
 
 - **Spawn:** the native host supervises one `obu-agent` per profile:

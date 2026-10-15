@@ -7,7 +7,7 @@
 export type { FrameHandle, PageContext, TabCdp } from "../seams.js";
 export { type BrowserBackend, type BackendEvent, type BackendOwner, type BackendTab, isTabGoneError, isContextGoneError } from "./backend.js";
 export { DirectCdpBackend, type DirectCdpOptions } from "./direct.js";
-export { ObuHostBackend, resolveObuSocket, type ObuHostOptions } from "./obu-host.js";
+export { ObuHostBackend, resolveObuSocket, resolveRelay, type ObuHostOptions } from "./obu-host.js";
 export { TabRuntime, type TabRuntimeOptions, type DialogDecision } from "./page.js";
 
 /** CDP methods sent on attach, in order (documentation + tests assert Runtime.enable is absent). */

@@ -17,6 +17,7 @@ import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { ObuAgentClient } from "../dist/index.js";
+import { INJECTED_VERSION } from "../dist/injected/index.js";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const MAIN = join(here, "..", "dist", "daemon", "main.js");
@@ -126,7 +127,7 @@ async function main() {
     }
   }
   const socket = join(tmp, "agent.sock");
-  const daemon = spawn(process.execPath, [MAIN, "--backend", "direct", "--cdp-endpoint", `http://127.0.0.1:${CDP_PORT}`, "--socket", socket, "--state", join(tmp, "state.sqlite"), "--artifacts", join(tmp, "art"), "--bundle-file", bundleFile], {
+  const daemon = spawn(process.execPath, [MAIN, "--backend", "direct", "--cdp-endpoint", `http://127.0.0.1:${CDP_PORT}`, "--socket", socket, "--state", join(tmp, "state.sqlite"), "--artifacts", join(tmp, "art")], {
     stdio: ["ignore", "ignore", "pipe"],
   });
   started.push(daemon);
@@ -156,7 +157,7 @@ async function main() {
 
   await check("I8 + isolated world: __obu only in utility world, page globals invisible there", async () => {
     const iso = await client.call("evaluate", { sessionId: "s1", expression: "[typeof __obu, __obu && __obu.version, typeof window.pageSecret, document.title]" });
-    assert.deepEqual(iso.value, ["object", "file", "undefined", "Main fixture"]);
+    assert.deepEqual(iso.value, ["object", INJECTED_VERSION, "undefined", "Main fixture"]);
     const page = await client.call("evaluate", { sessionId: "s1", world: "page", expression: "[typeof __obu, window.pageSecret]" });
     assert.deepEqual(page.value, ["undefined", 42]);
   });
@@ -165,12 +166,27 @@ async function main() {
     const nav = await client.call("navigate", { sessionId: "s1", url: `${A}/main.html?second`, waitUntil: "load" });
     assert.equal(nav.ok, true);
     const iso = await client.call("evaluate", { sessionId: "s1", expression: "[__obu.version, location.search]" });
-    assert.deepEqual(iso.value, ["file", "?second"]);
+    assert.deepEqual(iso.value, [INJECTED_VERSION, "?second"]);
     const back = await client.call("navigate", { sessionId: "s1", op: "back", waitUntil: "load" });
     assert.equal(back.ok, true);
     const after = await client.call("evaluate", { sessionId: "s1", expression: "[__obu.version, location.search]" });
-    assert.deepEqual(after.value, ["file", ""]);
+    assert.deepEqual(after.value, [INJECTED_VERSION, ""]);
     return `navigate ${nav.settled.ms} ms`;
+  });
+
+  await check("WS-D snapshot through the PageContext seam: refs, OOPIF stitched as fKeN, diff after a change", async () => {
+    const t0 = Date.now();
+    const snap = await client.call("snapshot", { sessionId: "s1" });
+    const ms = Date.now() - t0;
+    assert.match(snap.tree, /button "Go" \[ref=e\d+\]/);
+    assert.match(snap.tree, /iframe/);
+    assert.match(snap.tree, /textbox \[ref=f1e\d+\]/, snap.tree);
+    await client.call("evaluate", { sessionId: "s1", world: "page", expression: "document.getElementById('ready').textContent = 'changed', 1" });
+    const again = await client.call("snapshot", { sessionId: "s1" });
+    assert.match(again.diff, /changed/);
+    const t1 = Date.now();
+    const interactive = await client.call("snapshot", { sessionId: "s1", interactive: true });
+    return `full ${ms} ms (${snap.tree.length} chars, ${snap.refCount} refs), interactive ${Date.now() - t1} ms`;
   });
 
   await check("I6: owned tab viewport is 1440x900", async () => {
