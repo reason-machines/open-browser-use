@@ -101,13 +101,23 @@ behaviour spec. Change both in the same commit.
   answered after `timeoutMs + 2000` gets
   `{"error":{"code":-32001,"data":{"type":"timeout"}}}`; a late answer is
   dropped. The CLI fills `params.timeoutMs` from `--timeout` (minus 250 ms).
-- **Chunking (host↔extension, pairs with WS-A):** a native message over
-  900 KB is sent as frames
-  `{"chunk":{"id":"<string>","i":<0..n-1>,"n":<n>,"data":"<base64>"}}`, each
-  ≤ 900 KB. `data` is standard base64 of a byte slice (640 KiB) of the
-  original UTF-8 JSON message; concatenating decoded slices in `i` order
-  restores it exactly. Chunks of one message are written back to back. The
-  host accepts the same envelope from the extension (sets expire after 60 s).
+- **Chunking (host↔extension, pairs with WS-A, see apps/chrome-extension/WIRE.md):**
+  a native message over 900 KB is sent as frames
+  `{"chunk":{"id":"<string>","i":<0..n-1>,"n":<n>,"data":"<text slice>"}}`,
+  each ≤ 900 KB. `data` is a JSON string holding the i-th slice (≤ 400 KiB,
+  cut on a UTF-8 rune boundary) of the original JSON text; joining the decoded
+  strings in `i` order and parsing restores the message (the extension does
+  `JSON.parse(parts.join(""))`). Chunks of one message are written back to
+  back. The host accepts the same envelope from the extension (sets expire
+  after 60 s). (r2: replaced the earlier base64 form, which the extension
+  never decoded.)
+- **Event routing:** the relay records every `params.session_id` a client
+  sends. `onCDPEvent` with `params.subscribers` goes only to clients that
+  sent one of those ids (dropped if none is connected); without
+  `subscribers` it is broadcast. Other notifications with `params.sessionId`
+  (`leaseRevoked`, `tabClosed`, `popupOpened`, `sessionExpired`,
+  `onDownloadChange`) go to that session's clients, or to everyone when no
+  client has claimed the session. Everything else is broadcast.
 
 ## Methods
 
