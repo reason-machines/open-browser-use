@@ -1,0 +1,953 @@
+- title: "Home / X-like feed fixture" [url=http://localhost:PORT/feed-x.html]
+- navigation "Primary":
+  - link "Home" [ref=e1] [url=/home]
+  - link "Explore" [ref=e2] [url=/explore]
+  - link "Notifications" [ref=e3] [url=/notifications]
+  - link "Messages" [ref=e4] [url=/messages]
+  - link "Bookmarks" [ref=e5] [url=/bookmarks]
+  - link "Profile" [ref=e6] [url=/profile]
+  - link "More" [ref=e7] [url=/more]
+  - button "Post" [ref=e8]
+- main:
+  - heading "Home" [level=1]
+  - tablist:
+    - tab "For you" [ref=e9] [selected]
+    - tab "Following" [ref=e10]
+  - textbox "Post text" [ref=e11]
+  - button "Add photos or video" [ref=e12]: Media
+  - button "Add emoji" [ref=e13]: Emoji
+  - button "Post" [ref=e14] [disabled]
+  - region "Timeline: Your Home Timeline":
+    - article "Post by Ada Lovelace":
+      - link [ref=e15] [url=/ada0]
+      - link "Ada Lovelace" [ref=e16] [url=/ada0]
+      - link "@ada0" [ref=e17] [url=/ada0]
+      - link "1h" [ref=e18] [url=/ada0/status/1000]
+      - button "More" [ref=e19]: ⋯
+      - text: "Post number 0: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e20] [url=/hashtag/tag0]
+      - group "0 replies, 0 reposts, 0 likes":
+        - button "0 Replies. Reply" [ref=e21]: "0"
+        - button "0 reposts. Repost" [ref=e22]: "0"
+        - button "0 Likes. Like" [ref=e23]: "0"
+        - link "0 views" [ref=e24] [url=/ada0/status/1000/analytics]: "0"
+        - button "Bookmark" [ref=e25]: 🔖
+        - button "Share post" [ref=e26]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e27] [url=/grace1]
+      - link "Grace Hopper" [ref=e28] [url=/grace1]
+      - link "@grace1" [ref=e29] [url=/grace1]
+      - link "2h" [ref=e30] [url=/grace1/status/1001]
+      - button "More" [ref=e31]: ⋯
+      - text: "Post number 1: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e32] [url=/hashtag/tag1]
+      - group "3 replies, 5 reposts, 11 likes":
+        - button "3 Replies. Reply" [ref=e33]: "3"
+        - button "5 reposts. Repost" [ref=e34]: "5"
+        - button "11 Likes. Like" [ref=e35]: "11"
+        - link "97 views" [ref=e36] [url=/grace1/status/1001/analytics]: "97"
+        - button "Bookmark" [ref=e37]: 🔖
+        - button "Share post" [ref=e38]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e39] [url=/alan2]
+      - link "Alan Turing" [ref=e40] [url=/alan2]
+      - link "@alan2" [ref=e41] [url=/alan2]
+      - link "3h" [ref=e42] [url=/alan2/status/1002]
+      - button "More" [ref=e43]: ⋯
+      - text: "Post number 2: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e44] [url=/hashtag/tag2]
+      - group "6 replies, 10 reposts, 22 likes":
+        - button "6 Replies. Reply" [ref=e45]: "6"
+        - button "10 reposts. Repost" [ref=e46]: "10"
+        - button "22 Likes. Like" [ref=e47]: "22"
+        - link "194 views" [ref=e48] [url=/alan2/status/1002/analytics]: "194"
+        - button "Bookmark" [ref=e49]: 🔖
+        - button "Share post" [ref=e50]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e51] [url=/linus3]
+      - link "Linus Torvalds" [ref=e52] [url=/linus3]
+      - link "@linus3" [ref=e53] [url=/linus3]
+      - link "4h" [ref=e54] [url=/linus3/status/1003]
+      - button "More" [ref=e55]: ⋯
+      - text: "Post number 3: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e56] [url=/hashtag/tag3]
+      - group "9 replies, 15 reposts, 33 likes":
+        - button "9 Replies. Reply" [ref=e57]: "9"
+        - button "15 reposts. Repost" [ref=e58]: "15"
+        - button "33 Likes. Like" [ref=e59]: "33"
+        - link "291 views" [ref=e60] [url=/linus3/status/1003/analytics]: "291"
+        - button "Bookmark" [ref=e61]: 🔖
+        - button "Share post" [ref=e62]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e63] [url=/margaret4]
+      - link "Margaret Hamilton" [ref=e64] [url=/margaret4]
+      - link "@margaret4" [ref=e65] [url=/margaret4]
+      - link "5h" [ref=e66] [url=/margaret4/status/1004]
+      - button "More" [ref=e67]: ⋯
+      - text: "Post number 4: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e68] [url=/hashtag/tag4]
+      - group "12 replies, 20 reposts, 44 likes":
+        - button "12 Replies. Reply" [ref=e69]: "12"
+        - button "20 reposts. Repost" [ref=e70]: "20"
+        - button "44 Likes. Like" [ref=e71]: "44"
+        - link "388 views" [ref=e72] [url=/margaret4/status/1004/analytics]: "388"
+        - button "Bookmark" [ref=e73]: 🔖
+        - button "Share post" [ref=e74]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e75] [url=/ken5]
+      - link "Ken Thompson" [ref=e76] [url=/ken5]
+      - link "@ken5" [ref=e77] [url=/ken5]
+      - link "6h" [ref=e78] [url=/ken5/status/1005]
+      - button "More" [ref=e79]: ⋯
+      - text: "Post number 5: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e80] [url=/hashtag/tag5]
+      - group "15 replies, 25 reposts, 55 likes":
+        - button "15 Replies. Reply" [ref=e81]: "15"
+        - button "25 reposts. Repost" [ref=e82]: "25"
+        - button "55 Likes. Like" [ref=e83]: "55"
+        - link "485 views" [ref=e84] [url=/ken5/status/1005/analytics]: "485"
+        - button "Bookmark" [ref=e85]: 🔖
+        - button "Share post" [ref=e86]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e87] [url=/barbara6]
+      - link "Barbara Liskov" [ref=e88] [url=/barbara6]
+      - link "@barbara6" [ref=e89] [url=/barbara6]
+      - link "7h" [ref=e90] [url=/barbara6/status/1006]
+      - button "More" [ref=e91]: ⋯
+      - text: "Post number 6: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e92] [url=/hashtag/tag6]
+      - group "18 replies, 30 reposts, 66 likes":
+        - button "18 Replies. Reply" [ref=e93]: "18"
+        - button "30 reposts. Repost" [ref=e94]: "30"
+        - button "66 Likes. Like" [ref=e95]: "66"
+        - link "582 views" [ref=e96] [url=/barbara6/status/1006/analytics]: "582"
+        - button "Bookmark" [ref=e97]: 🔖
+        - button "Share post" [ref=e98]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e99] [url=/dennis7]
+      - link "Dennis Ritchie" [ref=e100] [url=/dennis7]
+      - link "@dennis7" [ref=e101] [url=/dennis7]
+      - link "8h" [ref=e102] [url=/dennis7/status/1007]
+      - button "More" [ref=e103]: ⋯
+      - text: "Post number 7: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e104] [url=/hashtag/tag0]
+      - group "21 replies, 35 reposts, 77 likes":
+        - button "21 Replies. Reply" [ref=e105]: "21"
+        - button "35 reposts. Repost" [ref=e106]: "35"
+        - button "77 Likes. Like" [ref=e107]: "77"
+        - link "679 views" [ref=e108] [url=/dennis7/status/1007/analytics]: "679"
+        - button "Bookmark" [ref=e109]: 🔖
+        - button "Share post" [ref=e110]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e111] [url=/ada8]
+      - link "Ada Lovelace" [ref=e112] [url=/ada8]
+      - link "@ada8" [ref=e113] [url=/ada8]
+      - link "9h" [ref=e114] [url=/ada8/status/1008]
+      - button "More" [ref=e115]: ⋯
+      - text: "Post number 8: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e116] [url=/hashtag/tag1]
+      - group "24 replies, 40 reposts, 88 likes":
+        - button "24 Replies. Reply" [ref=e117]: "24"
+        - button "40 reposts. Repost" [ref=e118]: "40"
+        - button "88 Likes. Like" [ref=e119]: "88"
+        - link "776 views" [ref=e120] [url=/ada8/status/1008/analytics]: "776"
+        - button "Bookmark" [ref=e121]: 🔖
+        - button "Share post" [ref=e122]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e123] [url=/grace9]
+      - link "Grace Hopper" [ref=e124] [url=/grace9]
+      - link "@grace9" [ref=e125] [url=/grace9]
+      - link "10h" [ref=e126] [url=/grace9/status/1009]
+      - button "More" [ref=e127]: ⋯
+      - text: "Post number 9: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e128] [url=/hashtag/tag2]
+      - group "27 replies, 45 reposts, 99 likes":
+        - button "27 Replies. Reply" [ref=e129]: "27"
+        - button "45 reposts. Repost" [ref=e130]: "45"
+        - button "99 Likes. Like" [ref=e131]: "99"
+        - link "873 views" [ref=e132] [url=/grace9/status/1009/analytics]: "873"
+        - button "Bookmark" [ref=e133]: 🔖
+        - button "Share post" [ref=e134]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e135] [url=/alan10]
+      - link "Alan Turing" [ref=e136] [url=/alan10]
+      - link "@alan10" [ref=e137] [url=/alan10]
+      - link "11h" [ref=e138] [url=/alan10/status/1010]
+      - button "More" [ref=e139]: ⋯
+      - text: "Post number 10: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e140] [url=/hashtag/tag3]
+      - group "30 replies, 50 reposts, 110 likes":
+        - button "30 Replies. Reply" [ref=e141]: "30"
+        - button "50 reposts. Repost" [ref=e142]: "50"
+        - button "110 Likes. Like" [ref=e143]: "110"
+        - link "970 views" [ref=e144] [url=/alan10/status/1010/analytics]: "970"
+        - button "Bookmark" [ref=e145]: 🔖
+        - button "Share post" [ref=e146]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e147] [url=/linus11]
+      - link "Linus Torvalds" [ref=e148] [url=/linus11]
+      - link "@linus11" [ref=e149] [url=/linus11]
+      - link "12h" [ref=e150] [url=/linus11/status/1011]
+      - button "More" [ref=e151]: ⋯
+      - text: "Post number 11: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e152] [url=/hashtag/tag4]
+      - group "33 replies, 55 reposts, 121 likes":
+        - button "33 Replies. Reply" [ref=e153]: "33"
+        - button "55 reposts. Repost" [ref=e154]: "55"
+        - button "121 Likes. Like" [ref=e155]: "121"
+        - link "1067 views" [ref=e156] [url=/linus11/status/1011/analytics]: "1067"
+        - button "Bookmark" [ref=e157]: 🔖
+        - button "Share post" [ref=e158]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e159] [url=/margaret12]
+      - link "Margaret Hamilton" [ref=e160] [url=/margaret12]
+      - link "@margaret12" [ref=e161] [url=/margaret12]
+      - link "13h" [ref=e162] [url=/margaret12/status/1012]
+      - button "More" [ref=e163]: ⋯
+      - text: "Post number 12: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e164] [url=/hashtag/tag5]
+      - group "36 replies, 60 reposts, 132 likes":
+        - button "36 Replies. Reply" [ref=e165]: "36"
+        - button "60 reposts. Repost" [ref=e166]: "60"
+        - button "132 Likes. Like" [ref=e167]: "132"
+        - link "1164 views" [ref=e168] [url=/margaret12/status/1012/analytics]: "1164"
+        - button "Bookmark" [ref=e169]: 🔖
+        - button "Share post" [ref=e170]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e171] [url=/ken13]
+      - link "Ken Thompson" [ref=e172] [url=/ken13]
+      - link "@ken13" [ref=e173] [url=/ken13]
+      - link "14h" [ref=e174] [url=/ken13/status/1013]
+      - button "More" [ref=e175]: ⋯
+      - text: "Post number 13: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e176] [url=/hashtag/tag6]
+      - group "39 replies, 65 reposts, 143 likes":
+        - button "39 Replies. Reply" [ref=e177]: "39"
+        - button "65 reposts. Repost" [ref=e178]: "65"
+        - button "143 Likes. Like" [ref=e179]: "143"
+        - link "1261 views" [ref=e180] [url=/ken13/status/1013/analytics]: "1261"
+        - button "Bookmark" [ref=e181]: 🔖
+        - button "Share post" [ref=e182]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e183] [url=/barbara14]
+      - link "Barbara Liskov" [ref=e184] [url=/barbara14]
+      - link "@barbara14" [ref=e185] [url=/barbara14]
+      - link "15h" [ref=e186] [url=/barbara14/status/1014]
+      - button "More" [ref=e187]: ⋯
+      - text: "Post number 14: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e188] [url=/hashtag/tag0]
+      - group "42 replies, 70 reposts, 154 likes":
+        - button "42 Replies. Reply" [ref=e189]: "42"
+        - button "70 reposts. Repost" [ref=e190]: "70"
+        - button "154 Likes. Like" [ref=e191]: "154"
+        - link "1358 views" [ref=e192] [url=/barbara14/status/1014/analytics]: "1358"
+        - button "Bookmark" [ref=e193]: 🔖
+        - button "Share post" [ref=e194]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e195] [url=/dennis15]
+      - link "Dennis Ritchie" [ref=e196] [url=/dennis15]
+      - link "@dennis15" [ref=e197] [url=/dennis15]
+      - link "16h" [ref=e198] [url=/dennis15/status/1015]
+      - button "More" [ref=e199]: ⋯
+      - text: "Post number 15: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e200] [url=/hashtag/tag1]
+      - group "45 replies, 75 reposts, 165 likes":
+        - button "45 Replies. Reply" [ref=e201]: "45"
+        - button "75 reposts. Repost" [ref=e202]: "75"
+        - button "165 Likes. Like" [ref=e203]: "165"
+        - link "1455 views" [ref=e204] [url=/dennis15/status/1015/analytics]: "1455"
+        - button "Bookmark" [ref=e205]: 🔖
+        - button "Share post" [ref=e206]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e207] [url=/ada16]
+      - link "Ada Lovelace" [ref=e208] [url=/ada16]
+      - link "@ada16" [ref=e209] [url=/ada16]
+      - link "17h" [ref=e210] [url=/ada16/status/1016]
+      - button "More" [ref=e211]: ⋯
+      - text: "Post number 16: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e212] [url=/hashtag/tag2]
+      - group "48 replies, 80 reposts, 176 likes":
+        - button "48 Replies. Reply" [ref=e213]: "48"
+        - button "80 reposts. Repost" [ref=e214]: "80"
+        - button "176 Likes. Like" [ref=e215]: "176"
+        - link "1552 views" [ref=e216] [url=/ada16/status/1016/analytics]: "1552"
+        - button "Bookmark" [ref=e217]: 🔖
+        - button "Share post" [ref=e218]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e219] [url=/grace17]
+      - link "Grace Hopper" [ref=e220] [url=/grace17]
+      - link "@grace17" [ref=e221] [url=/grace17]
+      - link "18h" [ref=e222] [url=/grace17/status/1017]
+      - button "More" [ref=e223]: ⋯
+      - text: "Post number 17: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e224] [url=/hashtag/tag3]
+      - group "51 replies, 85 reposts, 187 likes":
+        - button "51 Replies. Reply" [ref=e225]: "51"
+        - button "85 reposts. Repost" [ref=e226]: "85"
+        - button "187 Likes. Like" [ref=e227]: "187"
+        - link "1649 views" [ref=e228] [url=/grace17/status/1017/analytics]: "1649"
+        - button "Bookmark" [ref=e229]: 🔖
+        - button "Share post" [ref=e230]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e231] [url=/alan18]
+      - link "Alan Turing" [ref=e232] [url=/alan18]
+      - link "@alan18" [ref=e233] [url=/alan18]
+      - link "19h" [ref=e234] [url=/alan18/status/1018]
+      - button "More" [ref=e235]: ⋯
+      - text: "Post number 18: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e236] [url=/hashtag/tag4]
+      - group "54 replies, 90 reposts, 198 likes":
+        - button "54 Replies. Reply" [ref=e237]: "54"
+        - button "90 reposts. Repost" [ref=e238]: "90"
+        - button "198 Likes. Like" [ref=e239]: "198"
+        - link "1746 views" [ref=e240] [url=/alan18/status/1018/analytics]: "1746"
+        - button "Bookmark" [ref=e241]: 🔖
+        - button "Share post" [ref=e242]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e243] [url=/linus19]
+      - link "Linus Torvalds" [ref=e244] [url=/linus19]
+      - link "@linus19" [ref=e245] [url=/linus19]
+      - link "20h" [ref=e246] [url=/linus19/status/1019]
+      - button "More" [ref=e247]: ⋯
+      - text: "Post number 19: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e248] [url=/hashtag/tag5]
+      - group "57 replies, 95 reposts, 209 likes":
+        - button "57 Replies. Reply" [ref=e249]: "57"
+        - button "95 reposts. Repost" [ref=e250]: "95"
+        - button "209 Likes. Like" [ref=e251]: "209"
+        - link "1843 views" [ref=e252] [url=/linus19/status/1019/analytics]: "1843"
+        - button "Bookmark" [ref=e253]: 🔖
+        - button "Share post" [ref=e254]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e255] [url=/margaret20]
+      - link "Margaret Hamilton" [ref=e256] [url=/margaret20]
+      - link "@margaret20" [ref=e257] [url=/margaret20]
+      - link "21h" [ref=e258] [url=/margaret20/status/1020]
+      - button "More" [ref=e259]: ⋯
+      - text: "Post number 20: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e260] [url=/hashtag/tag6]
+      - group "60 replies, 100 reposts, 220 likes":
+        - button "60 Replies. Reply" [ref=e261]: "60"
+        - button "100 reposts. Repost" [ref=e262]: "100"
+        - button "220 Likes. Like" [ref=e263]: "220"
+        - link "1940 views" [ref=e264] [url=/margaret20/status/1020/analytics]: "1940"
+        - button "Bookmark" [ref=e265]: 🔖
+        - button "Share post" [ref=e266]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e267] [url=/ken21]
+      - link "Ken Thompson" [ref=e268] [url=/ken21]
+      - link "@ken21" [ref=e269] [url=/ken21]
+      - link "22h" [ref=e270] [url=/ken21/status/1021]
+      - button "More" [ref=e271]: ⋯
+      - text: "Post number 21: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e272] [url=/hashtag/tag0]
+      - group "63 replies, 105 reposts, 231 likes":
+        - button "63 Replies. Reply" [ref=e273]: "63"
+        - button "105 reposts. Repost" [ref=e274]: "105"
+        - button "231 Likes. Like" [ref=e275]: "231"
+        - link "2037 views" [ref=e276] [url=/ken21/status/1021/analytics]: "2037"
+        - button "Bookmark" [ref=e277]: 🔖
+        - button "Share post" [ref=e278]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e279] [url=/barbara22]
+      - link "Barbara Liskov" [ref=e280] [url=/barbara22]
+      - link "@barbara22" [ref=e281] [url=/barbara22]
+      - link "23h" [ref=e282] [url=/barbara22/status/1022]
+      - button "More" [ref=e283]: ⋯
+      - text: "Post number 22: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e284] [url=/hashtag/tag1]
+      - group "66 replies, 110 reposts, 242 likes":
+        - button "66 Replies. Reply" [ref=e285]: "66"
+        - button "110 reposts. Repost" [ref=e286]: "110"
+        - button "242 Likes. Like" [ref=e287]: "242"
+        - link "2134 views" [ref=e288] [url=/barbara22/status/1022/analytics]: "2134"
+        - button "Bookmark" [ref=e289]: 🔖
+        - button "Share post" [ref=e290]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e291] [url=/dennis23]
+      - link "Dennis Ritchie" [ref=e292] [url=/dennis23]
+      - link "@dennis23" [ref=e293] [url=/dennis23]
+      - link "24h" [ref=e294] [url=/dennis23/status/1023]
+      - button "More" [ref=e295]: ⋯
+      - text: "Post number 23: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e296] [url=/hashtag/tag2]
+      - group "69 replies, 115 reposts, 253 likes":
+        - button "69 Replies. Reply" [ref=e297]: "69"
+        - button "115 reposts. Repost" [ref=e298]: "115"
+        - button "253 Likes. Like" [ref=e299]: "253"
+        - link "2231 views" [ref=e300] [url=/dennis23/status/1023/analytics]: "2231"
+        - button "Bookmark" [ref=e301]: 🔖
+        - button "Share post" [ref=e302]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e303] [url=/ada24]
+      - link "Ada Lovelace" [ref=e304] [url=/ada24]
+      - link "@ada24" [ref=e305] [url=/ada24]
+      - link "25h" [ref=e306] [url=/ada24/status/1024]
+      - button "More" [ref=e307]: ⋯
+      - text: "Post number 24: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e308] [url=/hashtag/tag3]
+      - group "72 replies, 120 reposts, 264 likes":
+        - button "72 Replies. Reply" [ref=e309]: "72"
+        - button "120 reposts. Repost" [ref=e310]: "120"
+        - button "264 Likes. Like" [ref=e311]: "264"
+        - link "2328 views" [ref=e312] [url=/ada24/status/1024/analytics]: "2328"
+        - button "Bookmark" [ref=e313]: 🔖
+        - button "Share post" [ref=e314]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e315] [url=/grace25]
+      - link "Grace Hopper" [ref=e316] [url=/grace25]
+      - link "@grace25" [ref=e317] [url=/grace25]
+      - link "26h" [ref=e318] [url=/grace25/status/1025]
+      - button "More" [ref=e319]: ⋯
+      - text: "Post number 25: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e320] [url=/hashtag/tag4]
+      - group "75 replies, 125 reposts, 275 likes":
+        - button "75 Replies. Reply" [ref=e321]: "75"
+        - button "125 reposts. Repost" [ref=e322]: "125"
+        - button "275 Likes. Like" [ref=e323]: "275"
+        - link "2425 views" [ref=e324] [url=/grace25/status/1025/analytics]: "2425"
+        - button "Bookmark" [ref=e325]: 🔖
+        - button "Share post" [ref=e326]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e327] [url=/alan26]
+      - link "Alan Turing" [ref=e328] [url=/alan26]
+      - link "@alan26" [ref=e329] [url=/alan26]
+      - link "27h" [ref=e330] [url=/alan26/status/1026]
+      - button "More" [ref=e331]: ⋯
+      - text: "Post number 26: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e332] [url=/hashtag/tag5]
+      - group "78 replies, 130 reposts, 286 likes":
+        - button "78 Replies. Reply" [ref=e333]: "78"
+        - button "130 reposts. Repost" [ref=e334]: "130"
+        - button "286 Likes. Like" [ref=e335]: "286"
+        - link "2522 views" [ref=e336] [url=/alan26/status/1026/analytics]: "2522"
+        - button "Bookmark" [ref=e337]: 🔖
+        - button "Share post" [ref=e338]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e339] [url=/linus27]
+      - link "Linus Torvalds" [ref=e340] [url=/linus27]
+      - link "@linus27" [ref=e341] [url=/linus27]
+      - link "28h" [ref=e342] [url=/linus27/status/1027]
+      - button "More" [ref=e343]: ⋯
+      - text: "Post number 27: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e344] [url=/hashtag/tag6]
+      - group "81 replies, 135 reposts, 297 likes":
+        - button "81 Replies. Reply" [ref=e345]: "81"
+        - button "135 reposts. Repost" [ref=e346]: "135"
+        - button "297 Likes. Like" [ref=e347]: "297"
+        - link "2619 views" [ref=e348] [url=/linus27/status/1027/analytics]: "2619"
+        - button "Bookmark" [ref=e349]: 🔖
+        - button "Share post" [ref=e350]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e351] [url=/margaret28]
+      - link "Margaret Hamilton" [ref=e352] [url=/margaret28]
+      - link "@margaret28" [ref=e353] [url=/margaret28]
+      - link "29h" [ref=e354] [url=/margaret28/status/1028]
+      - button "More" [ref=e355]: ⋯
+      - text: "Post number 28: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e356] [url=/hashtag/tag0]
+      - group "84 replies, 140 reposts, 308 likes":
+        - button "84 Replies. Reply" [ref=e357]: "84"
+        - button "140 reposts. Repost" [ref=e358]: "140"
+        - button "308 Likes. Like" [ref=e359]: "308"
+        - link "2716 views" [ref=e360] [url=/margaret28/status/1028/analytics]: "2716"
+        - button "Bookmark" [ref=e361]: 🔖
+        - button "Share post" [ref=e362]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e363] [url=/ken29]
+      - link "Ken Thompson" [ref=e364] [url=/ken29]
+      - link "@ken29" [ref=e365] [url=/ken29]
+      - link "30h" [ref=e366] [url=/ken29/status/1029]
+      - button "More" [ref=e367]: ⋯
+      - text: "Post number 29: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e368] [url=/hashtag/tag1]
+      - group "87 replies, 145 reposts, 319 likes":
+        - button "87 Replies. Reply" [ref=e369]: "87"
+        - button "145 reposts. Repost" [ref=e370]: "145"
+        - button "319 Likes. Like" [ref=e371]: "319"
+        - link "2813 views" [ref=e372] [url=/ken29/status/1029/analytics]: "2813"
+        - button "Bookmark" [ref=e373]: 🔖
+        - button "Share post" [ref=e374]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e375] [url=/barbara30]
+      - link "Barbara Liskov" [ref=e376] [url=/barbara30]
+      - link "@barbara30" [ref=e377] [url=/barbara30]
+      - link "31h" [ref=e378] [url=/barbara30/status/1030]
+      - button "More" [ref=e379]: ⋯
+      - text: "Post number 30: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e380] [url=/hashtag/tag2]
+      - group "90 replies, 150 reposts, 330 likes":
+        - button "90 Replies. Reply" [ref=e381]: "90"
+        - button "150 reposts. Repost" [ref=e382]: "150"
+        - button "330 Likes. Like" [ref=e383]: "330"
+        - link "2910 views" [ref=e384] [url=/barbara30/status/1030/analytics]: "2910"
+        - button "Bookmark" [ref=e385]: 🔖
+        - button "Share post" [ref=e386]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e387] [url=/dennis31]
+      - link "Dennis Ritchie" [ref=e388] [url=/dennis31]
+      - link "@dennis31" [ref=e389] [url=/dennis31]
+      - link "32h" [ref=e390] [url=/dennis31/status/1031]
+      - button "More" [ref=e391]: ⋯
+      - text: "Post number 31: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e392] [url=/hashtag/tag3]
+      - group "93 replies, 155 reposts, 341 likes":
+        - button "93 Replies. Reply" [ref=e393]: "93"
+        - button "155 reposts. Repost" [ref=e394]: "155"
+        - button "341 Likes. Like" [ref=e395]: "341"
+        - link "3007 views" [ref=e396] [url=/dennis31/status/1031/analytics]: "3007"
+        - button "Bookmark" [ref=e397]: 🔖
+        - button "Share post" [ref=e398]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e399] [url=/ada32]
+      - link "Ada Lovelace" [ref=e400] [url=/ada32]
+      - link "@ada32" [ref=e401] [url=/ada32]
+      - link "33h" [ref=e402] [url=/ada32/status/1032]
+      - button "More" [ref=e403]: ⋯
+      - text: "Post number 32: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e404] [url=/hashtag/tag4]
+      - group "96 replies, 160 reposts, 352 likes":
+        - button "96 Replies. Reply" [ref=e405]: "96"
+        - button "160 reposts. Repost" [ref=e406]: "160"
+        - button "352 Likes. Like" [ref=e407]: "352"
+        - link "3104 views" [ref=e408] [url=/ada32/status/1032/analytics]: "3104"
+        - button "Bookmark" [ref=e409]: 🔖
+        - button "Share post" [ref=e410]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e411] [url=/grace33]
+      - link "Grace Hopper" [ref=e412] [url=/grace33]
+      - link "@grace33" [ref=e413] [url=/grace33]
+      - link "34h" [ref=e414] [url=/grace33/status/1033]
+      - button "More" [ref=e415]: ⋯
+      - text: "Post number 33: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e416] [url=/hashtag/tag5]
+      - group "99 replies, 165 reposts, 363 likes":
+        - button "99 Replies. Reply" [ref=e417]: "99"
+        - button "165 reposts. Repost" [ref=e418]: "165"
+        - button "363 Likes. Like" [ref=e419]: "363"
+        - link "3201 views" [ref=e420] [url=/grace33/status/1033/analytics]: "3201"
+        - button "Bookmark" [ref=e421]: 🔖
+        - button "Share post" [ref=e422]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e423] [url=/alan34]
+      - link "Alan Turing" [ref=e424] [url=/alan34]
+      - link "@alan34" [ref=e425] [url=/alan34]
+      - link "35h" [ref=e426] [url=/alan34/status/1034]
+      - button "More" [ref=e427]: ⋯
+      - text: "Post number 34: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e428] [url=/hashtag/tag6]
+      - group "102 replies, 170 reposts, 374 likes":
+        - button "102 Replies. Reply" [ref=e429]: "102"
+        - button "170 reposts. Repost" [ref=e430]: "170"
+        - button "374 Likes. Like" [ref=e431]: "374"
+        - link "3298 views" [ref=e432] [url=/alan34/status/1034/analytics]: "3298"
+        - button "Bookmark" [ref=e433]: 🔖
+        - button "Share post" [ref=e434]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e435] [url=/linus35]
+      - link "Linus Torvalds" [ref=e436] [url=/linus35]
+      - link "@linus35" [ref=e437] [url=/linus35]
+      - link "36h" [ref=e438] [url=/linus35/status/1035]
+      - button "More" [ref=e439]: ⋯
+      - text: "Post number 35: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e440] [url=/hashtag/tag0]
+      - group "105 replies, 175 reposts, 385 likes":
+        - button "105 Replies. Reply" [ref=e441]: "105"
+        - button "175 reposts. Repost" [ref=e442]: "175"
+        - button "385 Likes. Like" [ref=e443]: "385"
+        - link "3395 views" [ref=e444] [url=/linus35/status/1035/analytics]: "3395"
+        - button "Bookmark" [ref=e445]: 🔖
+        - button "Share post" [ref=e446]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e447] [url=/margaret36]
+      - link "Margaret Hamilton" [ref=e448] [url=/margaret36]
+      - link "@margaret36" [ref=e449] [url=/margaret36]
+      - link "37h" [ref=e450] [url=/margaret36/status/1036]
+      - button "More" [ref=e451]: ⋯
+      - text: "Post number 36: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e452] [url=/hashtag/tag1]
+      - group "108 replies, 180 reposts, 396 likes":
+        - button "108 Replies. Reply" [ref=e453]: "108"
+        - button "180 reposts. Repost" [ref=e454]: "180"
+        - button "396 Likes. Like" [ref=e455]: "396"
+        - link "3492 views" [ref=e456] [url=/margaret36/status/1036/analytics]: "3492"
+        - button "Bookmark" [ref=e457]: 🔖
+        - button "Share post" [ref=e458]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e459] [url=/ken37]
+      - link "Ken Thompson" [ref=e460] [url=/ken37]
+      - link "@ken37" [ref=e461] [url=/ken37]
+      - link "38h" [ref=e462] [url=/ken37/status/1037]
+      - button "More" [ref=e463]: ⋯
+      - text: "Post number 37: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e464] [url=/hashtag/tag2]
+      - group "111 replies, 185 reposts, 407 likes":
+        - button "111 Replies. Reply" [ref=e465]: "111"
+        - button "185 reposts. Repost" [ref=e466]: "185"
+        - button "407 Likes. Like" [ref=e467]: "407"
+        - link "3589 views" [ref=e468] [url=/ken37/status/1037/analytics]: "3589"
+        - button "Bookmark" [ref=e469]: 🔖
+        - button "Share post" [ref=e470]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e471] [url=/barbara38]
+      - link "Barbara Liskov" [ref=e472] [url=/barbara38]
+      - link "@barbara38" [ref=e473] [url=/barbara38]
+      - link "39h" [ref=e474] [url=/barbara38/status/1038]
+      - button "More" [ref=e475]: ⋯
+      - text: "Post number 38: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e476] [url=/hashtag/tag3]
+      - group "114 replies, 190 reposts, 418 likes":
+        - button "114 Replies. Reply" [ref=e477]: "114"
+        - button "190 reposts. Repost" [ref=e478]: "190"
+        - button "418 Likes. Like" [ref=e479]: "418"
+        - link "3686 views" [ref=e480] [url=/barbara38/status/1038/analytics]: "3686"
+        - button "Bookmark" [ref=e481]: 🔖
+        - button "Share post" [ref=e482]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e483] [url=/dennis39]
+      - link "Dennis Ritchie" [ref=e484] [url=/dennis39]
+      - link "@dennis39" [ref=e485] [url=/dennis39]
+      - link "40h" [ref=e486] [url=/dennis39/status/1039]
+      - button "More" [ref=e487]: ⋯
+      - text: "Post number 39: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e488] [url=/hashtag/tag4]
+      - group "117 replies, 195 reposts, 429 likes":
+        - button "117 Replies. Reply" [ref=e489]: "117"
+        - button "195 reposts. Repost" [ref=e490]: "195"
+        - button "429 Likes. Like" [ref=e491]: "429"
+        - link "3783 views" [ref=e492] [url=/dennis39/status/1039/analytics]: "3783"
+        - button "Bookmark" [ref=e493]: 🔖
+        - button "Share post" [ref=e494]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e495] [url=/ada40]
+      - link "Ada Lovelace" [ref=e496] [url=/ada40]
+      - link "@ada40" [ref=e497] [url=/ada40]
+      - link "41h" [ref=e498] [url=/ada40/status/1040]
+      - button "More" [ref=e499]: ⋯
+      - text: "Post number 40: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e500] [url=/hashtag/tag5]
+      - group "120 replies, 200 reposts, 440 likes":
+        - button "120 Replies. Reply" [ref=e501]: "120"
+        - button "200 reposts. Repost" [ref=e502]: "200"
+        - button "440 Likes. Like" [ref=e503]: "440"
+        - link "3880 views" [ref=e504] [url=/ada40/status/1040/analytics]: "3880"
+        - button "Bookmark" [ref=e505]: 🔖
+        - button "Share post" [ref=e506]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e507] [url=/grace41]
+      - link "Grace Hopper" [ref=e508] [url=/grace41]
+      - link "@grace41" [ref=e509] [url=/grace41]
+      - link "42h" [ref=e510] [url=/grace41/status/1041]
+      - button "More" [ref=e511]: ⋯
+      - text: "Post number 41: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e512] [url=/hashtag/tag6]
+      - group "123 replies, 205 reposts, 451 likes":
+        - button "123 Replies. Reply" [ref=e513]: "123"
+        - button "205 reposts. Repost" [ref=e514]: "205"
+        - button "451 Likes. Like" [ref=e515]: "451"
+        - link "3977 views" [ref=e516] [url=/grace41/status/1041/analytics]: "3977"
+        - button "Bookmark" [ref=e517]: 🔖
+        - button "Share post" [ref=e518]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e519] [url=/alan42]
+      - link "Alan Turing" [ref=e520] [url=/alan42]
+      - link "@alan42" [ref=e521] [url=/alan42]
+      - link "43h" [ref=e522] [url=/alan42/status/1042]
+      - button "More" [ref=e523]: ⋯
+      - text: "Post number 42: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e524] [url=/hashtag/tag0]
+      - group "126 replies, 210 reposts, 462 likes":
+        - button "126 Replies. Reply" [ref=e525]: "126"
+        - button "210 reposts. Repost" [ref=e526]: "210"
+        - button "462 Likes. Like" [ref=e527]: "462"
+        - link "4074 views" [ref=e528] [url=/alan42/status/1042/analytics]: "4074"
+        - button "Bookmark" [ref=e529]: 🔖
+        - button "Share post" [ref=e530]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e531] [url=/linus43]
+      - link "Linus Torvalds" [ref=e532] [url=/linus43]
+      - link "@linus43" [ref=e533] [url=/linus43]
+      - link "44h" [ref=e534] [url=/linus43/status/1043]
+      - button "More" [ref=e535]: ⋯
+      - text: "Post number 43: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e536] [url=/hashtag/tag1]
+      - group "129 replies, 215 reposts, 473 likes":
+        - button "129 Replies. Reply" [ref=e537]: "129"
+        - button "215 reposts. Repost" [ref=e538]: "215"
+        - button "473 Likes. Like" [ref=e539]: "473"
+        - link "4171 views" [ref=e540] [url=/linus43/status/1043/analytics]: "4171"
+        - button "Bookmark" [ref=e541]: 🔖
+        - button "Share post" [ref=e542]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e543] [url=/margaret44]
+      - link "Margaret Hamilton" [ref=e544] [url=/margaret44]
+      - link "@margaret44" [ref=e545] [url=/margaret44]
+      - link "45h" [ref=e546] [url=/margaret44/status/1044]
+      - button "More" [ref=e547]: ⋯
+      - text: "Post number 44: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e548] [url=/hashtag/tag2]
+      - group "132 replies, 220 reposts, 484 likes":
+        - button "132 Replies. Reply" [ref=e549]: "132"
+        - button "220 reposts. Repost" [ref=e550]: "220"
+        - button "484 Likes. Like" [ref=e551]: "484"
+        - link "4268 views" [ref=e552] [url=/margaret44/status/1044/analytics]: "4268"
+        - button "Bookmark" [ref=e553]: 🔖
+        - button "Share post" [ref=e554]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e555] [url=/ken45]
+      - link "Ken Thompson" [ref=e556] [url=/ken45]
+      - link "@ken45" [ref=e557] [url=/ken45]
+      - link "46h" [ref=e558] [url=/ken45/status/1045]
+      - button "More" [ref=e559]: ⋯
+      - text: "Post number 45: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e560] [url=/hashtag/tag3]
+      - group "135 replies, 225 reposts, 495 likes":
+        - button "135 Replies. Reply" [ref=e561]: "135"
+        - button "225 reposts. Repost" [ref=e562]: "225"
+        - button "495 Likes. Like" [ref=e563]: "495"
+        - link "4365 views" [ref=e564] [url=/ken45/status/1045/analytics]: "4365"
+        - button "Bookmark" [ref=e565]: 🔖
+        - button "Share post" [ref=e566]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e567] [url=/barbara46]
+      - link "Barbara Liskov" [ref=e568] [url=/barbara46]
+      - link "@barbara46" [ref=e569] [url=/barbara46]
+      - link "47h" [ref=e570] [url=/barbara46/status/1046]
+      - button "More" [ref=e571]: ⋯
+      - text: "Post number 46: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e572] [url=/hashtag/tag4]
+      - group "138 replies, 230 reposts, 506 likes":
+        - button "138 Replies. Reply" [ref=e573]: "138"
+        - button "230 reposts. Repost" [ref=e574]: "230"
+        - button "506 Likes. Like" [ref=e575]: "506"
+        - link "4462 views" [ref=e576] [url=/barbara46/status/1046/analytics]: "4462"
+        - button "Bookmark" [ref=e577]: 🔖
+        - button "Share post" [ref=e578]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e579] [url=/dennis47]
+      - link "Dennis Ritchie" [ref=e580] [url=/dennis47]
+      - link "@dennis47" [ref=e581] [url=/dennis47]
+      - link "48h" [ref=e582] [url=/dennis47/status/1047]
+      - button "More" [ref=e583]: ⋯
+      - text: "Post number 47: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e584] [url=/hashtag/tag5]
+      - group "141 replies, 235 reposts, 517 likes":
+        - button "141 Replies. Reply" [ref=e585]: "141"
+        - button "235 reposts. Repost" [ref=e586]: "235"
+        - button "517 Likes. Like" [ref=e587]: "517"
+        - link "4559 views" [ref=e588] [url=/dennis47/status/1047/analytics]: "4559"
+        - button "Bookmark" [ref=e589]: 🔖
+        - button "Share post" [ref=e590]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e591] [url=/ada48]
+      - link "Ada Lovelace" [ref=e592] [url=/ada48]
+      - link "@ada48" [ref=e593] [url=/ada48]
+      - link "49h" [ref=e594] [url=/ada48/status/1048]
+      - button "More" [ref=e595]: ⋯
+      - text: "Post number 48: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e596] [url=/hashtag/tag6]
+      - group "144 replies, 240 reposts, 528 likes":
+        - button "144 Replies. Reply" [ref=e597]: "144"
+        - button "240 reposts. Repost" [ref=e598]: "240"
+        - button "528 Likes. Like" [ref=e599]: "528"
+        - link "4656 views" [ref=e600] [url=/ada48/status/1048/analytics]: "4656"
+        - button "Bookmark" [ref=e601]: 🔖
+        - button "Share post" [ref=e602]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e603] [url=/grace49]
+      - link "Grace Hopper" [ref=e604] [url=/grace49]
+      - link "@grace49" [ref=e605] [url=/grace49]
+      - link "50h" [ref=e606] [url=/grace49/status/1049]
+      - button "More" [ref=e607]: ⋯
+      - text: "Post number 49: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e608] [url=/hashtag/tag0]
+      - group "147 replies, 245 reposts, 539 likes":
+        - button "147 Replies. Reply" [ref=e609]: "147"
+        - button "245 reposts. Repost" [ref=e610]: "245"
+        - button "539 Likes. Like" [ref=e611]: "539"
+        - link "4753 views" [ref=e612] [url=/grace49/status/1049/analytics]: "4753"
+        - button "Bookmark" [ref=e613]: 🔖
+        - button "Share post" [ref=e614]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e615] [url=/alan50]
+      - link "Alan Turing" [ref=e616] [url=/alan50]
+      - link "@alan50" [ref=e617] [url=/alan50]
+      - link "51h" [ref=e618] [url=/alan50/status/1050]
+      - button "More" [ref=e619]: ⋯
+      - text: "Post number 50: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e620] [url=/hashtag/tag1]
+      - group "150 replies, 250 reposts, 550 likes":
+        - button "150 Replies. Reply" [ref=e621]: "150"
+        - button "250 reposts. Repost" [ref=e622]: "250"
+        - button "550 Likes. Like" [ref=e623]: "550"
+        - link "4850 views" [ref=e624] [url=/alan50/status/1050/analytics]: "4850"
+        - button "Bookmark" [ref=e625]: 🔖
+        - button "Share post" [ref=e626]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e627] [url=/linus51]
+      - link "Linus Torvalds" [ref=e628] [url=/linus51]
+      - link "@linus51" [ref=e629] [url=/linus51]
+      - link "52h" [ref=e630] [url=/linus51/status/1051]
+      - button "More" [ref=e631]: ⋯
+      - text: "Post number 51: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e632] [url=/hashtag/tag2]
+      - group "153 replies, 255 reposts, 561 likes":
+        - button "153 Replies. Reply" [ref=e633]: "153"
+        - button "255 reposts. Repost" [ref=e634]: "255"
+        - button "561 Likes. Like" [ref=e635]: "561"
+        - link "4947 views" [ref=e636] [url=/linus51/status/1051/analytics]: "4947"
+        - button "Bookmark" [ref=e637]: 🔖
+        - button "Share post" [ref=e638]: ↗
+    - article "Post by Margaret Hamilton":
+      - link [ref=e639] [url=/margaret52]
+      - link "Margaret Hamilton" [ref=e640] [url=/margaret52]
+      - link "@margaret52" [ref=e641] [url=/margaret52]
+      - link "53h" [ref=e642] [url=/margaret52/status/1052]
+      - button "More" [ref=e643]: ⋯
+      - text: "Post number 52: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e644] [url=/hashtag/tag3]
+      - group "156 replies, 260 reposts, 572 likes":
+        - button "156 Replies. Reply" [ref=e645]: "156"
+        - button "260 reposts. Repost" [ref=e646]: "260"
+        - button "572 Likes. Like" [ref=e647]: "572"
+        - link "5044 views" [ref=e648] [url=/margaret52/status/1052/analytics]: "5044"
+        - button "Bookmark" [ref=e649]: 🔖
+        - button "Share post" [ref=e650]: ↗
+    - article "Post by Ken Thompson":
+      - link [ref=e651] [url=/ken53]
+      - link "Ken Thompson" [ref=e652] [url=/ken53]
+      - link "@ken53" [ref=e653] [url=/ken53]
+      - link "54h" [ref=e654] [url=/ken53/status/1053]
+      - button "More" [ref=e655]: ⋯
+      - text: "Post number 53: thoughts about compilers, browsers and agents. #tag4"
+      - link "#tag4" [ref=e656] [url=/hashtag/tag4]
+      - group "159 replies, 265 reposts, 583 likes":
+        - button "159 Replies. Reply" [ref=e657]: "159"
+        - button "265 reposts. Repost" [ref=e658]: "265"
+        - button "583 Likes. Like" [ref=e659]: "583"
+        - link "5141 views" [ref=e660] [url=/ken53/status/1053/analytics]: "5141"
+        - button "Bookmark" [ref=e661]: 🔖
+        - button "Share post" [ref=e662]: ↗
+    - article "Post by Barbara Liskov":
+      - link [ref=e663] [url=/barbara54]
+      - link "Barbara Liskov" [ref=e664] [url=/barbara54]
+      - link "@barbara54" [ref=e665] [url=/barbara54]
+      - link "55h" [ref=e666] [url=/barbara54/status/1054]
+      - button "More" [ref=e667]: ⋯
+      - text: "Post number 54: thoughts about compilers, browsers and agents. #tag5"
+      - link "#tag5" [ref=e668] [url=/hashtag/tag5]
+      - group "162 replies, 270 reposts, 594 likes":
+        - button "162 Replies. Reply" [ref=e669]: "162"
+        - button "270 reposts. Repost" [ref=e670]: "270"
+        - button "594 Likes. Like" [ref=e671]: "594"
+        - link "5238 views" [ref=e672] [url=/barbara54/status/1054/analytics]: "5238"
+        - button "Bookmark" [ref=e673]: 🔖
+        - button "Share post" [ref=e674]: ↗
+    - article "Post by Dennis Ritchie":
+      - link [ref=e675] [url=/dennis55]
+      - link "Dennis Ritchie" [ref=e676] [url=/dennis55]
+      - link "@dennis55" [ref=e677] [url=/dennis55]
+      - link "56h" [ref=e678] [url=/dennis55/status/1055]
+      - button "More" [ref=e679]: ⋯
+      - text: "Post number 55: thoughts about compilers, browsers and agents. #tag6"
+      - link "#tag6" [ref=e680] [url=/hashtag/tag6]
+      - group "165 replies, 275 reposts, 605 likes":
+        - button "165 Replies. Reply" [ref=e681]: "165"
+        - button "275 reposts. Repost" [ref=e682]: "275"
+        - button "605 Likes. Like" [ref=e683]: "605"
+        - link "5335 views" [ref=e684] [url=/dennis55/status/1055/analytics]: "5335"
+        - button "Bookmark" [ref=e685]: 🔖
+        - button "Share post" [ref=e686]: ↗
+    - article "Post by Ada Lovelace":
+      - link [ref=e687] [url=/ada56]
+      - link "Ada Lovelace" [ref=e688] [url=/ada56]
+      - link "@ada56" [ref=e689] [url=/ada56]
+      - link "57h" [ref=e690] [url=/ada56/status/1056]
+      - button "More" [ref=e691]: ⋯
+      - text: "Post number 56: thoughts about compilers, browsers and agents. #tag0"
+      - link "#tag0" [ref=e692] [url=/hashtag/tag0]
+      - group "168 replies, 280 reposts, 616 likes":
+        - button "168 Replies. Reply" [ref=e693]: "168"
+        - button "280 reposts. Repost" [ref=e694]: "280"
+        - button "616 Likes. Like" [ref=e695]: "616"
+        - link "5432 views" [ref=e696] [url=/ada56/status/1056/analytics]: "5432"
+        - button "Bookmark" [ref=e697]: 🔖
+        - button "Share post" [ref=e698]: ↗
+    - article "Post by Grace Hopper":
+      - link [ref=e699] [url=/grace57]
+      - link "Grace Hopper" [ref=e700] [url=/grace57]
+      - link "@grace57" [ref=e701] [url=/grace57]
+      - link "58h" [ref=e702] [url=/grace57/status/1057]
+      - button "More" [ref=e703]: ⋯
+      - text: "Post number 57: thoughts about compilers, browsers and agents. #tag1"
+      - link "#tag1" [ref=e704] [url=/hashtag/tag1]
+      - group "171 replies, 285 reposts, 627 likes":
+        - button "171 Replies. Reply" [ref=e705]: "171"
+        - button "285 reposts. Repost" [ref=e706]: "285"
+        - button "627 Likes. Like" [ref=e707]: "627"
+        - link "5529 views" [ref=e708] [url=/grace57/status/1057/analytics]: "5529"
+        - button "Bookmark" [ref=e709]: 🔖
+        - button "Share post" [ref=e710]: ↗
+    - article "Post by Alan Turing":
+      - link [ref=e711] [url=/alan58]
+      - link "Alan Turing" [ref=e712] [url=/alan58]
+      - link "@alan58" [ref=e713] [url=/alan58]
+      - link "59h" [ref=e714] [url=/alan58/status/1058]
+      - button "More" [ref=e715]: ⋯
+      - text: "Post number 58: thoughts about compilers, browsers and agents. #tag2"
+      - link "#tag2" [ref=e716] [url=/hashtag/tag2]
+      - group "174 replies, 290 reposts, 638 likes":
+        - button "174 Replies. Reply" [ref=e717]: "174"
+        - button "290 reposts. Repost" [ref=e718]: "290"
+        - button "638 Likes. Like" [ref=e719]: "638"
+        - link "5626 views" [ref=e720] [url=/alan58/status/1058/analytics]: "5626"
+        - button "Bookmark" [ref=e721]: 🔖
+        - button "Share post" [ref=e722]: ↗
+    - article "Post by Linus Torvalds":
+      - link [ref=e723] [url=/linus59]
+      - link "Linus Torvalds" [ref=e724] [url=/linus59]
+      - link "@linus59" [ref=e725] [url=/linus59]
+      - link "60h" [ref=e726] [url=/linus59/status/1059]
+      - button "More" [ref=e727]: ⋯
+      - text: "Post number 59: thoughts about compilers, browsers and agents. #tag3"
+      - link "#tag3" [ref=e728] [url=/hashtag/tag3]
+      - group "177 replies, 295 reposts, 649 likes":
+        - button "177 Replies. Reply" [ref=e729]: "177"
+        - button "295 reposts. Repost" [ref=e730]: "295"
+        - button "649 Likes. Like" [ref=e731]: "649"
+        - link "5723 views" [ref=e732] [url=/linus59/status/1059/analytics]: "5723"
+        - button "Bookmark" [ref=e733]: 🔖
+        - button "Share post" [ref=e734]: ↗
+- complementary "Trending":
+  - searchbox "Search query" [ref=e735]
+  - heading "What's happening" [level=2]
+  - link "Trending · Topic 0" [ref=e736] [url=/search?q=trend0]
+  - text: "1234 posts"
+  - button "More" [ref=e737]: ⋯
+  - link "Trending · Topic 1" [ref=e738] [url=/search?q=trend1]
+  - text: "2468 posts"
+  - button "More" [ref=e739]: ⋯
+  - link "Trending · Topic 2" [ref=e740] [url=/search?q=trend2]
+  - text: "3702 posts"
+  - button "More" [ref=e741]: ⋯
+  - link "Trending · Topic 3" [ref=e742] [url=/search?q=trend3]
+  - text: "4936 posts"
+  - button "More" [ref=e743]: ⋯
+  - link "Trending · Topic 4" [ref=e744] [url=/search?q=trend4]
+  - text: "6170 posts"
+  - button "More" [ref=e745]: ⋯
+  - link "Trending · Topic 5" [ref=e746] [url=/search?q=trend5]
+  - text: "7404 posts"
+  - button "More" [ref=e747]: ⋯
+  - link "Trending · Topic 6" [ref=e748] [url=/search?q=trend6]
+  - text: "8638 posts"
+  - button "More" [ref=e749]: ⋯
+  - link "Trending · Topic 7" [ref=e750] [url=/search?q=trend7]
+  - text: "9872 posts"
+  - button "More" [ref=e751]: ⋯
+  - link "Trending · Topic 8" [ref=e752] [url=/search?q=trend8]
+  - text: "11106 posts"
+  - button "More" [ref=e753]: ⋯
+  - link "Trending · Topic 9" [ref=e754] [url=/search?q=trend9]
+  - text: "12340 posts"
+  - button "More" [ref=e755]: ⋯

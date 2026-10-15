@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Home / X-like feed fixture</title>
+<style>body{margin:0;font:15px system-ui}nav{position:fixed;left:0;top:0;width:220px}main{margin-left:240px;width:600px}article{border-bottom:1px solid #ddd;padding:12px;min-height:140px}aside{position:fixed;left:860px;top:0;width:320px}.acts{display:flex;gap:40px}</style>
+<nav aria-label="Primary"><a href="/home">Home</a><a href="/explore">Explore</a><a href="/notifications">Notifications</a><a href="/messages">Messages</a><a href="/bookmarks">Bookmarks</a><a href="/profile">Profile</a><a href="/more">More</a><button>Post</button></nav>
+<main><h1>Home</h1>
+<div role="tablist"><button role="tab" aria-selected="true">For you</button><button role="tab" aria-selected="false">Following</button></div>
+<div class="composer"><div role="textbox" contenteditable="true" aria-label="Post text" aria-multiline="true"></div><button aria-label="Add photos or video">Media</button><button aria-label="Add emoji">Emoji</button><button disabled>Post</button></div>
+<section aria-label="Timeline: Your Home Timeline" id="tl"></section></main>
+<aside aria-label="Trending"><input type="search" aria-label="Search query" placeholder="Search"><h2>What's happening</h2><div id="tr"></div></aside>
+<script>
+const names=["Ada Lovelace","Grace Hopper","Alan Turing","Linus Torvalds","Margaret Hamilton","Ken Thompson","Barbara Liskov","Dennis Ritchie"];
+const tl=document.getElementById('tl');
+for(let i=0;i<60;i++){const n=names[i%names.length];const h='@'+n.split(' ')[0].toLowerCase()+i;
+const a=document.createElement('article');a.setAttribute('aria-label','Post by '+n);
+a.innerHTML=`<div><a href="/${h.slice(1)}"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width=40 height=40></a><a href="/${h.slice(1)}">${n}</a> <a href="/${h.slice(1)}">${h}</a> · <a href="/${h.slice(1)}/status/${1000+i}"><time>${i+1}h</time></a><button aria-label="More">⋯</button></div>
+<div lang="en">Post number ${i}: thoughts about compilers, browsers and agents. #tag${i%7} <a href="/hashtag/tag${i%7}">#tag${i%7}</a></div>
+<div class="acts" role="group" aria-label="${i*3} replies, ${i*5} reposts, ${i*11} likes"><button aria-label="${i*3} Replies. Reply">${i*3}</button><button aria-label="${i*5} reposts. Repost">${i*5}</button><button aria-label="${i*11} Likes. Like">${i*11}</button><a href="/${h.slice(1)}/status/${1000+i}/analytics" aria-label="${i*97} views">${i*97}</a><button aria-label="Bookmark">🔖</button><button aria-label="Share post">↗</button></div>`;tl.append(a);}
+const tr=document.getElementById('tr');for(let i=0;i<10;i++){const d=document.createElement('div');d.innerHTML=`<a href="/search?q=trend${i}">Trending · Topic ${i}</a><span>${(i+1)*1234} posts</span><button aria-label="More">⋯</button>`;tr.append(d);}
+</script>

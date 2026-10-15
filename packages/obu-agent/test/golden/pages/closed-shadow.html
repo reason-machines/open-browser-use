@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Closed shadow fixture</title>
+<h1>Closed roots</h1>
+<pay-widget></pay-widget>
+<div id="plain"></div>
+<script>
+customElements.define('pay-widget', class extends HTMLElement { constructor(){ super(); const r=this.attachShadow({mode:'closed'}); r.innerHTML='<label>Card number <input name="cc"></label><button>Pay now</button>'; }});
+document.getElementById('plain').attachShadow({mode:'closed'}).innerHTML='<a href="/terms">Terms in closed root</a>';
+</script>

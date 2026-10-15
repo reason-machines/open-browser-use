@@ -60,7 +60,7 @@ export function buildHost(tmp) {
  */
 export function installNativeHost({ userDataDir, hostBin, hostSocket, extensionId, tmp }) {
   const wrapper = join(tmp, "native-host.sh");
-  writeFileSync(wrapper, `#!/bin/sh\n# e2e dev native host (Chrome passes the caller origin as an arg; ignored)\nexec "${hostBin}" host --socket-path "${hostSocket}"\n`);
+  writeFileSync(wrapper, `#!/bin/sh\n# e2e dev native host (Chrome passes the caller origin as an arg; ignored)\necho "$(date +%s) launched $*" >> "${join(tmp, "native-host.log")}"\nexec "${hostBin}" host --socket-path "${hostSocket}" 2>> "${join(tmp, "native-host.log")}"\n`);
   chmodSync(wrapper, 0o755);
   const dir = join(userDataDir, "NativeMessagingHosts");
   mkdirSync(dir, { recursive: true });

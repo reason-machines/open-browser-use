@@ -3,3 +3,4 @@
 - button "Shadow button" [ref=e1]
 - textbox "Shadow input" [ref=e2]
 - text: Light text
+- button "Closed button" [ref=e3]
