@@ -182,6 +182,7 @@ export class Daemon {
   // Backend events → session events
 
   #onBackendEvent(event: BackendEvent): void {
+    if (event.type !== "cdp" && event.type !== "download") this.#log(`backend ${JSON.stringify(event)}`);
     switch (event.type) {
       case "tab_closed": {
         this.#forgetRuntime(event.tabId);
@@ -351,7 +352,12 @@ export class Daemon {
       if (tab?.active && tab.windowFocused !== false) return false; // the user is looking at it: leave it open
     }
     this.#forgetRuntime(tabId);
-    await this.backend.closeTab(this.ownerOf(session.id), tabId);
+    // guard=false: the agent itself is closing its own tab (session.close / tabs.close).
+    const result = await this.backend.closeTab(this.ownerOf(session.id), tabId, { force: !guard });
+    if (result && !result.closed) {
+      this.#log(`tab ${tabId} kept open by the browser on close: ${result.reason ?? "guarded"}`);
+      return false;
+    }
     return true;
   }
 
@@ -738,7 +744,7 @@ export class Daemon {
       await this.#mutex.run(row.tabId, async () => {
         this.#forgetRuntime(row.tabId);
         if (row.ownership === "borrowed") await this.backend.releaseTab(this.ownerOf(p.sessionId), row.tabId);
-        else await this.backend.closeTab(this.ownerOf(p.sessionId), row.tabId);
+        else await this.backend.closeTab(this.ownerOf(p.sessionId), row.tabId, { force: true });
       });
       const dropped = s.dropTab(row.tabId);
       return { activeTabId: dropped?.activeTabId };
@@ -771,13 +777,31 @@ export class Daemon {
     table.act = async (params) => {
       const p = params as ActParams;
       s.require(p.sessionId);
-      const result = await this.#onPage(p.sessionId, p.tabId, true, null, async (page, runtime, tabId) => {
-        const acted = await this.modules.act(page, p);
-        const warnings = [...(acted.warnings ?? []), ...runtime.setupWarnings.splice(0)];
-        const snapshot = await this.#snapshotAfter(page, p.sessionId, tabId, p.snapshot ?? "diff", warnings);
-        return { ...acted, ...(snapshot ? { snapshot } : {}), ...(warnings.length ? { warnings } : {}) };
-      });
-      return this.#withEvents(p.sessionId, result);
+      const target = s.resolveTab(p.sessionId, p.tabId).tabId;
+      const started = Date.now();
+      let acted = false;
+      try {
+        const result = await this.#onPage(p.sessionId, p.tabId, true, null, async (page, runtime, tabId) => {
+          const done = await this.modules.act(page, p);
+          acted = true;
+          const warnings = [...(done.warnings ?? []), ...runtime.setupWarnings.splice(0)];
+          const snapshot = await this.#snapshotAfter(page, p.sessionId, tabId, p.snapshot ?? "diff", warnings);
+          return { ...done, ...(snapshot ? { snapshot } : {}), ...(warnings.length ? { warnings } : {}) };
+        });
+        return this.#withEvents(p.sessionId, result);
+      } catch (error) {
+        // The action made its own tab go away (an OAuth/consent popup that
+        // window.close()s on submit): that is success, reported with tab_closed.
+        const gone = !s.store.ownerOf(target) || (error instanceof ObuError && error.code === "no_active_tab");
+        if (gone && (acted || isTabGoneError(error) || (error instanceof ObuError && (error.code === "tab_not_owned" || error.code === "no_active_tab")))) {
+          return this.#withEvents(p.sessionId, {
+            ok: true as const,
+            settled: { kind: "nav" as const, ms: Date.now() - started, warning: `tab ${target} closed during the action` },
+            warnings: [`tab ${target} closed itself during the action; check the [system] events for the new active tab`],
+          });
+        }
+        throw error;
+      }
     };
 
     table.navigate = async (params) => {

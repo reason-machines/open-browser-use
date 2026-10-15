@@ -10,7 +10,7 @@
 // mode, extension_disconnected / daemon unavailable) is reported as TODO, not failure.
 // E2E_STRICT=1 turns every pending into a failure — that is the Round-1 merge gate.
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
+import { appendFileSync, mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { ObuAgentClient, agentSocketPath } from "../../dist/index.js";
@@ -55,7 +55,7 @@ async function setup() {
     env.chrome = chrome; env.extensionId = extensionId;
     env.cdp = started.cdp = await Cdp.connect(await browserWsUrl(env.cdpPort));
     // Point downloads at our temp dir (ground truth for per-tab download tests).
-    await env.cdp.send("Browser.setDownloadBehavior", { behavior: "allowAndName", downloadPath: env.downloadsDir, eventsEnabled: true }).catch(() => {});
+    await env.cdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: env.downloadsDir, eventsEnabled: true }).catch(() => {});
     env.extensionLoaded = await waitForExtension(env);
     dbg("extension loaded", env.extensionLoaded, env.extensionId);
     if (!env.extensionLoaded) env.notes.push(`extension service worker not found (id ${extensionId})`);
@@ -101,7 +101,7 @@ async function spawnDaemon(env) {
     ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
     : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--obu-socket", env.hostSocket]];
   const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_RELAY_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
-  let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); });
+  let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); if (process.env.E2E_DAEMON_LOG) appendFileSync(process.env.E2E_DAEMON_LOG, d); });
   started.procs.push(daemon); env.daemon = daemon; env.daemonStderr = () => err;
   const t = Date.now();
   while (!existsSync(socket) && Date.now() - t < 10_000) {

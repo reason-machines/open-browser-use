@@ -15,7 +15,7 @@ lists the features below; a daemon must feature-detect, not version-sniff.
 | `getTargetId` | `tabId` | `{tabId, targetId}` |
 | `subscribe` | `tabId`, `domains[]` (`"*"` = all) | `{tabId, domains}` |
 | `unsubscribe` | `tabId?` (omit = all for the session) | — |
-| `closeTab` | `tabId` | `{closed, released, reason?}` — close guard (below) |
+| `closeTab` | `tabId`, `force?` | `{closed, released, reason?}` — close guard (below); `force` (agent closing its own tab) skips the on-screen guard but not `left_group` |
 | `finalizeTabs` | `keep[{tabId, status:'handoff'\|'deliverable'}]` | `{closedTabIds, releasedTabIds, keptTabIds, guardedTabs[{tabId, reason}]}` |
 | `configure` | `idleDetachMs?` (0 = never), `sessionLeaseMs?` (0 = off) | current values |
 

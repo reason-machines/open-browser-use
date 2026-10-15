@@ -79,7 +79,8 @@ export interface BrowserBackend {
   capabilities(): BackendCapabilities;
   /** New background tab (never focused, never activates the user's tab), grouped for `owner`. */
   createTab(owner: BackendOwner, url: string): Promise<BackendTab>;
-  closeTab(owner: BackendOwner, tabId: TabId): Promise<void>;
+  /** Close an owned tab. `closed:false` = the browser side kept it (e.g. close guard released it to the user). */
+  closeTab(owner: BackendOwner, tabId: TabId, opts?: { force?: boolean }): Promise<void | { closed: boolean; reason?: string }>;
   /** Claim a user tab for `owner` (borrowed). */
   claimTab(owner: BackendOwner, tabId: TabId): Promise<BackendTab>;
   /** Hand a tab's backend-level ownership to another owner (tabs.transfer). Best effort. */

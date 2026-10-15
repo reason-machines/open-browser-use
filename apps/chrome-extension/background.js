@@ -683,7 +683,10 @@ class BrowserBackend {
       throw new ExtensionError(ERROR_CODES.tab_not_owned, `tab_not_owned: tab ${tabId} is not owned by browser session ${session.sessionId}`, { code: "tab_not_owned", tabId });
     }
     const tab = await chrome.tabs.get(tabId).catch(() => null);
-    const guard = tab ? await this.closeGuard(session.sessionId, tab, owner.origin) : null;
+    // `force` (agent-initiated close of its own tab): skip the on-screen guard,
+    // but never close a tab the user took out of the agent group.
+    let guard = tab ? await this.closeGuard(session.sessionId, tab, owner.origin) : null;
+    if (params.force === true && guard === "user_viewing") guard = null;
     delete owner.session.tabOrigins[String(tabId)];
     this.dropTabState(session.sessionId, tabId);
     await this.store.save();

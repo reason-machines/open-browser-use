@@ -114,7 +114,7 @@ export class ObuHostBackend implements BrowserBackend {
       // WS-B relay auth: first frame. Relays that don't require it drop it.
       socket.write(encodeFrame({ auth: readFileSync(tokenPath, "utf8").trim() }));
     }
-    const info = (await this.#request("getInfo", { session_id: "obu-agent" }).catch(() => undefined)) as any;
+    const info = (await this.#request("getInfo", { session_id: "obu-agent", turn_id: "obu-agent" }).catch(() => undefined)) as any;
     this.#version = info?.version ?? info?.extensionVersion ?? info?.metadata?.version;
     this.#wire = new Set(Array.isArray(info?.capabilities?.wire) ? info.capabilities.wire.map(String) : []);
     this.#profileId = typeof info?.metadata?.profileId === "string" ? info.metadata.profileId : undefined;
@@ -164,12 +164,14 @@ export class ObuHostBackend implements BrowserBackend {
     return { tabId: tab.id, ...(tab.targetId ? { targetId: tab.targetId } : {}), url: url || tab.url || "about:blank", title: tab.title ?? "" };
   }
 
-  async closeTab(owner: BackendOwner, tabId: TabId): Promise<void> {
+  async closeTab(owner: BackendOwner, tabId: TabId, opts: { force?: boolean } = {}): Promise<void | { closed: boolean; reason?: string }> {
     if (this.#wire.has("close-guard")) {
       // Guarded close: a tab the user is looking at is released, not closed.
-      await this.#request("closeTab", { ...this.#params(owner), tabId }).catch(() => undefined);
+      const result = (await this.#request("closeTab", { ...this.#params(owner), tabId, ...(opts.force ? { force: true } : {}) }).catch((error) => ({ closed: false, reason: String((error as Error).message) }))) as
+        | { closed?: boolean; released?: boolean; reason?: string }
+        | null;
       this.#forget(tabId);
-      return;
+      return { closed: result?.closed !== false, ...(result?.reason ? { reason: result.reason } : {}) };
     }
     // Legacy extension: Page.close through the debugger closes the tab.
     await this.attach(owner, tabId).catch(() => undefined);
@@ -216,7 +218,7 @@ export class ObuHostBackend implements BrowserBackend {
   }
 
   async listBrowserTabs(): Promise<BackendTab[]> {
-    const tabs = (await this.#request("getUserTabs", { session_id: "obu-agent-readonly" })) as any[];
+    const tabs = (await this.#request("getUserTabs", { session_id: "obu-agent-readonly", turn_id: "obu-agent", ...this.#route() })) as any[];
     return tabs.map((tab) => ({
       tabId: tab.id,
       url: tab.url ?? "",
@@ -275,9 +277,13 @@ export class ObuHostBackend implements BrowserBackend {
       session_id: owner.key,
       turn_id: "obu-agent",
       ...(owner.label ? { label: owner.label } : {}),
-      // Guards against a host fronting another Chrome profile (profile_mismatch).
-      ...(this.#profileId && this.#wire.has("route") ? { route: { profileId: this.#profileId } } : {}),
+      ...this.#route(),
     };
+  }
+
+  /** Guards against a host fronting another Chrome profile (profile_mismatch). */
+  #route(): Record<string, unknown> {
+    return this.#profileId && this.#wire.has("route") ? { route: { profileId: this.#profileId } } : {};
   }
 
   #forget(tabId: TabId): void {
