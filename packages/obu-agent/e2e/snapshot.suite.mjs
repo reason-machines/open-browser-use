@@ -51,7 +51,9 @@ e2e("snapshot: a single-node mutation yields a small unified diff", async (ctx) 
   await ctx.snap(tab);
   await ctx.fx(tab, "document.getElementById('result').textContent = 'Changed status line', true");
   const b = await ctx.snap(tab);
-  const changed = b.diff.split("\n").filter((l) => /^[+-](?![+-])/.test(l));
+  // Changed lines start with +/-; snapshot lines themselves start with "- ", so "+- text" is a change.
+  // Only unified-diff file headers ("+++ ", "--- ") are excluded.
+  const changed = b.diff.split("\n").filter((l) => /^[+-]/.test(l) && !/^(\+\+\+|---) /.test(l));
   assert.ok(changed.some((l) => l.includes("Changed status line")), b.diff);
   assert.ok(changed.length <= 4, `diff too large (${changed.length}):\n${b.diff}`);
 });
