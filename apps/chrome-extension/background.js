@@ -1589,14 +1589,29 @@ class BrowserBackend {
   // An agent-opened tab came up in the foreground: give the window back to the
   // tab the user had active before it.
   async restoreUserFocus(tab) {
+    const win = await chrome.windows.get(tab.windowId).catch(() => null);
+    if (win?.type && win.type !== "normal") {
+      return null; // popup/app windows: the agent's own window, leave it
+    }
+    const isUserTab = async (tabId) => tabId !== tab.id && !(await this.store.findTabOwner(tabId));
     const history = this.activationHistory.get(tab.windowId) ?? [];
     for (let i = history.length - 1; i >= 0; i -= 1) {
       const candidate = history[i];
-      if (candidate === tab.id) continue;
+      if (!(await isUserTab(candidate))) continue;
       const previous = await chrome.tabs.get(candidate).catch(() => null);
       if (!previous) continue;
       await chrome.tabs.update(candidate, { active: true });
       return candidate;
+    }
+    // No activation seen yet (service worker started after the user's last
+    // switch): fall back to the user's most recently accessed tab there.
+    const inWindow = (await chrome.tabs.query({ windowId: tab.windowId }).catch(() => []))
+      .filter((other) => hasTabId(other) && other.windowId === tab.windowId)
+      .sort(compareLastAccessed);
+    for (const other of inWindow) {
+      if (!(await isUserTab(other.id))) continue;
+      await chrome.tabs.update(other.id, { active: true });
+      return other.id;
     }
     return null;
   }
@@ -2436,6 +2451,17 @@ chrome.tabs.onUpdated?.addListener((tabId, changeInfo, tab) => {
 chrome.tabs.onActivated?.addListener((activeInfo) => {
   backend.handleTabActivated(activeInfo);
 });
+// Seed per-window activation history with the tabs active right now, so the
+// first agent popup after a service-worker start can hand focus back.
+void chrome.tabs.query?.({ active: true })
+  ?.then((tabs) => {
+    for (const tab of tabs) {
+      if (hasTabId(tab) && !backend.activationHistory.get(tab.windowId)?.length) {
+        backend.handleTabActivated({ tabId: tab.id, windowId: tab.windowId });
+      }
+    }
+  })
+  .catch(() => {});
 chrome.tabs.onRemoved?.addListener((tabId) => {
   void backend.handleTabRemoved(tabId).catch(() => {});
 });

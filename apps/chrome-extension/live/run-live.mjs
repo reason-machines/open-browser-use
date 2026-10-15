@@ -16,6 +16,7 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadBrand, stageBrandedExtension } from "../../../scripts/package-chrome-extension-brand.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const EXTENSION_DIR = path.resolve(HERE, "..");
@@ -30,7 +31,12 @@ const argValue = (flag) => {
 const CHROME = argValue("--chrome") || process.env.OBU_LIVE_CHROME || findChromeForTesting();
 const DEBUG_PORT = Number(process.env.OBU_LIVE_DEBUG_PORT || 9410);
 const [PORT_A, PORT_B] = (process.env.OBU_LIVE_PORTS || "9411,9412").split(",").map(Number);
-const NATIVE_HOST = "com.ifuryst.open_browser_use.extension";
+// The extension under test is the branded build (default: reason), staged
+// into .run/ext exactly as packaging would produce it.
+const BRAND = loadBrand({ brand: argValue("--brand") || process.env.OBU_BRAND || "reason" });
+const STAGED_EXTENSION = path.join(WORK, "ext");
+const NATIVE_HOST = BRAND.nativeHostName;
+const SCREENSHOT = argValue("--screenshot");
 const results = [];
 
 function findChromeForTesting() {
@@ -126,7 +132,6 @@ function startFixtures() {
 }
 
 function setupProfile(extensionId) {
-  fs.rmSync(WORK, { recursive: true, force: true });
   fs.mkdirSync(path.join(PROFILE, "NativeMessagingHosts"), { recursive: true });
   fs.mkdirSync(path.dirname(SOCKET), { recursive: true });
   fs.writeFileSync(path.join(HERE, "socket-path.txt"), SOCKET);
@@ -226,7 +231,9 @@ async function serviceWorkerEval(extensionId, expression) {
 }
 
 async function main() {
-  const extensionId = unpackedExtensionId(EXTENSION_DIR);
+  fs.rmSync(WORK, { recursive: true, force: true });
+  stageBrandedExtension({ out: STAGED_EXTENSION, brand: BRAND });
+  const extensionId = unpackedExtensionId(STAGED_EXTENSION);
   setupProfile(extensionId);
   const stopFixtures = startFixtures();
   const userUrl = `http://localhost:${PORT_A}/user-tab`;
@@ -234,8 +241,8 @@ async function main() {
     CHROME,
     [
       `--user-data-dir=${PROFILE}`,
-      `--load-extension=${EXTENSION_DIR}`,
-      `--disable-extensions-except=${EXTENSION_DIR}`,
+      `--load-extension=${STAGED_EXTENSION}`,
+      `--disable-extensions-except=${STAGED_EXTENSION}`,
       "--disable-features=DisableLoadExtensionCommandLineSwitch",
       `--remote-debugging-port=${DEBUG_PORT}`,
       "--no-first-run",
@@ -287,12 +294,23 @@ async function main() {
       const [x, y] = [created[2 * i], created[2 * i + 1]];
       groupedRight &&= tabGroups[x.id] === tabGroups[y.id] && tabGroups[x.id] !== -1;
     }
+    groupedRight &&= groups.every((g) => g.title === BRAND.groupTitle && g.color === BRAND.groupColor);
     check("4 sessions × 2 tabs land in 4 correct groups", groupedRight, `${groups.map((g) => `${g.title}/${g.color}`).join(", ")}; 8 tabs in ${createMs} ms`);
     const user1 = await userState();
     const front1 = frontmostApp();
     check("user's active tab + focused window unchanged", user0.tabId === user1.tabId && user0.windowId === user1.windowId, `active tab ${user1.tabId} ${user1.url}`);
     check("frontmost app unchanged", front0 === front1, `${front0} → ${front1}`);
     check("targetId reported for new tabs", created.every((tab) => typeof tab.targetId === "string"));
+    if (SCREENSHOT) {
+      const win = await serviceWorkerEval(extensionId, `(async () => { const w = await chrome.windows.getLastFocused(); await chrome.windows.update(w.id, {focused:true}); return w; })()`);
+      await sleep(400);
+      try {
+        execFileSync("screencapture", ["-x", "-R", `${win.left},${win.top},${Math.min(win.width, 1400)},90`, SCREENSHOT]);
+        console.log(`  · tab strip screenshot: ${SCREENSHOT}`);
+      } catch (error) {
+        console.log(`  · screenshot failed: ${error.message}`);
+      }
+    }
 
     // 2. Implicit attach + timings.
     const tab = created[0];
@@ -396,6 +414,7 @@ async function main() {
     // 9. Close guard + finalize: activate one alpha tab as if the user clicked it.
     const viewed = created[1];
     await serviceWorkerEval(extensionId, `chrome.tabs.update(${viewed.id}, {active:true})`);
+    await sleep(100);
     console.log("  · s-alpha tabs before finalize:", JSON.stringify(await host.call("getTabs", S("s-alpha"))));
     const fin = await host.call("finalizeTabs", S("s-alpha", { keep: [] }));
     console.log("  · finalize:", JSON.stringify(fin));
@@ -404,6 +423,8 @@ async function main() {
     await sleep(300);
     const remainingGroups = await serviceWorkerEval(extensionId, `(async () => (await chrome.tabGroups.query({})).length)()`);
     check("no agent groups left after finalize", remainingGroups === 0, `${remainingGroups} groups`);
+    const leftover = await serviceWorkerEval(extensionId, `(async () => (await chrome.tabs.query({})).filter(t => t.url && t.url.includes(":${PORT_A}/") && !t.url.endsWith("/user-tab")).map(t => t.id))()`);
+    check("only the user's tab and the released (viewed) tab remain", leftover.length <= 2, `remaining agent-origin tabs: ${leftover.join(",") || "none"}`);
   } finally {
     if (!argv.includes("--keep-open")) {
       chrome.kill("SIGTERM");
@@ -412,6 +433,8 @@ async function main() {
     }
     host?.socket.destroy();
     stopFixtures();
+    // RAM hygiene: no profile/ext left behind unless asked to keep the browser.
+    if (!argv.includes("--keep-open")) fs.rmSync(WORK, { recursive: true, force: true });
   }
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} live checks passed`);
