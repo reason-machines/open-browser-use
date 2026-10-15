@@ -78,6 +78,9 @@ type clientConn struct {
 	id   int64
 	conn net.Conn
 	mu   sync.Mutex
+	// sessions holds every params.session_id this client has sent (guarded
+	// by Relay.mu). Session-scoped notifications go only to these clients.
+	sessions map[string]struct{}
 }
 
 type pendingRequest struct {
@@ -317,7 +320,14 @@ func (r *Relay) forwardClientRequest(client *clientConn, payload []byte) {
 	originalID := bytes.Clone(payload[idSpan.Start:idSpan.End])
 	forwarded := wire.Splice(payload, idSpan, []byte(strconv.Quote(hostID)))
 	pending := &pendingRequest{client: client, originalID: originalID, method: rawMethod(payload)}
+	sessionID := rawParamString(payload, "session_id")
 	r.mu.Lock()
+	if sessionID != "" {
+		if client.sessions == nil {
+			client.sessions = make(map[string]struct{})
+		}
+		client.sessions[sessionID] = struct{}{}
+	}
 	r.pending[hostID] = pending
 	if timeout, ok := requestTimeout(payload); ok {
 		pending.timer = time.AfterFunc(timeout+relayTimeoutGrace, func() { r.expire(hostID, timeout) })
@@ -397,8 +407,58 @@ func (r *Relay) dispatchExtensionPayload(payload []byte) error {
 			return nil
 		}
 	}
-	r.broadcast(payload)
+	r.route(payload)
 	return nil
+}
+
+// route delivers an extension notification (WIRE.md):
+//   - onCDPEvent with params.subscribers: only to clients that sent one of
+//     those session ids; nobody else asked for it, so it is dropped if none
+//     match. Without subscribers it is a legacy broadcast.
+//   - other notifications carrying params.sessionId (leaseRevoked, tabClosed,
+//     popupOpened, sessionExpired, onDownloadChange, …): to the clients owning
+//     that session, or everyone when no client has claimed it yet.
+//   - everything else: broadcast.
+func (r *Relay) route(payload []byte) {
+	if rawMethod(payload) == "onCDPEvent" {
+		if span, ok, err := wire.FindPath(payload, "params", "subscribers"); err == nil && ok {
+			var subscribers []string
+			if json.Unmarshal(payload[span.Start:span.End], &subscribers) == nil {
+				r.deliver(payload, r.clientsFor(subscribers))
+				return
+			}
+		}
+		r.broadcast(payload)
+		return
+	}
+	if sessionID := rawParamString(payload, "sessionId"); sessionID != "" {
+		if clients := r.clientsFor([]string{sessionID}); len(clients) > 0 {
+			r.deliver(payload, clients)
+			return
+		}
+	}
+	r.broadcast(payload)
+}
+
+func (r *Relay) clientsFor(sessionIDs []string) []*clientConn {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	var out []*clientConn
+	for _, client := range r.clients {
+		for _, id := range sessionIDs {
+			if _, ok := client.sessions[id]; ok {
+				out = append(out, client)
+				break
+			}
+		}
+	}
+	return out
+}
+
+func (r *Relay) deliver(payload []byte, clients []*clientConn) {
+	for _, client := range clients {
+		_ = client.write(payload)
+	}
 }
 
 // Call sends a host-originated request to the extension and waits for its
@@ -513,6 +573,19 @@ func rawMethod(payload []byte) string {
 		return "request"
 	}
 	return method
+}
+
+// rawParamString reads params.<key> as a string without decoding the rest.
+func rawParamString(payload []byte, key string) string {
+	span, ok, err := wire.FindPath(payload, "params", key)
+	if err != nil || !ok || payload[span.Start] != '"' {
+		return ""
+	}
+	var value string
+	if json.Unmarshal(payload[span.Start:span.End], &value) != nil {
+		return ""
+	}
+	return value
 }
 
 // requestTimeout reads params.timeoutMs (the extension's own timeout).

@@ -60,8 +60,8 @@ func TestReassemblerRejectsBadChunksAndExpires(t *testing.T) {
 	if _, err := r.Add([]byte(`{"chunk":{"id":"a","i":2,"n":2,"data":""}}`)); err == nil {
 		t.Fatal("expected bad index error")
 	}
-	if _, err := r.Add([]byte(`{"chunk":{"id":"a","i":0,"n":2,"data":"!!"}}`)); err == nil {
-		t.Fatal("expected base64 error")
+	if _, err := r.Add([]byte(`{"chunk":{"id":"a","i":0,"n":2,"data":5}}`)); err == nil {
+		t.Fatal("expected non-string data error")
 	}
 	now := time.Now()
 	r.now = func() time.Time { return now }
@@ -106,6 +106,52 @@ func BenchmarkReassemble2MB(b *testing.B) {
 			if _, err := r.Add(f); err != nil {
 				b.Fatal(err)
 			}
+		}
+	}
+}
+
+// The extension reassembles with JSON.parse(parts.join("")) over the decoded
+// data strings; mimic that: decode each data string, concatenate, parse.
+func TestChunksMatchExtensionAssembler(t *testing.T) {
+	payload := []byte(`{"id":"obu:9","params":{"q":"` + strings.Repeat(`a\"b\\c\n漢🙂`, 200_000) + `"}}`)
+	frames := SplitChunks(payload, "obu:9")
+	if len(frames) < 2 {
+		t.Fatalf("expected chunks, got %d", len(frames))
+	}
+	var text strings.Builder
+	for i, f := range frames {
+		if len(f) > ChunkThreshold {
+			t.Fatalf("frame %d is %d bytes > %d", i, len(f), ChunkThreshold)
+		}
+		var env struct {
+			Chunk struct {
+				ID   string `json:"id"`
+				I, N int
+				Data string `json:"data"`
+			} `json:"chunk"`
+		}
+		if err := json.Unmarshal(f, &env); err != nil {
+			t.Fatalf("frame %d: %v", i, err)
+		}
+		if env.Chunk.I != i || env.Chunk.N != len(frames) || env.Chunk.ID != "obu:9" {
+			t.Fatalf("frame %d header %+v", i, env.Chunk)
+		}
+		text.WriteString(env.Chunk.Data)
+	}
+	if text.String() != string(payload) {
+		t.Fatal("joined data differs from payload")
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(text.String()), &parsed); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSplitChunksWorstCaseEscapingFits(t *testing.T) {
+	payload := []byte(`{"q":"` + strings.Repeat(`\"`, 1_200_000) + `"}`)
+	for i, f := range SplitChunks(payload, "w") {
+		if len(f) > ChunkThreshold {
+			t.Fatalf("frame %d is %d bytes", i, len(f))
 		}
 	}
 }
