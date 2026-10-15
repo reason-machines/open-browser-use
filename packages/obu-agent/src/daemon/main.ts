@@ -2,7 +2,8 @@
 // obu-agent entry.
 //
 //   obu-agent [--profile P] [--socket PATH] [--backend obu|direct] [--cdp-endpoint URL]
-//             [--obu-socket PATH] [--state PATH] [--no-auth] [--lease-ttl-ms N] [--sweep-ms N]
+//             [--obu-socket PATH] [--state PATH] [--state-dir DIR] [--downloads-dir DIR (direct)]
+//             [--no-auth] [--lease-ttl-ms N] [--sweep-ms N]
 //       Run the resident daemon (one per Chrome profile; refuses to start twice).
 //   obu-agent mcp --attach [--profile P] [--socket PATH] [--session ID] [--parent ID] [--label L]
 //       MCP stdio proxy onto the daemon socket (spawns the daemon if it is not running).
@@ -82,7 +83,10 @@ export async function runDaemon(argv: string[]): Promise<void> {
   const backendKind = flag(argv, "backend") ?? (flag(argv, "cdp-endpoint") ? "direct" : "obu");
   const backend: BrowserBackend =
     backendKind === "direct"
-      ? new DirectCdpBackend({ endpoint: flag(argv, "cdp-endpoint") ?? "http://127.0.0.1:9222" })
+      ? new DirectCdpBackend({
+          endpoint: flag(argv, "cdp-endpoint") ?? "http://127.0.0.1:9222",
+          downloadDir: flag(argv, "downloads-dir") ?? process.env.OBU_DOWNLOADS_DIR,
+        })
       : new ObuHostBackend({ socketPath: flag(argv, "obu-socket") });
   const store = openStore(flag(argv, "state") ?? join(dir, "state.sqlite"));
   const log = (line: string) => process.stderr.write(`[obu-agent] ${line}\n`);
