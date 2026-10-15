@@ -59,23 +59,20 @@ async function setup() {
     env.extensionLoaded = await waitForExtension(env);
     dbg("extension loaded", env.extensionLoaded, env.extensionId);
     if (!env.extensionLoaded) env.notes.push(`extension service worker not found (id ${extensionId})`);
+    else {
+      // PLAN D6 #5: uploads must work with the extension's file-URL access OFF (the default for
+      // Web Store installs). --load-extension grants it, so revoke it unless E2E_FILE_URL_ACCESS=on.
+      env.fileUrlAccess = await fileAccess(env, process.env.E2E_FILE_URL_ACCESS === "on" ? undefined : false).catch((e) => `unknown (${e.message})`);
+    }
+    dbg("file-URL access", env.fileUrlAccess);
   }
 
   const socket = process.env.OBU_AGENT_SOCKET ?? (REAL_PROFILE ? agentSocketPath(process.env.E2E_PROFILE ?? "Default") : join(env.tmp, "agent.sock"));
   env.socket = socket;
-  if (!process.env.OBU_AGENT_SOCKET && !REAL_PROFILE) {
-    const cmd = process.env.E2E_DAEMON_CMD
-      ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
-      : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--host-socket", env.hostSocket]];
-    const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_HOST_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir } });
-    let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); });
-    started.procs.push(daemon); env.daemonStderr = () => err;
-    const t = Date.now();
-    while (!existsSync(socket) && Date.now() - t < 10_000) {
-      if (daemon.exitCode !== null) break;
-      await sleep(50);
-    }
-    if (!existsSync(socket)) { env.unavailable = `daemon did not create ${socket}: ${err}`; return env; }
+  env.ownsDaemon = !process.env.OBU_AGENT_SOCKET && !REAL_PROFILE;
+  if (env.ownsDaemon) {
+    const why = await spawnDaemon(env);
+    if (why) { env.unavailable = why; return env; }
   }
   try {
     env.client = await new ObuAgentClient(socket).connect();
@@ -90,6 +87,57 @@ async function setup() {
   }
   if (!env.info.extension?.connected) env.notes.push("daemon reports extension not connected");
   return env;
+}
+
+async function spawnDaemon(env) {
+  const socket = env.socket;
+  const cmd = process.env.E2E_DAEMON_CMD
+    ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
+    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--host-socket", env.hostSocket]];
+  const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_HOST_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
+  let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); });
+  started.procs.push(daemon); env.daemon = daemon; env.daemonStderr = () => err;
+  const t = Date.now();
+  while (!existsSync(socket) && Date.now() - t < 10_000) {
+    if (daemon.exitCode !== null) break;
+    await sleep(50);
+  }
+  return existsSync(socket) ? null : `daemon did not create ${socket}: ${err}`;
+}
+
+/** I5 test support: SIGKILL our daemon and start a fresh one on the same socket. */
+export async function restartDaemon(env) {
+  if (!env.ownsDaemon) throw new Pending("restart needs a harness-owned daemon");
+  try { env.client?.close(); } catch {}
+  await killProc(env.daemon, "SIGKILL");
+  started.procs = started.procs.filter((p) => p !== env.daemon);
+  rmSync(env.socket, { force: true });
+  const why = await spawnDaemon(env);
+  if (why) throw new Error(why);
+  env.client = await new ObuAgentClient(env.socket).connect();
+  env.info = await env.client.call("daemon.info", {});
+  return env.client;
+}
+
+/** Read (and optionally set) the extension's "Allow access to file URLs" via chrome://extensions. */
+async function fileAccess(env, set) {
+  const { targetId } = await env.cdp.send("Target.createTarget", { url: "chrome://extensions/", background: true });
+  try {
+    await sleep(800);
+    const page = await attachPage(env.cdp, targetId);
+    const id = JSON.stringify(env.extensionId);
+    if (set !== undefined) await page.evaluate(`chrome.developerPrivate.updateExtensionConfiguration({ extensionId: ${id}, fileAccess: ${set} }).then(() => true)`);
+    const info = await page.evaluate(`chrome.developerPrivate.getExtensionInfo(${id}).then((i) => i.fileAccess)`);
+    await page.detach();
+    return info?.isActive ?? info;
+  } finally { await env.cdp.send("Target.closeTarget", { targetId }).catch(() => {}); }
+}
+
+async function extensionEval(env, expression) {
+  const sw = (await listTargets(env.cdpPort)).find((x) => x.type === "service_worker" && x.url.startsWith(`chrome-extension://${env.extensionId}/`));
+  if (!sw) throw new Error("no service worker");
+  const page = await attachPage(env.cdp, sw.id);
+  try { return await page.evaluate(expression); } finally { await page.detach(); }
 }
 
 async function waitForExtension(env, timeoutMs = 8000) {
@@ -165,17 +213,16 @@ export function pendingAware(test) {
 
 let sessionCounter = 0;
 function makeCtx(env, t, cleanups) {
-  const client = env.client;
   const ctx = {
-    env, t, client,
+    env, t, get client() { return env.client; },
     url: (file) => env.fixtures.url(file),
     xurl: (file) => `${env.fixtures.crossOrigin}/${file}`,
     /** Open an agent session (closed after the test). */
     async session(label = "e2e", extra = {}) {
       const sessionId = `e2e-${process.pid}-${++sessionCounter}-${label}`.replace(/[^\w-]/g, "_");
-      const r = await client.call("session.open", { sessionId, label, ...extra });
-      cleanups.push(() => client.call("session.close", { sessionId }));
-      return { sessionId, ...r, call: (method, params = {}) => client.call(method, { sessionId, ...params }) };
+      const r = await env.client.call("session.open", { sessionId, label, ...extra });
+      cleanups.push(() => env.client.call("session.close", { sessionId }));
+      return { sessionId, ...r, call: (method, params = {}) => env.client.call(method, { sessionId, ...params }) };
     },
     /** Ground truth: evaluate in the page (raw CDP in CfT mode, daemon page world otherwise). */
     async fx(tab, expression) {
@@ -183,7 +230,7 @@ function makeCtx(env, t, cleanups) {
         const page = await attachPage(env.cdp, tab.targetId);
         try { return await page.evaluate(expression); } finally { await page.detach(); }
       }
-      const r = await client.call("evaluate", { sessionId: tab.sessionId, tabId: tab.tabId, expression, world: "page", awaitPromise: true });
+      const r = await env.client.call("evaluate", { sessionId: tab.sessionId, tabId: tab.tabId, expression, world: "page", awaitPromise: true });
       return r.value;
     },
     /** Poll ground truth until predicate passes (for async page effects, not agent waits). */
@@ -195,9 +242,43 @@ function makeCtx(env, t, cleanups) {
     /** Page targets currently open in CfT (raw CDP). */
     async pageTargets() { if (!env.cdpPort) return null; return (await listTargets(env.cdpPort)).filter((x) => x.type === "page"); },
     requireCdp() { if (!env.cdp) throw new Pending("needs raw CDP ground truth (CfT mode)"); },
+    /** Browser-dependent tests: pending (non-strict) until WS-A/B/C connect the extension. */
+    requireExtension() { if (!env.info?.extension?.connected) throw new Pending("daemon reports extension not connected (WS-A/B/C)"); },
+    /** Open an owned tab on a fixture page; returns a tab handle usable with fx()/snap()/act(). */
+    async open(s, file, extra = {}) {
+      const r = await s.call("tabs.open", { url: file.startsWith("http") ? file : ctx.url(file), ...extra });
+      return { ...r, sessionId: s.sessionId, s };
+    },
+    snap(tab, params = {}) { return tab.s.call("snapshot", { tabId: tab.tabId, ...params }); },
+    act(tab, params) { return tab.s.call("act", { tabId: tab.tabId, ...params }); },
+    /** Raw-CDP: does a page target with this id still exist? (null outside CfT mode) */
+    async targetAlive(targetId) { const ts = await ctx.pageTargets(); return ts ? ts.some((x) => x.id === targetId) : null; },
+    async waitTargetGone(targetId, timeoutMs = 5000) { const t0 = Date.now(); while (Date.now() - t0 < timeoutMs) { if ((await ctx.targetAlive(targetId)) === false) return true; await sleep(100); } return false; },
+    /** Raw-CDP "user" tab (not owned by any agent session). Closed after the test. */
+    async userTab(file, { background = true } = {}) {
+      ctx.requireCdp();
+      const { targetId } = await env.cdp.send("Target.createTarget", { url: ctx.url(file), background });
+      cleanups.push(() => env.cdp.send("Target.closeTarget", { targetId }));
+      await sleep(400);
+      return { targetId };
+    },
   };
   return ctx;
 }
+
+/** Assert a daemon call rejects with a typed ObuError code. Returns the error. */
+export async function expectCode(promise, code) {
+  try { await promise; } catch (error) {
+    const got = errorCode(error);
+    if (got === "not_implemented") throw error; // -> pending
+    if (got !== code) throw new Error(`expected ${code}, got ${got}: ${error.message}`);
+    return error;
+  }
+  throw new Error(`expected ${code}, call succeeded`);
+}
+
+/** Percentile helper for latency assertions. */
+export function pct(xs, p) { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.min(s.length - 1, Math.floor((p / 100) * s.length))] : NaN; }
 
 /** Find the ref of the first snapshot line matching a regexp, e.g. refOf(tree, /button "Create account"/). */
 export function refOf(tree, re) {
