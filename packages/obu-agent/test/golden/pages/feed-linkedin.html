@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Feed | LinkedIn-like fixture</title>
+<style>body{margin:0;font:14px system-ui}header{height:52px}main{width:560px;margin:0 auto}.post{border:1px solid #ddd;margin:8px 0;padding:12px;min-height:220px}</style>
+<header><nav aria-label="Global"><input type="search" aria-label="Search"><a href="/feed/">Home</a><a href="/mynetwork/">My Network</a><a href="/jobs/">Jobs</a><a href="/messaging/">Messaging</a><a href="/notifications/">Notifications</a><button>Me</button></nav></header>
+<main aria-label="Main Feed"><div class="share-box"><button>Start a post</button><button>Video</button><button>Photo</button><button>Write article</button></div>
+<h2 class="visually-hidden">Feed post number</h2><div id="feed"></div></main>
+<script>
+const feed=document.getElementById('feed');
+for(let i=0;i<40;i++){const d=document.createElement('div');d.className='post';d.setAttribute('role','article');
+d.innerHTML=`<div><a href="/in/person-${i}?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA${i}xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_feed">Person ${i}</a><span>Engineer at Company ${i} • ${i%3+1}nd</span><span>${i}d • Edited</span><button aria-label="Follow Person ${i}">+ Follow</button><button aria-label="Open control menu for post by Person ${i}">…</button></div>
+<div><span dir="ltr">Excited to share update ${i}! We shipped a new feature that makes browsing agents faster. ${'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(i%4+1)}</span><button aria-label="see more, visually reveals content which is already detected by screen readers">…more</button></div>
+<div><button aria-label="${i*7} reactions">👍 ${i*7}</button><button aria-label="${i} comments on Person ${i}’s post">${i} comments</button><button aria-label="${i%5} reposts of Person ${i}’s post">${i%5} reposts</button></div>
+<div role="group"><button aria-pressed="false" aria-label="React Like">Like</button><button aria-label="Comment">Comment</button><button aria-label="Repost">Repost</button><button aria-label="Send in a private message">Send</button></div>`;feed.append(d);}
+</script>

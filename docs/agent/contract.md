@@ -127,7 +127,7 @@ active tab (I1). Every page result carries `events: SystemEvent[]`.
 | `tabs.select` | `{sessionId, tabId}` | `{activeTabId}` — session-local; never activates the Chrome tab |
 | `tabs.close` | `{sessionId, tabId}` | `{activeTabId?}` — owned only; close guard applies |
 | `tabs.transfer` | `{sessionId, tabId, toSessionId}` | `{activeTabId?}` — parent↔child handover |
-| `snapshot` | `{interactive?, ref?, selector?, showHidden?, maxChars?=40000}` | `{tree, diff, url, title, tabId, refCount, warnings, events}` |
+| `snapshot` | `{interactive?, ref?, selector?, showHidden?, maxChars?=40000, budget?}` | `{tree, diff, url, title, tabId, refCount, warnings, events}` |
 | `act` | `{action, ref\|selector\|coords, value?, keys?, files?, to?, modifiers?, button?, timeoutMs?=5000, snapshot?='diff'}` | `{ok, settled{kind,ms,warning?}, snapshot?, events, warnings?, details?}` |
 | `navigate` | `{url? \| op?:'back'\|'forward'\|'reload', waitUntil?='settled', snapshot?}` | same shape as `act` |
 | `screenshot` | `{ref?, fullPage?, annotate?, format?='jpeg', quality?=70, maxWidth?=1280}` | `{path, mime, width, height, via:'capture'\|'screencast'}` |
@@ -241,7 +241,9 @@ context destroy (10 tries × 200 ms).
   ref-less subtrees; fold ≤ 3 leaf texts into parent name; assert unique refs.
 - Output: Playwright-style YAML, header `- title: "…" [url=…]`; markers
   `[focused] [checked] [disabled] [expanded] [selected]`; passwords `[redacted]`.
-- Over `maxChars` → `snapshot_too_large` with advice. Never truncate.
+- **Budget folding** (`budget`, default 8000 chars for `interactive`, `maxChars−1000` otherwise, `0` = off): past the budget the engine folds subtrees into one-line `- <role> [ref=eN] [collapsed]: "<N refs (…) · first names>"` entries — off-screen first (above the viewport before below), then the bottom of the screen; runs of folded siblings merge into one line. Before folding it applies lossless tidy-ups (drop footnote-marker links and same-page `#fragment` urls, shorten long query strings to `?…`, drop an image link that duplicates the next link's href). `snapshot({ref})` of a folded ref expands it (a merged run expands its container starting at the run's first item). A `warnings[]` line reports how many subtrees were folded. Child frames get `min(budget/4, 3000)`.
+- **Closed shadow roots**: when the page has candidate hosts (`__obu.closedRootCandidates()`), the daemon runs `DOM.getDocument{depth:-1,pierce:true}` per CDP session once per document, resolves each `shadowRootType:"closed"` root into the frame's utility world (`DOM.resolveNode{executionContextId}`) and hands it to `__obu.registerClosedRoot(this)`; walks, hit tests and deref then enter it.
+- Over `maxChars` even after folding (or with `budget:0`) → `snapshot_too_large` with advice. Never truncate.
 - Frames in parallel, each in its own isolated world, stitched under
   `- iframe [ref=…] [origin=…]`; main frame retried 3×; snapshots of one
   page serialised.

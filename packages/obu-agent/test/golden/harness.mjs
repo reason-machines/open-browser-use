@@ -107,7 +107,8 @@ class CdpConnection {
 export async function launchChrome() {
   const chrome = findChrome();
   if (!chrome) return null;
-  const port = await pickPort(9440, 9449);
+  const [lo, hi] = (process.env.OBU_TEST_CDP_PORTS ?? "9440-9449").split("-").map(Number);
+  const port = await pickPort(lo, hi);
   const userDataDir = mkdtempSync(join(tmpdir(), "obu-snap-"));
   const proc = spawn(chrome, [
     "--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`,

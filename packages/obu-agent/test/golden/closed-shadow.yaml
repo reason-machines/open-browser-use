@@ -1,0 +1,5 @@
+- title: "Closed shadow fixture" [url=http://localhost:PORT/closed-shadow.html]
+- heading "Closed roots" [level=1]
+- textbox "Card number" [ref=e1]
+- button "Pay now" [ref=e2]
+- link "Terms in closed root" [ref=e3] [url=/terms]

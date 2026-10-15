@@ -12,6 +12,8 @@ export { unifiedDiff } from "./diff.js";
 export { withAnnotations } from "./annotate.js";
 
 const MAIN_FRAME_RETRIES = 3;
+/** Default char budget for interactive snapshots (folds far/bulky subtrees past it). */
+export const DEFAULT_INTERACTIVE_BUDGET = 8_000;
 const CHILD_FRAME_TIMEOUT_MS = 3_000;
 
 /** Snapshots of one page are serialised (spec). Keyed by the TabCdp object. */
@@ -121,6 +123,9 @@ export async function takeSnapshot(page: PageContext, params: SnapshotParams): P
 async function takeSnapshotUnlocked(page: PageContext, params: SnapshotParams): Promise<Omit<SnapshotResult, "events">> {
   const maxChars = params.maxChars ?? DEFAULT_SNAPSHOT_MAX_CHARS;
   const warnings: string[] = [];
+  // Budget: explicit (0 = off), else 8K for interactive, else just under maxChars
+  // so a big page folds instead of failing with snapshot_too_large.
+  const budget = params.budget !== undefined ? Math.max(0, params.budget) : params.interactive ? Math.min(DEFAULT_INTERACTIVE_BUDGET, maxChars) : Math.max(2_000, maxChars - 1_000);
   const base = { interactive: params.interactive, showHidden: params.showHidden };
 
   // Main frame, retried (context churn during navigation).
@@ -136,7 +141,9 @@ async function takeSnapshotUnlocked(page: PageContext, params: SnapshotParams): 
         if (params.ref) throw new ObuError("stale_ref", `ref ${params.ref} belongs to a frame that is gone; take a fresh snapshot`, { ref: params.ref });
         throw new Error("main frame unavailable");
       }
-      main = await snapshotFrame(page, target, { ...base, ref: params.ref, selector: params.selector, frameOrdinal: target.ordinal });
+      await registerClosedRoots(page, frames).catch(() => undefined);
+      // Leave room for the `- title:` header and stitched child frames.
+      main = await snapshotFrame(page, target, { ...base, budget: budget ? Math.max(1_000, budget - 300) : 0, ref: params.ref, selector: params.selector, frameOrdinal: target.ordinal });
     } catch (e) {
       lastErr = e;
       const msg = e instanceof Error ? e.message : String(e);
@@ -154,7 +161,7 @@ async function takeSnapshotUnlocked(page: PageContext, params: SnapshotParams): 
   const childResults = await Promise.all(
     children.map(async (f): Promise<FrameSnapshot | null> => {
       try {
-        const snap = await snapshotFrame(page, f, { ...base, frameOrdinal: f.ordinal }, CHILD_FRAME_TIMEOUT_MS);
+        const snap = await snapshotFrame(page, f, { ...base, budget: budget ? Math.min(Math.floor(budget / 4), 3_000) : 0, frameOrdinal: f.ordinal }, CHILD_FRAME_TIMEOUT_MS);
         return { ordinal: f.ordinal, origin: originOf(snap.url, f.origin), snapshot: snap };
       } catch (e) {
         warnings.push(`iframe f${f.ordinal} (${f.origin || "unknown origin"}) could not be read: ${e instanceof Error ? e.message : String(e)}`);
@@ -201,6 +208,8 @@ async function takeSnapshotUnlocked(page: PageContext, params: SnapshotParams): 
   const { title, url } = scopedOrdinal === 0 || !mainFrame ? main : await pageInfo(page, mainFrame, main);
   const tree = `- title: ${JSON.stringify(title)} [url=${url}]${stitched ? "\n" + stitched : ""}`;
   const refCount = main.refs + childSnaps.reduce((n, c) => n + c.snapshot.refs, 0);
+  const folded = (main.collapsed ?? 0) + childSnaps.reduce((n, c) => n + (c.snapshot.collapsed ?? 0), 0);
+  if (folded) warnings.push(`${folded} subtree(s) folded to fit the ${budget}-char budget; snapshot({ref}) a [collapsed] node to expand it.`);
 
   if (tree.length > maxChars) {
     const advice = params.interactive
@@ -238,5 +247,77 @@ async function pageInfo(page: PageContext, frame: FrameHandle, fallback: Injecte
     return { title: s.title, url: s.url };
   } catch {
     return { title: fallback.title, url: fallback.url };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Closed shadow roots: the isolated world cannot see them, CDP can.
+// DOM.getDocument{depth:-1,pierce:true} lists every shadow root with its type;
+// each closed root is resolved into the frame's utility world and handed to
+// __obu.registerClosedRoot. Runs once per (tab, document, candidate count).
+// ---------------------------------------------------------------------------
+
+interface DomNode {
+  nodeId: number;
+  backendNodeId: number;
+  nodeName: string;
+  frameId?: string;
+  children?: DomNode[];
+  shadowRoots?: (DomNode & { shadowRootType?: "open" | "closed" | "user-agent" })[];
+  contentDocument?: DomNode;
+}
+
+const closedRootPass = new WeakMap<object, { doc: string; candidates: number; at: number }>();
+
+async function registerClosedRoots(page: PageContext, frames: FrameHandle[]): Promise<void> {
+  const main = frames.find((f) => f.ordinal === 0);
+  if (!main) return;
+  const candidates = await page.callInjected<number>(main, "closedRootCandidates", []).catch(() => 0);
+  if (!candidates) return;
+  // Once per document; again only when new candidates appear (SPAs), at most every 5 s.
+  const docKey = `${main.frameId}|${main.utilityContextId}`;
+  const prev = closedRootPass.get(page.cdp);
+  const now = Date.now();
+  if (prev && prev.doc === docKey && (candidates <= prev.candidates || now - prev.at < 5_000)) return;
+  closedRootPass.set(page.cdp, { doc: docKey, candidates, at: now });
+  // Group frames by CDP session (main session = undefined; OOPIFs have their own).
+  const bySession = new Map<string | undefined, FrameHandle[]>();
+  for (const f of frames) bySession.set(f.sessionId, [...(bySession.get(f.sessionId) ?? []), f]);
+  for (const [sessionId, sessionFrames] of bySession) {
+    let doc: { root: DomNode };
+    try {
+      doc = await page.cdp.send<{ root: DomNode }>("DOM.getDocument", { depth: -1, pierce: true }, { sessionId, timeoutMs: 3_000 });
+    } catch {
+      continue;
+    }
+    const top = sessionFrames.find((f) => !f.sessionId || f.sessionId === sessionId) ?? sessionFrames[0];
+    const found: { backendNodeId: number; frame: FrameHandle }[] = [];
+    const walk = (n: DomNode, frame: FrameHandle) => {
+      for (const sr of n.shadowRoots ?? []) {
+        if (sr.shadowRootType === "closed") found.push({ backendNodeId: sr.backendNodeId, frame });
+        walk(sr, frame);
+      }
+      for (const c of n.children ?? []) walk(c, frame);
+      if (n.contentDocument) {
+        const child = sessionFrames.find((f) => f.frameId === n.frameId) ?? frame;
+        walk(n.contentDocument, child);
+      }
+    };
+    walk(doc.root, top);
+    await Promise.all(
+      found.slice(0, 200).map(async ({ backendNodeId, frame }) => {
+        let objectId: string | undefined;
+        try {
+          const r = await page.cdp.send<{ object: { objectId?: string } }>("DOM.resolveNode", { backendNodeId, executionContextId: frame.utilityContextId }, { sessionId, timeoutMs: 1_000 });
+          objectId = r.object.objectId;
+          if (!objectId) return;
+          await page.cdp.send("Runtime.callFunctionOn", { objectId, functionDeclaration: "function(){return globalThis.__obu ? globalThis.__obu.registerClosedRoot(this) : false}", returnByValue: true }, { sessionId, timeoutMs: 1_000 });
+        } catch {
+          /* best effort */
+        } finally {
+          if (objectId) page.cdp.send("Runtime.releaseObject", { objectId }, { sessionId }).catch(() => undefined);
+        }
+      }),
+    );
   }
 }

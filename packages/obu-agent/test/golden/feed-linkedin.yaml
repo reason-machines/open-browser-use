@@ -1,0 +1,616 @@
+- title: "Feed | LinkedIn-like fixture" [url=http://localhost:PORT/feed-linkedin.html]
+- banner:
+  - navigation "Global":
+    - searchbox "Search" [ref=e1]
+    - link "Home" [ref=e2] [url=/feed/]
+    - link "My Network" [ref=e3] [url=/mynetwork/]
+    - link "Jobs" [ref=e4] [url=/jobs/]
+    - link "Messaging" [ref=e5] [url=/messaging/]
+    - link "Notifications" [ref=e6] [url=/notifications/]
+    - button "Me" [ref=e7]
+- main "Main Feed":
+  - button "Start a post" [ref=e8]
+  - button "Video" [ref=e9]
+  - button "Photo" [ref=e10]
+  - button "Write article" [ref=e11]
+  - heading "Feed post number" [level=2]
+  - article:
+    - link "Person 0" [ref=e12] [url=/in/person-0?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA0xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 0 • 1nd0d • Edited
+    - button "Follow Person 0" [ref=e13]: "+ Follow"
+    - button "Open control menu for post by Person 0" [ref=e14]: …
+    - text: "Excited to share update 0! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e15]: …more
+    - button "0 reactions" [ref=e16]: 👍 0
+    - button "0 comments on Person 0’s post" [ref=e17]: "0 comments"
+    - button "0 reposts of Person 0’s post" [ref=e18]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e19]: Like
+      - button "Comment" [ref=e20]
+      - button "Repost" [ref=e21]
+      - button "Send in a private message" [ref=e22]: Send
+  - article:
+    - link "Person 1" [ref=e23] [url=/in/person-1?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA1xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 1 • 2nd1d • Edited
+    - button "Follow Person 1" [ref=e24]: "+ Follow"
+    - button "Open control menu for post by Person 1" [ref=e25]: …
+    - text: "Excited to share update 1! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e26]: …more
+    - button "7 reactions" [ref=e27]: 👍 7
+    - button "1 comments on Person 1’s post" [ref=e28]: "1 comments"
+    - button "1 reposts of Person 1’s post" [ref=e29]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e30]: Like
+      - button "Comment" [ref=e31]
+      - button "Repost" [ref=e32]
+      - button "Send in a private message" [ref=e33]: Send
+  - article:
+    - link "Person 2" [ref=e34] [url=/in/person-2?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA2xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 2 • 3nd2d • Edited
+    - button "Follow Person 2" [ref=e35]: "+ Follow"
+    - button "Open control menu for post by Person 2" [ref=e36]: …
+    - text: "Excited to share update 2! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e37]: …more
+    - button "14 reactions" [ref=e38]: 👍 14
+    - button "2 comments on Person 2’s post" [ref=e39]: "2 comments"
+    - button "2 reposts of Person 2’s post" [ref=e40]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e41]: Like
+      - button "Comment" [ref=e42]
+      - button "Repost" [ref=e43]
+      - button "Send in a private message" [ref=e44]: Send
+  - article:
+    - link "Person 3" [ref=e45] [url=/in/person-3?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA3xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 3 • 1nd3d • Edited
+    - button "Follow Person 3" [ref=e46]: "+ Follow"
+    - button "Open control menu for post by Person 3" [ref=e47]: …
+    - text: "Excited to share update 3! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e48]: …more
+    - button "21 reactions" [ref=e49]: 👍 21
+    - button "3 comments on Person 3’s post" [ref=e50]: "3 comments"
+    - button "3 reposts of Person 3’s post" [ref=e51]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e52]: Like
+      - button "Comment" [ref=e53]
+      - button "Repost" [ref=e54]
+      - button "Send in a private message" [ref=e55]: Send
+  - article:
+    - link "Person 4" [ref=e56] [url=/in/person-4?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA4xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 4 • 2nd4d • Edited
+    - button "Follow Person 4" [ref=e57]: "+ Follow"
+    - button "Open control menu for post by Person 4" [ref=e58]: …
+    - text: "Excited to share update 4! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e59]: …more
+    - button "28 reactions" [ref=e60]: 👍 28
+    - button "4 comments on Person 4’s post" [ref=e61]: "4 comments"
+    - button "4 reposts of Person 4’s post" [ref=e62]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e63]: Like
+      - button "Comment" [ref=e64]
+      - button "Repost" [ref=e65]
+      - button "Send in a private message" [ref=e66]: Send
+  - article:
+    - link "Person 5" [ref=e67] [url=/in/person-5?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA5xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 5 • 3nd5d • Edited
+    - button "Follow Person 5" [ref=e68]: "+ Follow"
+    - button "Open control menu for post by Person 5" [ref=e69]: …
+    - text: "Excited to share update 5! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e70]: …more
+    - button "35 reactions" [ref=e71]: 👍 35
+    - button "5 comments on Person 5’s post" [ref=e72]: "5 comments"
+    - button "0 reposts of Person 5’s post" [ref=e73]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e74]: Like
+      - button "Comment" [ref=e75]
+      - button "Repost" [ref=e76]
+      - button "Send in a private message" [ref=e77]: Send
+  - article:
+    - link "Person 6" [ref=e78] [url=/in/person-6?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA6xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 6 • 1nd6d • Edited
+    - button "Follow Person 6" [ref=e79]: "+ Follow"
+    - button "Open control menu for post by Person 6" [ref=e80]: …
+    - text: "Excited to share update 6! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e81]: …more
+    - button "42 reactions" [ref=e82]: 👍 42
+    - button "6 comments on Person 6’s post" [ref=e83]: "6 comments"
+    - button "1 reposts of Person 6’s post" [ref=e84]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e85]: Like
+      - button "Comment" [ref=e86]
+      - button "Repost" [ref=e87]
+      - button "Send in a private message" [ref=e88]: Send
+  - article:
+    - link "Person 7" [ref=e89] [url=/in/person-7?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA7xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 7 • 2nd7d • Edited
+    - button "Follow Person 7" [ref=e90]: "+ Follow"
+    - button "Open control menu for post by Person 7" [ref=e91]: …
+    - text: "Excited to share update 7! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e92]: …more
+    - button "49 reactions" [ref=e93]: 👍 49
+    - button "7 comments on Person 7’s post" [ref=e94]: "7 comments"
+    - button "2 reposts of Person 7’s post" [ref=e95]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e96]: Like
+      - button "Comment" [ref=e97]
+      - button "Repost" [ref=e98]
+      - button "Send in a private message" [ref=e99]: Send
+  - article:
+    - link "Person 8" [ref=e100] [url=/in/person-8?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA8xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 8 • 3nd8d • Edited
+    - button "Follow Person 8" [ref=e101]: "+ Follow"
+    - button "Open control menu for post by Person 8" [ref=e102]: …
+    - text: "Excited to share update 8! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e103]: …more
+    - button "56 reactions" [ref=e104]: 👍 56
+    - button "8 comments on Person 8’s post" [ref=e105]: "8 comments"
+    - button "3 reposts of Person 8’s post" [ref=e106]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e107]: Like
+      - button "Comment" [ref=e108]
+      - button "Repost" [ref=e109]
+      - button "Send in a private message" [ref=e110]: Send
+  - article:
+    - link "Person 9" [ref=e111] [url=/in/person-9?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA9xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3_f…]
+    - text: Engineer at Company 9 • 1nd9d • Edited
+    - button "Follow Person 9" [ref=e112]: "+ Follow"
+    - button "Open control menu for post by Person 9" [ref=e113]: …
+    - text: "Excited to share update 9! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e114]: …more
+    - button "63 reactions" [ref=e115]: 👍 63
+    - button "9 comments on Person 9’s post" [ref=e116]: "9 comments"
+    - button "4 reposts of Person 9’s post" [ref=e117]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e118]: Like
+      - button "Comment" [ref=e119]
+      - button "Repost" [ref=e120]
+      - button "Send in a private message" [ref=e121]: Send
+  - article:
+    - link "Person 10" [ref=e122] [url=/in/person-10?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA10xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 10 • 2nd10d • Edited
+    - button "Follow Person 10" [ref=e123]: "+ Follow"
+    - button "Open control menu for post by Person 10" [ref=e124]: …
+    - text: "Excited to share update 10! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e125]: …more
+    - button "70 reactions" [ref=e126]: 👍 70
+    - button "10 comments on Person 10’s post" [ref=e127]: "10 comments"
+    - button "0 reposts of Person 10’s post" [ref=e128]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e129]: Like
+      - button "Comment" [ref=e130]
+      - button "Repost" [ref=e131]
+      - button "Send in a private message" [ref=e132]: Send
+  - article:
+    - link "Person 11" [ref=e133] [url=/in/person-11?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA11xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 11 • 3nd11d • Edited
+    - button "Follow Person 11" [ref=e134]: "+ Follow"
+    - button "Open control menu for post by Person 11" [ref=e135]: …
+    - text: "Excited to share update 11! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e136]: …more
+    - button "77 reactions" [ref=e137]: 👍 77
+    - button "11 comments on Person 11’s post" [ref=e138]: "11 comments"
+    - button "1 reposts of Person 11’s post" [ref=e139]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e140]: Like
+      - button "Comment" [ref=e141]
+      - button "Repost" [ref=e142]
+      - button "Send in a private message" [ref=e143]: Send
+  - article:
+    - link "Person 12" [ref=e144] [url=/in/person-12?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA12xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 12 • 1nd12d • Edited
+    - button "Follow Person 12" [ref=e145]: "+ Follow"
+    - button "Open control menu for post by Person 12" [ref=e146]: …
+    - text: "Excited to share update 12! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e147]: …more
+    - button "84 reactions" [ref=e148]: 👍 84
+    - button "12 comments on Person 12’s post" [ref=e149]: "12 comments"
+    - button "2 reposts of Person 12’s post" [ref=e150]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e151]: Like
+      - button "Comment" [ref=e152]
+      - button "Repost" [ref=e153]
+      - button "Send in a private message" [ref=e154]: Send
+  - article:
+    - link "Person 13" [ref=e155] [url=/in/person-13?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA13xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 13 • 2nd13d • Edited
+    - button "Follow Person 13" [ref=e156]: "+ Follow"
+    - button "Open control menu for post by Person 13" [ref=e157]: …
+    - text: "Excited to share update 13! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e158]: …more
+    - button "91 reactions" [ref=e159]: 👍 91
+    - button "13 comments on Person 13’s post" [ref=e160]: "13 comments"
+    - button "3 reposts of Person 13’s post" [ref=e161]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e162]: Like
+      - button "Comment" [ref=e163]
+      - button "Repost" [ref=e164]
+      - button "Send in a private message" [ref=e165]: Send
+  - article:
+    - link "Person 14" [ref=e166] [url=/in/person-14?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA14xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 14 • 3nd14d • Edited
+    - button "Follow Person 14" [ref=e167]: "+ Follow"
+    - button "Open control menu for post by Person 14" [ref=e168]: …
+    - text: "Excited to share update 14! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e169]: …more
+    - button "98 reactions" [ref=e170]: 👍 98
+    - button "14 comments on Person 14’s post" [ref=e171]: "14 comments"
+    - button "4 reposts of Person 14’s post" [ref=e172]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e173]: Like
+      - button "Comment" [ref=e174]
+      - button "Repost" [ref=e175]
+      - button "Send in a private message" [ref=e176]: Send
+  - article:
+    - link "Person 15" [ref=e177] [url=/in/person-15?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA15xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 15 • 1nd15d • Edited
+    - button "Follow Person 15" [ref=e178]: "+ Follow"
+    - button "Open control menu for post by Person 15" [ref=e179]: …
+    - text: "Excited to share update 15! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e180]: …more
+    - button "105 reactions" [ref=e181]: 👍 105
+    - button "15 comments on Person 15’s post" [ref=e182]: "15 comments"
+    - button "0 reposts of Person 15’s post" [ref=e183]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e184]: Like
+      - button "Comment" [ref=e185]
+      - button "Repost" [ref=e186]
+      - button "Send in a private message" [ref=e187]: Send
+  - article:
+    - link "Person 16" [ref=e188] [url=/in/person-16?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA16xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 16 • 2nd16d • Edited
+    - button "Follow Person 16" [ref=e189]: "+ Follow"
+    - button "Open control menu for post by Person 16" [ref=e190]: …
+    - text: "Excited to share update 16! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e191]: …more
+    - button "112 reactions" [ref=e192]: 👍 112
+    - button "16 comments on Person 16’s post" [ref=e193]: "16 comments"
+    - button "1 reposts of Person 16’s post" [ref=e194]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e195]: Like
+      - button "Comment" [ref=e196]
+      - button "Repost" [ref=e197]
+      - button "Send in a private message" [ref=e198]: Send
+  - article:
+    - link "Person 17" [ref=e199] [url=/in/person-17?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA17xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 17 • 3nd17d • Edited
+    - button "Follow Person 17" [ref=e200]: "+ Follow"
+    - button "Open control menu for post by Person 17" [ref=e201]: …
+    - text: "Excited to share update 17! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e202]: …more
+    - button "119 reactions" [ref=e203]: 👍 119
+    - button "17 comments on Person 17’s post" [ref=e204]: "17 comments"
+    - button "2 reposts of Person 17’s post" [ref=e205]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e206]: Like
+      - button "Comment" [ref=e207]
+      - button "Repost" [ref=e208]
+      - button "Send in a private message" [ref=e209]: Send
+  - article:
+    - link "Person 18" [ref=e210] [url=/in/person-18?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA18xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 18 • 1nd18d • Edited
+    - button "Follow Person 18" [ref=e211]: "+ Follow"
+    - button "Open control menu for post by Person 18" [ref=e212]: …
+    - text: "Excited to share update 18! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e213]: …more
+    - button "126 reactions" [ref=e214]: 👍 126
+    - button "18 comments on Person 18’s post" [ref=e215]: "18 comments"
+    - button "3 reposts of Person 18’s post" [ref=e216]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e217]: Like
+      - button "Comment" [ref=e218]
+      - button "Repost" [ref=e219]
+      - button "Send in a private message" [ref=e220]: Send
+  - article:
+    - link "Person 19" [ref=e221] [url=/in/person-19?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA19xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 19 • 2nd19d • Edited
+    - button "Follow Person 19" [ref=e222]: "+ Follow"
+    - button "Open control menu for post by Person 19" [ref=e223]: …
+    - text: "Excited to share update 19! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e224]: …more
+    - button "133 reactions" [ref=e225]: 👍 133
+    - button "19 comments on Person 19’s post" [ref=e226]: "19 comments"
+    - button "4 reposts of Person 19’s post" [ref=e227]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e228]: Like
+      - button "Comment" [ref=e229]
+      - button "Repost" [ref=e230]
+      - button "Send in a private message" [ref=e231]: Send
+  - article:
+    - link "Person 20" [ref=e232] [url=/in/person-20?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA20xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 20 • 3nd20d • Edited
+    - button "Follow Person 20" [ref=e233]: "+ Follow"
+    - button "Open control menu for post by Person 20" [ref=e234]: …
+    - text: "Excited to share update 20! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e235]: …more
+    - button "140 reactions" [ref=e236]: 👍 140
+    - button "20 comments on Person 20’s post" [ref=e237]: "20 comments"
+    - button "0 reposts of Person 20’s post" [ref=e238]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e239]: Like
+      - button "Comment" [ref=e240]
+      - button "Repost" [ref=e241]
+      - button "Send in a private message" [ref=e242]: Send
+  - article:
+    - link "Person 21" [ref=e243] [url=/in/person-21?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA21xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 21 • 1nd21d • Edited
+    - button "Follow Person 21" [ref=e244]: "+ Follow"
+    - button "Open control menu for post by Person 21" [ref=e245]: …
+    - text: "Excited to share update 21! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e246]: …more
+    - button "147 reactions" [ref=e247]: 👍 147
+    - button "21 comments on Person 21’s post" [ref=e248]: "21 comments"
+    - button "1 reposts of Person 21’s post" [ref=e249]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e250]: Like
+      - button "Comment" [ref=e251]
+      - button "Repost" [ref=e252]
+      - button "Send in a private message" [ref=e253]: Send
+  - article:
+    - link "Person 22" [ref=e254] [url=/in/person-22?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA22xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 22 • 2nd22d • Edited
+    - button "Follow Person 22" [ref=e255]: "+ Follow"
+    - button "Open control menu for post by Person 22" [ref=e256]: …
+    - text: "Excited to share update 22! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e257]: …more
+    - button "154 reactions" [ref=e258]: 👍 154
+    - button "22 comments on Person 22’s post" [ref=e259]: "22 comments"
+    - button "2 reposts of Person 22’s post" [ref=e260]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e261]: Like
+      - button "Comment" [ref=e262]
+      - button "Repost" [ref=e263]
+      - button "Send in a private message" [ref=e264]: Send
+  - article:
+    - link "Person 23" [ref=e265] [url=/in/person-23?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA23xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 23 • 3nd23d • Edited
+    - button "Follow Person 23" [ref=e266]: "+ Follow"
+    - button "Open control menu for post by Person 23" [ref=e267]: …
+    - text: "Excited to share update 23! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e268]: …more
+    - button "161 reactions" [ref=e269]: 👍 161
+    - button "23 comments on Person 23’s post" [ref=e270]: "23 comments"
+    - button "3 reposts of Person 23’s post" [ref=e271]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e272]: Like
+      - button "Comment" [ref=e273]
+      - button "Repost" [ref=e274]
+      - button "Send in a private message" [ref=e275]: Send
+  - article:
+    - link "Person 24" [ref=e276] [url=/in/person-24?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA24xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 24 • 1nd24d • Edited
+    - button "Follow Person 24" [ref=e277]: "+ Follow"
+    - button "Open control menu for post by Person 24" [ref=e278]: …
+    - text: "Excited to share update 24! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e279]: …more
+    - button "168 reactions" [ref=e280]: 👍 168
+    - button "24 comments on Person 24’s post" [ref=e281]: "24 comments"
+    - button "4 reposts of Person 24’s post" [ref=e282]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e283]: Like
+      - button "Comment" [ref=e284]
+      - button "Repost" [ref=e285]
+      - button "Send in a private message" [ref=e286]: Send
+  - article:
+    - link "Person 25" [ref=e287] [url=/in/person-25?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA25xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 25 • 2nd25d • Edited
+    - button "Follow Person 25" [ref=e288]: "+ Follow"
+    - button "Open control menu for post by Person 25" [ref=e289]: …
+    - text: "Excited to share update 25! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e290]: …more
+    - button "175 reactions" [ref=e291]: 👍 175
+    - button "25 comments on Person 25’s post" [ref=e292]: "25 comments"
+    - button "0 reposts of Person 25’s post" [ref=e293]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e294]: Like
+      - button "Comment" [ref=e295]
+      - button "Repost" [ref=e296]
+      - button "Send in a private message" [ref=e297]: Send
+  - article:
+    - link "Person 26" [ref=e298] [url=/in/person-26?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA26xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 26 • 3nd26d • Edited
+    - button "Follow Person 26" [ref=e299]: "+ Follow"
+    - button "Open control menu for post by Person 26" [ref=e300]: …
+    - text: "Excited to share update 26! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e301]: …more
+    - button "182 reactions" [ref=e302]: 👍 182
+    - button "26 comments on Person 26’s post" [ref=e303]: "26 comments"
+    - button "1 reposts of Person 26’s post" [ref=e304]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e305]: Like
+      - button "Comment" [ref=e306]
+      - button "Repost" [ref=e307]
+      - button "Send in a private message" [ref=e308]: Send
+  - article:
+    - link "Person 27" [ref=e309] [url=/in/person-27?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA27xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 27 • 1nd27d • Edited
+    - button "Follow Person 27" [ref=e310]: "+ Follow"
+    - button "Open control menu for post by Person 27" [ref=e311]: …
+    - text: "Excited to share update 27! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e312]: …more
+    - button "189 reactions" [ref=e313]: 👍 189
+    - button "27 comments on Person 27’s post" [ref=e314]: "27 comments"
+    - button "2 reposts of Person 27’s post" [ref=e315]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e316]: Like
+      - button "Comment" [ref=e317]
+      - button "Repost" [ref=e318]
+      - button "Send in a private message" [ref=e319]: Send
+  - article:
+    - link "Person 28" [ref=e320] [url=/in/person-28?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA28xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 28 • 2nd28d • Edited
+    - button "Follow Person 28" [ref=e321]: "+ Follow"
+    - button "Open control menu for post by Person 28" [ref=e322]: …
+    - text: "Excited to share update 28! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e323]: …more
+    - button "196 reactions" [ref=e324]: 👍 196
+    - button "28 comments on Person 28’s post" [ref=e325]: "28 comments"
+    - button "3 reposts of Person 28’s post" [ref=e326]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e327]: Like
+      - button "Comment" [ref=e328]
+      - button "Repost" [ref=e329]
+      - button "Send in a private message" [ref=e330]: Send
+  - article:
+    - link "Person 29" [ref=e331] [url=/in/person-29?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA29xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 29 • 3nd29d • Edited
+    - button "Follow Person 29" [ref=e332]: "+ Follow"
+    - button "Open control menu for post by Person 29" [ref=e333]: …
+    - text: "Excited to share update 29! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e334]: …more
+    - button "203 reactions" [ref=e335]: 👍 203
+    - button "29 comments on Person 29’s post" [ref=e336]: "29 comments"
+    - button "4 reposts of Person 29’s post" [ref=e337]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e338]: Like
+      - button "Comment" [ref=e339]
+      - button "Repost" [ref=e340]
+      - button "Send in a private message" [ref=e341]: Send
+  - article:
+    - link "Person 30" [ref=e342] [url=/in/person-30?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA30xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 30 • 1nd30d • Edited
+    - button "Follow Person 30" [ref=e343]: "+ Follow"
+    - button "Open control menu for post by Person 30" [ref=e344]: …
+    - text: "Excited to share update 30! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e345]: …more
+    - button "210 reactions" [ref=e346]: 👍 210
+    - button "30 comments on Person 30’s post" [ref=e347]: "30 comments"
+    - button "0 reposts of Person 30’s post" [ref=e348]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e349]: Like
+      - button "Comment" [ref=e350]
+      - button "Repost" [ref=e351]
+      - button "Send in a private message" [ref=e352]: Send
+  - article:
+    - link "Person 31" [ref=e353] [url=/in/person-31?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA31xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 31 • 2nd31d • Edited
+    - button "Follow Person 31" [ref=e354]: "+ Follow"
+    - button "Open control menu for post by Person 31" [ref=e355]: …
+    - text: "Excited to share update 31! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e356]: …more
+    - button "217 reactions" [ref=e357]: 👍 217
+    - button "31 comments on Person 31’s post" [ref=e358]: "31 comments"
+    - button "1 reposts of Person 31’s post" [ref=e359]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e360]: Like
+      - button "Comment" [ref=e361]
+      - button "Repost" [ref=e362]
+      - button "Send in a private message" [ref=e363]: Send
+  - article:
+    - link "Person 32" [ref=e364] [url=/in/person-32?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA32xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 32 • 3nd32d • Edited
+    - button "Follow Person 32" [ref=e365]: "+ Follow"
+    - button "Open control menu for post by Person 32" [ref=e366]: …
+    - text: "Excited to share update 32! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e367]: …more
+    - button "224 reactions" [ref=e368]: 👍 224
+    - button "32 comments on Person 32’s post" [ref=e369]: "32 comments"
+    - button "2 reposts of Person 32’s post" [ref=e370]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e371]: Like
+      - button "Comment" [ref=e372]
+      - button "Repost" [ref=e373]
+      - button "Send in a private message" [ref=e374]: Send
+  - article:
+    - link "Person 33" [ref=e375] [url=/in/person-33?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA33xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 33 • 1nd33d • Edited
+    - button "Follow Person 33" [ref=e376]: "+ Follow"
+    - button "Open control menu for post by Person 33" [ref=e377]: …
+    - text: "Excited to share update 33! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e378]: …more
+    - button "231 reactions" [ref=e379]: 👍 231
+    - button "33 comments on Person 33’s post" [ref=e380]: "33 comments"
+    - button "3 reposts of Person 33’s post" [ref=e381]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e382]: Like
+      - button "Comment" [ref=e383]
+      - button "Repost" [ref=e384]
+      - button "Send in a private message" [ref=e385]: Send
+  - article:
+    - link "Person 34" [ref=e386] [url=/in/person-34?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA34xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 34 • 2nd34d • Edited
+    - button "Follow Person 34" [ref=e387]: "+ Follow"
+    - button "Open control menu for post by Person 34" [ref=e388]: …
+    - text: "Excited to share update 34! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e389]: …more
+    - button "238 reactions" [ref=e390]: 👍 238
+    - button "34 comments on Person 34’s post" [ref=e391]: "34 comments"
+    - button "4 reposts of Person 34’s post" [ref=e392]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e393]: Like
+      - button "Comment" [ref=e394]
+      - button "Repost" [ref=e395]
+      - button "Send in a private message" [ref=e396]: Send
+  - article:
+    - link "Person 35" [ref=e397] [url=/in/person-35?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA35xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 35 • 3nd35d • Edited
+    - button "Follow Person 35" [ref=e398]: "+ Follow"
+    - button "Open control menu for post by Person 35" [ref=e399]: …
+    - text: "Excited to share update 35! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e400]: …more
+    - button "245 reactions" [ref=e401]: 👍 245
+    - button "35 comments on Person 35’s post" [ref=e402]: "35 comments"
+    - button "0 reposts of Person 35’s post" [ref=e403]: "0 reposts"
+    - group:
+      - button "React Like" [ref=e404]: Like
+      - button "Comment" [ref=e405]
+      - button "Repost" [ref=e406]
+      - button "Send in a private message" [ref=e407]: Send
+  - article:
+    - link "Person 36" [ref=e408] [url=/in/person-36?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA36xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 36 • 1nd36d • Edited
+    - button "Follow Person 36" [ref=e409]: "+ Follow"
+    - button "Open control menu for post by Person 36" [ref=e410]: …
+    - text: "Excited to share update 36! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e411]: …more
+    - button "252 reactions" [ref=e412]: 👍 252
+    - button "36 comments on Person 36’s post" [ref=e413]: "36 comments"
+    - button "1 reposts of Person 36’s post" [ref=e414]: "1 reposts"
+    - group:
+      - button "React Like" [ref=e415]: Like
+      - button "Comment" [ref=e416]
+      - button "Repost" [ref=e417]
+      - button "Send in a private message" [ref=e418]: Send
+  - article:
+    - link "Person 37" [ref=e419] [url=/in/person-37?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA37xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 37 • 2nd37d • Edited
+    - button "Follow Person 37" [ref=e420]: "+ Follow"
+    - button "Open control menu for post by Person 37" [ref=e421]: …
+    - text: "Excited to share update 37! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e422]: …more
+    - button "259 reactions" [ref=e423]: 👍 259
+    - button "37 comments on Person 37’s post" [ref=e424]: "37 comments"
+    - button "2 reposts of Person 37’s post" [ref=e425]: "2 reposts"
+    - group:
+      - button "React Like" [ref=e426]: Like
+      - button "Comment" [ref=e427]
+      - button "Repost" [ref=e428]
+      - button "Send in a private message" [ref=e429]: Send
+  - article:
+    - link "Person 38" [ref=e430] [url=/in/person-38?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA38xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 38 • 3nd38d • Edited
+    - button "Follow Person 38" [ref=e431]: "+ Follow"
+    - button "Open control menu for post by Person 38" [ref=e432]: …
+    - text: "Excited to share update 38! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e433]: …more
+    - button "266 reactions" [ref=e434]: 👍 266
+    - button "38 comments on Person 38’s post" [ref=e435]: "38 comments"
+    - button "3 reposts of Person 38’s post" [ref=e436]: "3 reposts"
+    - group:
+      - button "React Like" [ref=e437]: Like
+      - button "Comment" [ref=e438]
+      - button "Repost" [ref=e439]
+      - button "Send in a private message" [ref=e440]: Send
+  - article:
+    - link "Person 39" [ref=e441] [url=/in/person-39?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAA39xyzlongtrackingtoken&lipi=urn%3Ali%3Apage%3Ad_flagship3…]
+    - text: Engineer at Company 39 • 1nd39d • Edited
+    - button "Follow Person 39" [ref=e442]: "+ Follow"
+    - button "Open control menu for post by Person 39" [ref=e443]: …
+    - text: "Excited to share update 39! We shipped a new feature that makes browsing agents faster. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    - button "see more, visually reveals content which is already detected by screen readers" [ref=e444]: …more
+    - button "273 reactions" [ref=e445]: 👍 273
+    - button "39 comments on Person 39’s post" [ref=e446]: "39 comments"
+    - button "4 reposts of Person 39’s post" [ref=e447]: "4 reposts"
+    - group:
+      - button "React Like" [ref=e448]: Like
+      - button "Comment" [ref=e449]
+      - button "Repost" [ref=e450]
+      - button "Send in a private message" [ref=e451]: Send
