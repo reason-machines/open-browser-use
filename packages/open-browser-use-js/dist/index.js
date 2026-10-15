@@ -1,5 +1,7 @@
+import { readFileSync, statSync } from "node:fs";
 import { createConnection } from "node:net";
 import { endianness } from "node:os";
+import { dirname, join } from "node:path";
 const headerBytes = 4;
 const defaultNavigationTimeoutMs = 10_000;
 export class OpenBrowserUseClient {
@@ -7,7 +9,9 @@ export class OpenBrowserUseClient {
     sessionId;
     turnId;
     timeoutMs;
+    tokenPath;
     #socket = null;
+    #chunks = new ChunkAssembler();
     #pendingData = Buffer.alloc(0);
     #nextId = 1;
     #pending = new Map();
@@ -17,6 +21,7 @@ export class OpenBrowserUseClient {
         this.sessionId = options.sessionId ?? "open-browser-use-js";
         this.turnId = options.turnId ?? `turn-${Date.now()}`;
         this.timeoutMs = options.timeoutMs ?? 10_000;
+        this.tokenPath = options.tokenPath;
     }
     async connect() {
         if (this.#socket) {
@@ -31,6 +36,11 @@ export class OpenBrowserUseClient {
             socket.once("connect", resolve);
             socket.once("error", reject);
         });
+        const token = readRelayToken(this.socketPath, this.tokenPath);
+        if (token) {
+            // Relays that don't require a token drop this frame.
+            socket.write(encodeFrame({ auth: token }));
+        }
         return this;
     }
     close() {
@@ -163,7 +173,10 @@ export class OpenBrowserUseClient {
             }
             const payload = this.#pendingData.subarray(headerBytes, total);
             this.#pendingData = this.#pendingData.subarray(total);
-            this.#handleMessage(JSON.parse(payload.toString("utf8")));
+            const message = this.#chunks.accept(JSON.parse(payload.toString("utf8")));
+            if (message !== null) {
+                this.#handleMessage(message);
+            }
         }
     }
     #handleMessage(message) {
@@ -182,6 +195,11 @@ export class OpenBrowserUseClient {
             return;
         }
         if (!id) {
+            if (isObject(message.error)) {
+                // Connection-level relay error (e.g. unauthorized); the relay closes
+                // the socket right after, which rejects everything pending.
+                this.#rejectAll(new Error(`Open Browser Use relay: ${String(message.error.message ?? "error")}`));
+            }
             return;
         }
         const pending = this.#pending.get(id);
@@ -402,6 +420,71 @@ export class OpenBrowserUseCdp {
         }
         await this.client.attach(tabId);
         this.#attachedTabIds.add(tabId);
+    }
+}
+/** Resolves and reads the relay token (see OpenBrowserUseClientOptions.tokenPath). */
+export function readRelayToken(socketPath, tokenPath) {
+    if (process.env.OBU_RELAY_AUTH === "uid") {
+        return null;
+    }
+    const path = process.env.OBU_RELAY_TOKEN_PATH || tokenPath || join(dirname(socketPath), "relay.token");
+    try {
+        if (process.platform !== "win32" && (statSync(path).mode & 0o077) !== 0) {
+            throw new Error(`relay token file ${path} must be mode 0600`);
+        }
+        const token = readFileSync(path, "utf8").trim();
+        return token || null;
+    }
+    catch (error) {
+        if (error.code === "ENOENT") {
+            return null;
+        }
+        throw error;
+    }
+}
+/**
+ * Reassembles `{"chunk":{id,i,n,data}}` envelopes (WIRE.md framing: `data` is
+ * the i-th slice of the message's JSON text). Non-chunk messages pass through.
+ */
+export class ChunkAssembler {
+    ttlMs;
+    #pending = new Map();
+    constructor(ttlMs = 60_000) {
+        this.ttlMs = ttlMs;
+    }
+    accept(message) {
+        const chunk = isObject(message) ? message.chunk : undefined;
+        if (!isObject(chunk)) {
+            return message;
+        }
+        const { id, i, n, data } = chunk;
+        if (typeof id !== "string" || typeof i !== "number" || typeof n !== "number" || typeof data !== "string" || n <= 0 || i < 0 || i >= n) {
+            throw new Error("Malformed Open Browser Use chunk frame");
+        }
+        const now = Date.now();
+        for (const [key, entry] of this.#pending) {
+            if (now - entry.at > this.ttlMs) {
+                this.#pending.delete(key);
+            }
+        }
+        let entry = this.#pending.get(id);
+        if (!entry) {
+            entry = { parts: new Array(n), received: 0, at: now };
+            this.#pending.set(id, entry);
+        }
+        if (entry.parts.length !== n) {
+            this.#pending.delete(id);
+            throw new Error(`Open Browser Use chunk ${id} changed part count`);
+        }
+        if (entry.parts[i] === undefined) {
+            entry.parts[i] = data;
+            entry.received += 1;
+        }
+        if (entry.received < n) {
+            return null;
+        }
+        this.#pending.delete(id);
+        return JSON.parse(entry.parts.join(""));
     }
 }
 export function encodeFrame(value) {
