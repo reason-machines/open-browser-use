@@ -1,0 +1,18 @@
+- title: "Table fixture" [url=http://localhost:PORT/table.html]
+- table "Users":
+  - row:
+    - columnheader:
+      - button "Name ▲" [ref=e1]
+    - columnheader "Age"
+    - columnheader "City"
+  - row:
+    - cell "Ada"
+    - cell "36"
+    - cell "London"
+  - row:
+    - cell "Linus"
+    - cell "54"
+    - cell "Portland"
+  - row:
+    - rowheader "Total"
+    - cell "90"

@@ -1,0 +1,7 @@
+<!doctype html><title>Shadow fixture</title>
+<x-card id="open"><span slot="title">Slotted title</span><span>Light text</span></x-card>
+<div id="closed"></div>
+<script>
+customElements.define('x-card', class extends HTMLElement { constructor(){ super(); const r=this.attachShadow({mode:'open'}); r.innerHTML='<h2><slot name="title"></slot></h2><button>Shadow button</button><input aria-label="Shadow input"><slot></slot>'; }});
+const c=document.getElementById('closed').attachShadow({mode:'closed'}); c.innerHTML='<button>Closed button</button>';
+</script>

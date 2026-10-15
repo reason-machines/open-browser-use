@@ -1,0 +1,19 @@
+- title: "Form fixture" [url=http://localhost:PORT/form.html]
+- main:
+  - heading "Sign up" [level=1]
+  - form "Signup":
+    - textbox "Email" [ref=e1] [required]
+    - textbox "Password" [ref=e2]: "[redacted]"
+    - textbox "Birthday" [ref=e3]: "2020-01-02"
+    - textbox "Color" [ref=e4]: "#ff0000"
+    - slider "Volume" [ref=e5] [min=0] [max=10]: "3"
+    - spinbutton "Age" [ref=e6]: "42"
+    - group "Plan":
+      - radio "Free" [ref=e7] [checked]
+      - radio "Pro" [ref=e8]
+    - checkbox "I accept the terms" [ref=e9]
+    - checkbox "Newsletter" [ref=e10] [checked]
+    - textbox "Bio" [ref=e11]: Hello there
+    - button "Create account" [ref=e12]
+    - button "Disabled" [ref=e13] [disabled]
+    - button "Go" [ref=e14]

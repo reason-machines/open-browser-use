@@ -150,7 +150,7 @@ Installed as `globalThis.__obu` in isolated world `__obu_utility` of every frame
 
 ```ts
 version
-takeSnapshot({interactive?, ref?, selector?, showHidden?, maxDepth?=50, frameOrdinal}) -> {yaml, refs, iframes:[{ref, frameName?, src}]}
+takeSnapshot({interactive?, ref?, selector?, showHidden?, maxDepth?=50, frameOrdinal}) -> {yaml, refs, iframes:[{ref, frameName?, src}], title, url}
 deref(ref) -> Element|null                // cache first, then role+name+nth over ≤5000 nodes
 waitForReady(ref, {timeoutMs, enabled?, editable?}) -> {ok:true, rect} | {ok:false, reason}
 checkHitTarget(ref, x, y) -> {ok, hit?}   // elementFromPoint through shadow roots
@@ -158,6 +158,7 @@ resolvePointerTarget(x, y) -> {ref?, tag}
 checkEditable(ref) -> boolean
 settleProbe() -> {readyState, interactiveCount, textLen, mutationRatio, landmarks}
 annotate(on)                              // red numbered boxes per ref, z-index 2147483647
+refOf(el) -> ref|null                     // daemon maps DOM.getFrameOwner nodes to iframe placeholders
 ```
 
 WS-C injects with `Page.addScriptToEvaluateOnNewDocument{worldName}` +
@@ -188,6 +189,31 @@ context destroy (10 tries × 200 ms).
   `- iframe [ref=…] [origin=…]`; main frame retried 3×; snapshots of one
   page serialised.
 - `{tree, diff}`: unified diff vs previous snapshot of (session, tab).
+  `diff` is only computed for unscoped, non-interactive snapshots (otherwise
+  `''`); hunks carry 1 line of context. WS-C stores `tree` as
+  `PageContext.previousTree` after every full snapshot.
+- Bundle: `INJECTED_BUNDLE_SOURCE` (`src/injected/index.ts`) is
+  `installObu.toString()` wrapped in an IIFE — no bundler; `installObu`
+  (`src/injected/runtime.ts`) must stay self-contained. Idempotent per
+  `version`; `INJECTED_HEALTH_EXPRESSION` returns the installed version.
+- Child frames → placeholders: after snapshotting, the daemon calls
+  `DOM.getFrameOwner{frameId}` on the parent's session, `DOM.resolveNode` in
+  each candidate parent utility world and `__obu.refOf(this)`; cached per
+  (tab, frameId). Unresolvable frames are appended as
+  `- iframe [frame=fK] [origin=…]` (never dropped); unreadable frames add a
+  warning.
+- Output details: links carry `[url=…]` (path for same-origin, ≤120 chars);
+  values render inline (`- textbox "Email" [ref=e1]: a@b.c`) or as a
+  `- /value: …` child when the node also has children; native `<select>`
+  options are listed without refs (≤50); clickable generics carry
+  `[cursor=pointer]`; scroll containers `[scrollable]`; layout tables
+  (no caption/th/thead/summary/label) render as generic and unwrap;
+  separator-only text (`|`, `·`, `(`…) and label text duplicated by the
+  adjacent control's name are dropped; names computed from content are
+  dropped when the children already render that content. Closed shadow
+  roots are not walked yet (BACKLOG).
+- Dev tools: `node scripts/snap-dump.mjs <page|url> [--interactive]`,
+  `node scripts/snap-bench.mjs [N] <page|url>…` (CfT, throwaway profile).
 
 ### Input (WS-E)
 

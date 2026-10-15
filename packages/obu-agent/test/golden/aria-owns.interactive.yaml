@@ -1,0 +1,6 @@
+- title: "Aria owns fixture" [url=http://localhost:PORT/aria-owns.html]
+- combobox "Fruit" [ref=e1] [expanded]:
+  - textbox "Fruit input" [ref=e2]: Ap
+  - listbox [ref=e3]:
+    - option "Apple" [ref=e4] [selected]
+    - option "Apricot" [ref=e5]

@@ -1,0 +1,6 @@
+- title: "Hidden fixture" [url=http://localhost:PORT/hidden.html]
+- button "Visible" [ref=e1]
+- button "Visible child" [ref=e2]
+- group:
+  - button "More" [ref=e3] [expanded=false]
+- button "Below the fold" [ref=e4]

@@ -30,6 +30,10 @@ export interface InjectedSnapshot {
   refs: number;
   /** Child frames to stitch in, in document order. */
   iframes: { ref: string; frameName?: string; src: string }[];
+  /** document.title of this frame. */
+  title: string;
+  /** location.href of this frame. */
+  url: string;
 }
 
 export interface Rect {
@@ -69,6 +73,12 @@ export interface ObuInjectedApi {
   settleProbe(): SettleProbe;
   /** Set-of-marks overlay: red numbered boxes per ref (z-index 2147483647). */
   annotate(on: boolean): void;
+  /**
+   * Ref of an element (null if it has none). The daemon calls this with
+   * `Runtime.callFunctionOn` on an <iframe> owner node (from DOM.getFrameOwner)
+   * to map child frames onto their `- iframe [ref=…]` placeholders.
+   */
+  refOf(el: Element): string | null;
 }
 
 declare global {

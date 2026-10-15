@@ -1,0 +1,3 @@
+- title: "Upload fixture" [url=http://localhost:PORT/upload.html]
+- button "Avatar" [ref=e1] [file]
+- generic "Drop zone" [ref=e2]: Drop files here
