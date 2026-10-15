@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Obscured fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Covered elements</h1>
+<button id="target" onclick="__fx.log('target')" style="margin:40px">Covered target button</button>
+<div id="overlay" role="dialog" aria-label="Cookie banner" style="position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:end;justify-content:center">
+  <div style="background:#fff;padding:16px;margin:16px">We use cookies. <button id="accept" onclick="document.getElementById('overlay').remove();__fx.log('accept')">Accept cookies</button></div>
+</div>
+<div style="position:relative;margin-top:200px">
+  <button id="under" onclick="__fx.log('under')">Button under transparent sibling</button>
+  <div id="glass" style="position:absolute;inset:0;background:transparent"></div>
+</div>
+<details id="disc"><summary>Show advanced options</summary><button id="adv" onclick="__fx.log('adv')">Advanced action</button></details>
+<button id="moving" style="position:relative">Moving button</button>
+<ol id="fx-log"></ol>
+<script>
+// A button that animates for 600 ms after load (actionability "stable" check).
+// setTimeout-driven (not rAF) so it also animates in background tabs.
+const mv = document.getElementById("moving"); const t0 = performance.now();
+const iv = setInterval(() => { const dt = performance.now() - t0; mv.style.left = dt < 600 ? Math.round(dt / 3) + "px" : "200px"; if (dt >= 600) clearInterval(iv); }, 16);
+mv.onclick = () => __fx.log("moving");
+</script>

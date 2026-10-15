@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Select fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Selects</h1>
+<label>Shipping <select id="ship"><option value="std">Standard</option><option value="exp">Express</option><optgroup label="Pickup"><option value="store">In store</option></optgroup></select></label>
+<label>Toppings <select id="tops" multiple size="4"><option>Cheese</option><option>Olives</option><option>Mushrooms</option><option>Peppers</option></select></label>
+<div>
+  <button id="custom" aria-haspopup="listbox" aria-expanded="false">Size: <span id="size">Medium</span></button>
+  <ul role="listbox" id="sizes" hidden aria-label="Sizes">
+    <li role="option" tabindex="-1">Small</li><li role="option" tabindex="-1" aria-selected="true">Medium</li><li role="option" tabindex="-1">Large</li><li role="option" tabindex="-1" aria-disabled="true">XXL (sold out)</li>
+  </ul>
+</div>
+<ol id="fx-log"></ol>
+<script>
+document.getElementById("ship").onchange = (e) => { __fx.state.ship = e.target.value; __fx.log("ship", e.target.value); };
+document.getElementById("tops").onchange = (e) => { __fx.state.tops = [...e.target.selectedOptions].map((o) => o.value); __fx.log("tops", __fx.state.tops); };
+const btn = document.getElementById("custom"), lb = document.getElementById("sizes");
+btn.onclick = () => { lb.hidden = !lb.hidden; btn.setAttribute("aria-expanded", String(!lb.hidden)); };
+lb.onclick = (e) => { const o = e.target.closest("[role=option]"); if (!o || o.getAttribute("aria-disabled") === "true") return;
+  for (const x of lb.children) x.removeAttribute("aria-selected"); o.setAttribute("aria-selected", "true");
+  document.getElementById("size").textContent = o.textContent; lb.hidden = true; btn.setAttribute("aria-expanded", "false"); __fx.state.size = o.textContent; __fx.log("size", o.textContent); };
+</script>

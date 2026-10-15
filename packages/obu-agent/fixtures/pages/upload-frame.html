@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Upload frame</title>
+<label>File in iframe <input type="file" id="f"></label>
+<script>
+document.getElementById("f").addEventListener("change", async (e) => {
+  const files = await Promise.all([...e.target.files].map(async (f) => ({ name: f.name, size: f.size, head: await f.slice(0, 64).text() })));
+  parent.postMessage({ fx: "frame-upload", files }, "*");
+});
+</script>

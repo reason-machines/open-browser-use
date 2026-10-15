@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Popup fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Popups and new tabs</h1>
+<button id="open">window.open popup</button>
+<button id="open-feat">window.open with features (popup window)</button>
+<a id="blank" href="/form.html" target="_blank">Open form in new tab (target=_blank)</a>
+<a id="noopener" href="/table.html" target="_blank" rel="noopener">Open table noopener</a>
+<button id="oauth">Sign in with Fixture (OAuth-style popup that posts back)</button>
+<p id="out" role="status"></p>
+<ol id="fx-log"></ol>
+<script>
+document.getElementById("open").onclick = () => { window.__child = window.open("/form.html"); __fx.log("open"); };
+document.getElementById("open-feat").onclick = () => { window.open("/table.html", "fx", "width=500,height=400"); __fx.log("open-feat"); };
+document.getElementById("oauth").onclick = () => { window.open("/oauth-popup.html", "oauth", "width=480,height=360"); __fx.log("oauth-open"); };
+addEventListener("message", (e) => { if (e.data && e.data.fx === "oauth-done") { __fx.state.oauth = e.data.user; document.getElementById("out").textContent = "Signed in as " + e.data.user; __fx.log("oauth-done", e.data.user); } });
+</script>

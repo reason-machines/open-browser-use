@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Upload fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>File uploads</h1>
+<label>Resume <input type="file" id="single" accept=".txt,.pdf,.png"></label><br>
+<label>Attachments <input type="file" id="multi" multiple></label><br>
+<label class="styled" style="position:relative;display:inline-block;padding:6px;border:1px dashed #555">Choose avatar (styled, input hidden)
+  <input type="file" id="hidden-input" style="position:absolute;opacity:0;width:1px;height:1px"></label><br>
+<div id="drop" style="width:320px;height:80px;border:2px dashed #0a0;margin:8px 0" aria-label="Drop zone" role="region">Drop files here</div>
+<iframe id="frame" title="upload frame" src="/upload-frame.html" style="width:500px;height:90px"></iframe>
+<ol id="fx-log"></ol>
+<script>
+async function describe(files) { return Promise.all([...files].map(async (f) => ({ name: f.name, size: f.size, type: f.type, head: (await f.slice(0, 64).text()) }))); }
+for (const id of ["single", "multi", "hidden-input"]) document.getElementById(id).addEventListener("change", async (e) => { const d = await describe(e.target.files); __fx.state[id] = d; __fx.log("upload", { id, files: d }); });
+const drop = document.getElementById("drop");
+drop.addEventListener("dragover", (e) => e.preventDefault());
+drop.addEventListener("drop", async (e) => { e.preventDefault(); const d = await describe(e.dataTransfer.files); __fx.state.drop = d; __fx.log("upload", { id: "drop", files: d }); });
+addEventListener("message", (e) => { if (e.data && e.data.fx === "frame-upload") { __fx.state.frame = e.data.files; __fx.log("upload", { id: "frame", files: e.data.files }); } });
+</script>

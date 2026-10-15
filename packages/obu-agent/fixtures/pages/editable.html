@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><title>Editable fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Text editing</h1>
+<label for="ta">Notes</label><br><textarea id="ta" rows="4" cols="60">Original textarea content</textarea><br>
+<label for="ta2">Paste target</label><br><textarea id="ta2" rows="2" cols="60"></textarea>
+<div id="ce" contenteditable="true" role="textbox" aria-label="Rich editor" aria-multiline="true" style="border:1px solid #888;min-height:60px;padding:4px"><p>Editable <b>rich</b> text</p></div>
+<div id="react-like" contenteditable="true" role="textbox" aria-label="Controlled editor" style="border:1px solid #888;min-height:30px"></div>
+<input id="single" aria-label="Single line" value="">
+<p>Expected unicode probe: <span id="probe">héllo 👋🏽 日本語 مرحبا</span></p>
+<ol id="fx-log"></ol>
+<script>
+for (const id of ["ta", "ta2", "ce", "single", "react-like"]) {
+  const el = document.getElementById(id);
+  el.addEventListener("input", (e) => __fx.state[id] = el.value !== undefined && el.tagName !== "DIV" ? el.value : el.innerText);
+  el.addEventListener("keydown", (e) => { if (e.metaKey || e.ctrlKey) __fx.log("shortcut", { id, key: e.key, meta: e.metaKey, ctrl: e.ctrlKey }); });
+  el.addEventListener("paste", () => __fx.log("paste", id));
+  el.addEventListener("copy", () => __fx.log("copy", id));
+}
+// "Controlled" editor: rejects synthetic text that does not arrive via beforeinput (common in Lexical/Draft).
+const rl = document.getElementById("react-like");
+rl.addEventListener("beforeinput", (e) => { __fx.state.beforeinput = (__fx.state.beforeinput || 0) + 1; });
+</script>
