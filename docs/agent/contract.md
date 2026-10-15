@@ -15,6 +15,43 @@ behaviour spec. Change both in the same commit.
 - JSON-RPC 2.0, newline-delimited JSON. MCP stdio: `obu-agent mcp --attach`
   proxies onto the socket with static tool schemas.
 
+### Native host (relay) — WS-B
+
+- **Spawn:** the native host supervises one `obu-agent` per profile:
+  `obu-agent --profile <key> --socket <agentSocket>` with env `OBU_PROFILE`,
+  `OBU_AGENT_SOCKET`, `OBU_RELAY_SOCKET`, `OBU_RELAY_TOKEN_PATH`,
+  `OBU_AGENT_SUPERVISED=1`. stdout/stderr go to `<agentDir>/agent.log`.
+  Restart backoff 0/250/750/1500/3000 ms (reset after 30 s up). An agent
+  already listening on the socket is adopted, not duplicated (it outlives a
+  host crash, so the daemon must re-read `active.json` when its relay
+  connection drops). Binary: `OBU_AGENT_BIN` (a `.js`/`.mjs` runs under
+  `OBU_NODE`/node), else `obu-agent` next to the host or in common bin dirs;
+  `OBU_AGENT=off` disables. Profile key: `OBU_PROFILE`, else the Chrome
+  profile dir resolved from the extension's `extensionInstanceId`
+  (`<browserId>-<dir>` for non-stable browsers), else `instance-<uuid>`.
+- **Records:** `<socketDir>/active.json` gains `tokenPath`, `profile`,
+  `agentSocket`; `<socketDir>/agents/<profile>.json` =
+  `{profile, agentSocket, agentPid, adopted, relaySocket, relayPid, tokenPath, updatedAt}`.
+  `OBU_SOCKET_DIR` overrides the socket dir (tests, side-by-side installs).
+- **Relay auth:** peer uid must equal the host uid (LOCAL_PEERCRED /
+  SO_PEERCRED). Unless `OBU_RELAY_AUTH=uid`, the first frame must be
+  `{"auth":"<token>"}` with the token from `<socketDir>/relay.token` (0600);
+  failures get `{"id":null,"error":{"code":-32001,"data":{"type":"unauthorized"}}}`
+  and the socket closes. Relays that don't require a token drop an auth frame.
+- **Decode-free relay:** only the top-level `id` is rewritten (to
+  `"obu:<n>"` and back, raw JSON bytes preserved); nothing else is re-encoded.
+- **Timeouts:** a request with `params.timeoutMs` that the extension has not
+  answered after `timeoutMs + 2000` gets
+  `{"error":{"code":-32001,"data":{"type":"timeout"}}}`; a late answer is
+  dropped. The CLI fills `params.timeoutMs` from `--timeout` (minus 250 ms).
+- **Chunking (host↔extension, pairs with WS-A):** a native message over
+  900 KB is sent as frames
+  `{"chunk":{"id":"<string>","i":<0..n-1>,"n":<n>,"data":"<base64>"}}`, each
+  ≤ 900 KB. `data` is standard base64 of a byte slice (640 KiB) of the
+  original UTF-8 JSON message; concatenating decoded slices in `i` order
+  restores it exactly. Chunks of one message are written back to back. The
+  host accepts the same envelope from the extension (sets expire after 60 s).
+
 ## Methods
 
 All page methods take `{sessionId, tabId?}`; `tabId` omitted = the session's
