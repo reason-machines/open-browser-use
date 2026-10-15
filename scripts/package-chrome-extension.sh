@@ -107,24 +107,16 @@ mkdir -p "${dist_dir}"
 staging_dir="${dist_dir}/extension-staging"
 mkdir -p "${staging_dir}"
 
-while IFS= read -r file; do
-  mkdir -p "${staging_dir}/$(dirname "${file}")"
-  cp "${extension_dir}/${file}" "${staging_dir}/${file}"
-done <<'EOF'
-manifest.json
-background.js
-content-cursor.js
-content-webmcp-main.js
-content-webmcp-bridge.js
-icons/icon-16.png
-icons/icon-32.png
-icons/icon-48.png
-icons/icon-128.png
-images/cursor-chat.png
-popup.css
-popup.html
-popup.js
-EOF
+# Branding comes from apps/chrome-extension/brands/<OBU_BRAND>.json (default:
+# "default"), or OBU_BRAND_FILE for an out-of-tree brand JSON.
+brand_args=(--out "${staging_dir}")
+if [[ -n "${OBU_BRAND_FILE:-}" ]]; then
+  brand_args+=(--brand-file "${OBU_BRAND_FILE}")
+else
+  brand_args+=(--brand "${OBU_BRAND:-default}")
+fi
+node "${repo_root}/scripts/package-chrome-extension-brand.mjs" "${brand_args[@]}" >&2
+node --check "${staging_dir}/background.js" >&2
 
 (
   cd "${staging_dir}"
