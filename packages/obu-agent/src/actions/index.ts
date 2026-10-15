@@ -120,7 +120,14 @@ async function clickElement(page: PageContext, target: ElementTarget, o: ClickOp
     }
     throw new ObuError("obscured", `The ${target.label} is covered by ${hit.by ?? "another element"}. Close the overlay/dialog first, or act on the covering element.`, { by: hit.by, ref: target.ref });
   }
-  await mouseClick(page.cdp, point, o);
+  const f = await pageFocus(page, target);
+  if (!f.visible) {
+    // Hidden tab without focus emulation: Chrome drops CDP mouse/key input. Synthesize at the point.
+    await callInFrame(page, target.frame, fnSynthPointer, [o.clickCount === 2 ? "dblclick" : "click", local.x, local.y, BUTTON_INDEX[o.button], o.modifiers, 0, 0]);
+    warnings.push("tab is hidden: synthesized DOM pointer events on the element");
+  } else {
+    await mouseClick(page.cdp, point, o);
+  }
   if (!before || o.button !== "left") return;
   // Verify: checkbox flipped; disclosure opened.
   if (st.isCheckable && st.type === "checkbox") {
@@ -159,6 +166,13 @@ async function focusElement(page: PageContext, target: ElementTarget, selectAll:
     if (point) await mouseClick(page.cdp, point, { button: "left", clickCount: 1, modifiers: 0 });
     if (selectAll) await callOn(page, target.frame, target.objectId, fnFocusSelectAll, [true]);
   }
+}
+
+/** Key events are dropped on hidden tabs; Input.insertText still works there (text exact, no key handlers). */
+async function typeVisibleOrInsert(page: PageContext, t: Target, value: string, warnings: string[]): Promise<void> {
+  if ((await pageFocus(page, t)).visible) return typeText(page.cdp, value);
+  await page.cdp.send("Input.insertText", { text: value });
+  warnings.push("tab is hidden: inserted the text without key events");
 }
 
 function normalizeText(s: string): string {
@@ -263,7 +277,13 @@ export async function act(page: PageContext, params: ActParams): Promise<ActOutc
         const hit = await callOn<{ ok: boolean; by?: string }>(page, t.frame, t.objectId, fnHitTest, [local.x, local.y]);
         if (!hit.ok) throw new ObuError("obscured", `The ${t.label} is covered by ${hit.by ?? "another element"}; hover would land on it instead.`, { by: hit.by, ref: t.ref });
         const p = (await elementCenter(page, t)) ?? local;
-        run = () => mouseMove(page.cdp, p, o.modifiers);
+        run = async () => {
+          if ((await pageFocus(page, t)).visible) await mouseMove(page.cdp, p, o.modifiers);
+          else {
+            await callInFrame(page, t.frame, fnSynthPointer, ["hover", local.x, local.y, 0, o.modifiers, 0, 0]);
+            warnings.push("tab is hidden: synthesized DOM hover events");
+          }
+        };
       } else {
         run = () => clickElement(page, t, o, timeoutMs, warnings);
       }
@@ -283,10 +303,10 @@ export async function act(page: PageContext, params: ActParams): Promise<ActOutc
         if ("useLabel" in st) throw new ObuError("not_actionable", `The ${t.label} ${NOT_ACTIONABLE_ADVICE.not_editable}`, { reason: "not_editable" });
         run = async () => {
           await focusElement(page, t, false);
-          await typeText(page.cdp, value);
+          await typeVisibleOrInsert(page, t, value, warnings);
         };
       } else {
-        run = () => typeText(page.cdp, value);
+        run = async () => typeVisibleOrInsert(page, { kind: "point", frame: await mainFrame(page), point: { x: 0, y: 0 }, label: "page" }, value, warnings);
       }
       break;
     }
@@ -300,6 +320,9 @@ export async function act(page: PageContext, params: ActParams): Promise<ActOutc
         if (t) {
           await waitActionable(page, t, { enabled: true, timeoutMs });
           await focusElement(page, t, false);
+        }
+        if (!(await pageFocus(page, t ?? { kind: "point", frame: await mainFrame(page), point: { x: 0, y: 0 }, label: "page" })).visible) {
+          warnings.push("tab is hidden: Chrome may ignore key presses until it is visible (WS-C focus emulation)");
         }
         for (const c of combos) await press(page.cdp, c);
       };

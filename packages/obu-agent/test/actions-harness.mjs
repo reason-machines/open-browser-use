@@ -119,6 +119,10 @@ export async function launchChrome({ headful = process.env.OBU_E2E_HEADFUL === "
     const out = execFileSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"]).toString().trim().split("\n")[0];
     pid = Number(out);
   }
+  // Never leave an orphan Chrome (user rule: Mac RAM): kill on any exit path.
+  const kill = () => { try { if (pid) process.kill(pid, "SIGKILL"); } catch { /* gone */ } };
+  process.once("exit", kill);
+  for (const sig of ["SIGINT", "SIGTERM"]) process.once(sig, () => { kill(); process.exit(130); });
   const cdp = await Cdp.connect(wsUrl);
   const downloadDir = mkdtempSync(join(tmpdir(), "obu-wse-downloads-"));
   await cdp.send("Browser.setDownloadBehavior", { behavior: "allowAndName", downloadPath: downloadDir, eventsEnabled: true });
@@ -136,11 +140,11 @@ export class Browser {
   }
 
   /** Open a tab. Owned agent tabs are background; `foreground` simulates the user's own tab. */
-  async openTab(url, { foreground = false, owned = true } = {}) {
+  async openTab(url, { foreground = false, owned = true, bare = false } = {}) {
     const { targetId } = await this.cdp.send("Target.createTarget", { url: "about:blank", background: !foreground });
     const { sessionId } = await this.cdp.send("Target.attachToTarget", { targetId, flatten: true });
     const tab = new Tab(this, targetId, sessionId, owned);
-    await tab.attach();
+    await tab.attach({ bare });
     this.tabs.push(tab);
     if (url) await tab.goto(url);
     return tab;
@@ -151,6 +155,7 @@ export class Browser {
   }
 
   async close() {
+    for (const t of [...this.tabs]) await t.close();
     this.cdp.close();
     const { pid, child, userDataDir, downloadDir } = this.info;
     if (child) child.kill("SIGTERM");
@@ -196,7 +201,8 @@ export class Tab {
     };
   }
 
-  async attach() {
+  /** `bare`: skip lifecycle/focus emulation (a truly hidden background tab). */
+  async attach({ bare = false } = {}) {
     const c = this.browser.cdp;
     const s = this.sessionId;
     c.onAny((method, params, sid) => {
@@ -223,10 +229,16 @@ export class Tab {
     await c.send("Page.enable", {}, s);
     await c.send("DOM.enable", {}, s);
     await c.send("Network.enable", {}, s);
-    await c.send("Page.setWebLifecycleState", { state: "active" }, s).catch(() => {});
+    if (!bare) await c.send("Page.setWebLifecycleState", { state: "active" }, s).catch(() => {});
     await c.send("Target.setAutoAttach", { autoAttach: true, waitForDebuggerOnStart: false, flatten: true }, s);
     if (this.owned) await c.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 900, deviceScaleFactor: 0, mobile: false }, s);
-    await c.send("Emulation.setFocusEmulationEnabled", { enabled: true }, s);
+    if (!bare) await c.send("Emulation.setFocusEmulationEnabled", { enabled: true }, s);
+  }
+
+  async close() {
+    await this.browser.cdp.send("Target.closeTarget", { targetId: this.targetId }).catch(() => {});
+    rmSync(this.artifactDir, { recursive: true, force: true });
+    this.browser.tabs = this.browser.tabs.filter((t) => t !== this);
   }
 
   async goto(url) {

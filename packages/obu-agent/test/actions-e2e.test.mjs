@@ -2,9 +2,9 @@
 // BACKGROUND tabs in Chrome for Testing while another ("user") tab is focused.
 // Skips when Chrome for Testing is not installed. OBU_E2E_HEADFUL=1 runs headful
 // (launched with `open -g`, never brought to the front).
-import { test, before, after } from "node:test";
+import { test, before, after, afterEach } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { act, navigate } from "../dist/actions/index.js";
@@ -102,14 +102,23 @@ before(async () => {
   await browser.activate(userTab);
 });
 
+const agentTabs = [];
+const tmpDirs = [];
+// Close every agent tab as soon as its test finishes (user rule: Mac RAM).
+afterEach(async () => {
+  for (const t of agentTabs.splice(0)) await t.close();
+  for (const d of tmpDirs.splice(0)) rmSync(d, { recursive: true, force: true });
+});
+
 after(async () => {
   if (skip) return;
   await browser?.close();
   await server?.close();
 });
 
-async function agentTab(path) {
-  const tab = await browser.openTab(`${server.origin}${path}`);
+async function agentTab(path, opts = {}) {
+  const tab = await browser.openTab(`${server.origin}${path}`, opts);
+  agentTabs.push(tab);
   return { tab, page: tab.page() };
 }
 
@@ -121,7 +130,8 @@ async function userForegroundUnchanged() {
 
 test("click on a background owned tab: p50 < 300 ms incl. settle; user tab untouched", { skip }, async () => {
   const { tab, page } = await agentTab("/click");
-  assert.equal(await tab.eval("document.visibilityState"), browser.info.headful ? "hidden" : await tab.eval("document.visibilityState"));
+  // WS-C's attach (lifecycle active + focus emulation) makes owned background tabs report visible.
+  console.log(`# agent tab visibility: ${await tab.eval("document.visibilityState")} (user tab in front)`);
   const times = [];
   for (let i = 0; i < 30; i++) {
     const t0 = performance.now();
@@ -235,6 +245,7 @@ test("SPA route change and slow XHR settle without sleeps; real navigation settl
 
 function tmpFile(name, content) {
   const dir = mkdtempSync(join(tmpdir(), "obu-wse-up-"));
+  tmpDirs.push(dir);
   const p = join(dir, name);
   writeFileSync(p, content);
   return p;
@@ -342,4 +353,29 @@ test("drag (HTML5 + pointer), scroll, iframes (same-origin + OOPIF), shadow DOM,
   assert.equal(w.event.dialogType, "confirm");
   assert.equal(await dl.tab.eval("c.textContent"), "false");
   await userForegroundUnchanged();
+});
+
+test("hidden tab typing: fill and type still land exactly", { skip }, async () => {
+  const { tab, page } = await agentTab("/editable", { bare: true });
+  await act(page, { action: "fill", ref: "e4", value: "héllo 世界 🙂" });
+  assert.equal(await tab.eval("document.getElementById('i1').value"), "héllo 世界 🙂");
+  await act(page, { action: "type", ref: "e1", value: "abc" });
+  assert.equal(await tab.eval("document.getElementById('t1').value"), "abc");
+});
+
+test("truly hidden tab (no lifecycle/focus emulation): coords synthesize DOM events, ref clicks + screenshot still work", { skip }, async () => {
+  const { tab, page } = await agentTab("/click", { bare: true });
+  const vis = await tab.eval("document.visibilityState");
+  console.log(`# bare background tab visibility: ${vis}`);
+  const box = await tab.eval("(() => { const r = document.querySelector('[data-ref=e1]').getBoundingClientRect(); return {x: r.x + r.width/2, y: r.y + r.height/2}; })()");
+  const r = await act(page, { action: "click", coords: box });
+  if (vis === "hidden") assert.match(r.warnings.join(" "), /synthesized/);
+  await act(page, { action: "click", ref: "e1" });
+  assert.equal(await tab.eval("window.n"), 2);
+  await act(page, { action: "hover", ref: "e4" });
+  assert.equal(await tab.eval("document.getElementById('hov').textContent"), "hovered");
+  const t0 = performance.now();
+  const s = await screenshot(page, {});
+  console.log(`# hidden-tab screenshot ${(performance.now() - t0).toFixed(0)}ms via=${s.via}`);
+  assert.ok(performance.now() - t0 < 3000);
 });
