@@ -21,10 +21,11 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/build-injected.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "pnpm build && node --test test/*.test.mjs",
-    "fixtures": "node fixtures/server.mjs"
+    "fixtures": "node fixtures/server.mjs",
+    "build:injected": "node scripts/build-injected.mjs"
   },
   "files": [
     "dist/",

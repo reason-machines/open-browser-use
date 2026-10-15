@@ -1,0 +1,5 @@
+- title: "Dialogs fixture" [url=http://localhost:PORT/dialogs.html]
+- button "Alert" [ref=e1]
+- button "Confirm" [ref=e2]
+- dialog "Modal":
+  - button "Close" [ref=e3]

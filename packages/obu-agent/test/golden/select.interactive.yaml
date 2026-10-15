@@ -1,0 +1,6 @@
+- title: "Select fixture" [url=http://localhost:PORT/select.html]
+- combobox "Country" [ref=e1]: France
+- listbox "Langs" [ref=e2]: JS, Rust
+- listbox "Custom" [ref=e3]:
+  - option "One" [ref=e4] [selected]
+  - option "Two" [ref=e5]
