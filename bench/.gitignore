@@ -1,9 +1,13 @@
-# raw agent transcripts can contain third-party system prompts and page dumps: never commit
-results/**/transcript*
-results/**/events*.ndjson
-results/**/*.jsonl
-results/**/stdout.txt
-results/**/stderr.txt
-results/probe/
+# Raw agent transcripts/trajectories can contain third-party system prompts, skill text and page dumps:
+# only per-task meta.json/judge.json and run summaries are committed.
+results/**
+!results/*/
+!results/*/*/
+!results/*/*/*/
+!results/*/*/*/meta.json
+!results/*/*/*/judge.json
+!results/*/summary.md
+!results/*/summary.json
+!results/BASELINE.md
 .aside-sessions-created
 .native-manifest.backup.json

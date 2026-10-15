@@ -1,1 +1,0 @@
-{"success":true,"score":1.0,"reason":"The final answer contains the exact required vault code, 09MLBWN, confirmed by the trajectory.","failure_category":"none"}
