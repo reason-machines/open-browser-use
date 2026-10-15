@@ -156,9 +156,25 @@ export function fnHitTest(this: Element, x: number, y: number): { ok: boolean; b
   return { ok: false, by: `${role ?? hit.tagName.toLowerCase()}${id}${label ? ` "${label}"` : ""}` };
 }
 
+/**
+ * ARIA 1.1 combobox wrappers (`div[role=combobox]` around an `<input>`): users click the
+ * text field, and the widget opens on its focus/input — clicking the wrapper's centre
+ * usually lands on empty space. Retarget to the editable descendant.
+ */
+export function fnComboboxEditable(this: Element): Element | null {
+  const el = this as HTMLElement;
+  if (el.getAttribute("role") !== "combobox") return null;
+  if (el.matches("input, textarea, [contenteditable=''], [contenteditable=true]")) return null;
+  return el.querySelector("input:not([type=hidden]), textarea, [contenteditable=''], [contenteditable=true], [role=textbox], [role=searchbox]");
+}
+
 /** DOM click fallback (obscured element, unfocused tab, failed verify). */
 export function fnDomClick(this: Element): void {
   const el = this as HTMLElement;
+  // A real click focuses focusable targets before the click event; el.click() does not.
+  if (el.matches("input, textarea, select, button, [contenteditable=''], [contenteditable=true], [tabindex]") && document.activeElement !== el) {
+    try { el.focus({ preventScroll: true }); } catch { /* not focusable */ }
+  }
   if (typeof el.click === "function") { el.click(); return; }
   el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, composed: true, view: window }));
 }

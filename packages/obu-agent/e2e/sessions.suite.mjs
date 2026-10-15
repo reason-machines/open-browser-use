@@ -154,11 +154,12 @@ e2e("events: user closing an owned tab is reported (tab_closed reason user)", as
 });
 
 e2e("I4: lease expiry finalizes the session (E2E_SLOW=1, ~65 s)", { timeout: 120_000 }, async (ctx) => {
-  if (process.env.E2E_SLOW !== "1") return ctx.t.skip("set E2E_SLOW=1 to run the 60 s lease-expiry test");
+  if (process.env.E2E_SLOW !== "1" && !process.env.E2E_LEASE_TTL_MS) return ctx.t.skip("set E2E_SLOW=1 (or E2E_LEASE_TTL_MS=3000 for a fast run) to run the lease-expiry test");
   ctx.requireExtension();
   const s = await ctx.session("lease");
   const tab = await ctx.open(s, "table.html");
-  await sleep(63_000);
+  // The daemon's lease TTL (60 s by default; E2E_LEASE_TTL_MS shortens it for this test).
+  await sleep((s.leaseTtlMs ?? 60_000) + 3_000);
   if (ctx.env.cdp) assert.ok(await ctx.waitTargetGone(tab.targetId, 5000), "owned tab closed on lease expiry");
   await expectCode(s.call("tabs.list", {}), "unknown_session");
 });
