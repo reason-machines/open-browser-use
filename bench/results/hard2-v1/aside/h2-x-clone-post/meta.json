@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-x-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 34.0,
+  "steps": 17,
+  "tokens": 1287088,
+  "final": "Posted locally with the selected @ada_l mention and attached image. Post ID: **0SXJ3II**.",
+  "raw_final": "FINAL ANSWER: Posted locally with the selected @ada_l mention and attached image. Post ID: **0SXJ3II**.",
+  "session_id": "2Fqyq7ufqqEyui6c",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The reported Post ID 0SXJ3II does not match the required Post ID 1F7TJA5.",
+  "failure_category": "wrong_answer"
+ }
+}

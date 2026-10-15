@@ -33,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The trajectory shows actual listings for administrative support and customer care jobs in Bentonville, Arkansas. The final answer reports both roles, and the administrative job’s pay, schedule, and requirements are supported by the fetched listing.",
+  "reason": "The observations show administrative support and customer care jobs in Bentonville, Arkansas. The agent reached and reported matching listings, with the administrative role’s pay, schedule, and requirements supported by the page text.",
   "failure_category": "none"
  }
 }

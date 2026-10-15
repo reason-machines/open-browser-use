@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-x-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 262.4,
+  "steps": 41,
+  "tokens": 1441540,
+  "final": "I selected Ada Lovelace (`@ada_l`) from the mention suggestions and added `#obubench`, but couldn’t attach `/Users/adi/Downloads/obu-bench/post-image.png`: the file chooser timed out, and the browser rejected direct file assignment. I did not click Post. No Post ID was generated.",
+  "raw_final": "FINAL ANSWER: I selected Ada Lovelace (`@ada_l`) from the mention suggestions and added `#obubench`, but couldn’t attach `/Users/adi/Downloads/obu-bench/post-image.png`: the file chooser timed out, and the browser rejected direct file assignment. I did not click Post. No Post ID was generated.",
+  "session_id": "bench-hard2-v1-h2-x-clone-post",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent failed to attach the image or submit the post and did not report the required Post ID 1F7TJA5. File chooser timeouts and rejected file assignment blocked completion.",
+  "failure_category": "download_or_upload"
+ }
+}

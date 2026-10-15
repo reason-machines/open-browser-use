@@ -1,0 +1,45 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-login-otp",
+ "category": "login-2fa-session",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 46.1,
+  "steps": 21,
+  "tokens": 614800,
+  "final": "I couldn’t complete the sign-in because Chrome’s trusted pointer input did not toggle the “I’m not a robot” checkbox. I wasn’t able to reach the inbox or account page, so I don’t have the API secret.",
+  "raw_final": "I couldn’t complete the sign-in because Chrome’s trusted pointer input did not toggle the “I’m not a robot” checkbox. I wasn’t able to reach the inbox or account page, so I don’t have the API secret.",
+  "session_id": "bench-hard2-v1-h2-login-otp",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 79,
+   "left_by_agent": 1,
+   "left_urls": [
+    "http://127.0.0.1:18731/h2/login.html"
+   ],
+   "closed_by_harness": 1,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent did not report the required API secret 0ZMHRTM. Pointer interactions failed to toggle the robot checkbox, preventing sign-in and subsequent verification.",
+  "failure_category": "interaction_failed"
+ }
+}

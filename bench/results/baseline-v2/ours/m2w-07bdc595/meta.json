@@ -33,7 +33,7 @@
  "verdict": {
   "success": false,
   "score": 0,
-  "reason": "The agent stopped without selecting any ticket. Shanghai was only typed into an unconfirmed field; Beijing, high-speed service, and departure before 23:00 were never applied or verified.",
+  "reason": "No ticket was selected. Shanghai was only typed into an unconfirmed station field; Beijing, high-speed filtering, and departure before 23:00 were never applied or verified. The agent stopped after the initial autocomplete attempt despite a default travel date being present.",
   "failure_category": "gave_up"
  }
 }

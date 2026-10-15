@@ -10,5 +10,7 @@ results/**
 !results/*/summary.json
 !results/*/logins.json
 !results/BASELINE.md
+!results/M2W-AUDIT.md
+!results/*/m2w-audit.json
 .aside-sessions-created
 .native-manifest.backup.json

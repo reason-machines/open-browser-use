@@ -33,7 +33,7 @@
  "verdict": {
   "success": false,
   "score": 0.5,
-  "reason": "The agent identified ERICBS as the highest positive mover in BEPTEC's heatmap, but used intraday data timestamped 13:26 on 15 October 2026. It never verified the top mover as of the latest market close, so the required time constraint was not satisfied.",
-  "failure_category": "wrong_answer"
+  "reason": "ERICBS is the highest positive mover in the observed BEPTEC heatmap (+3.85%), but the data is timestamped 13:26 on 15 October 2026. The agent used intraday data without verifying the latest market close, so the time constraint was not satisfied.",
+  "failure_category": "incomplete"
  }
 }

@@ -1,0 +1,433 @@
+[
+ {
+  "id": "m2w-04613880",
+  "task": "Find discussions of the community and open one with the most replies on Flightaware.",
+  "website": "https://www.flightaware.com/",
+  "level": "medium",
+  "arms": {
+   "aside": true,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run supports feasibility and identifies The Banter Thread as having the most replies. Ours reached the correct community site but compared only five Latest topics, so it did not establish that Stream1090 had the most replies."
+ },
+ {
+  "id": "m2w-0a0fa834",
+  "task": "What are the onboard activities of the highest-rated Regent Seven Seas Cruise ship based on Costco member reviews?",
+  "website": "https://www.costco.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": null,
+  "feasible_today": "yes",
+  "judge_overstrict": [
+   "aside",
+   "ours"
+  ],
+  "antibot": [
+   "aside"
+  ],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "pass",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Both arms identified the highest-rated ship using Costco member ratings and extracted onboard activities; requiring a literal sort action despite comparative rating evidence looks over-strict. Aside encountered access-denial markers, while its public run’s decoding error provides no evidence about current site feasibility."
+ },
+ {
+  "id": "m2w-1ab384fb",
+  "task": "Show me the result of a proton emission decay for a Beryllium nucleus with 6 protons and 4 neutrons in the simulation.",
+  "website": "https://phet.colorado.edu/",
+  "level": "hard",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": null,
+  "feasible_today": "unclear",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Both arms reached the simulation but failed to obtain a verified decay result; Aside’s public run ended in a decoding error and provides no current feasibility evidence. The request is internally inconsistent: 6 protons identifies carbon, not beryllium, and proton emission would leave boron-9 (5 protons, 4 neutrons), not lithium-9."
+ },
+ {
+  "id": "m2w-239a29bd",
+  "task": "Find me a gluten-free diet to lose weight for a pregnant woman.",
+  "website": "https://www.healthline.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [
+   "aside"
+  ],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run shows the task is feasible with medically appropriate weight-management reframing; our Aside arm supplied a concrete gluten-free pregnancy menu and supporting citations. Ours supplied only general guidance, while omitting the start URL plausibly contributed to missing Healthline-specific evidence."
+ },
+ {
+  "id": "m2w-28e7574e",
+  "task": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.",
+  "website": "https://ohiomeansjobs.ohio.gov/",
+  "level": "hard",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates that the requested filters can be applied; zero matching jobs is a valid completion. Both supplied arms instead found an external Cook listing without verifying the required filters, so their failures are fair; omitting the start URL plausibly contributed to the wrong-site approach."
+ },
+ {
+  "id": "m2w-301f267f",
+  "task": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.",
+  "website": "https://www.healthline.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": true
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "pass",
+   "ours_in_aside": "pass"
+  },
+  "notes": "Aside’s recent public run supports continued feasibility on Healthline. Our Aside arm lacked observed evidence for its timing and protein claims, while ours had supporting evidence; the missing start URL is not established as the cause of failure."
+ },
+ {
+  "id": "m2w-354b4ddf",
+  "task": "Browse marketing jobs and filter by Bachelor's Degree education level.",
+  "website": "https://ohiomeansjobs.ohio.gov/",
+  "level": "medium",
+  "arms": {
+   "aside": true,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run confirms the task is doable on OhioMeansJobs. Both local arms used Indeed after receiving no start URL; Aside completed the filters on the wrong site, while ours never confirmed the degree filter. Captcha markers alone do not establish blocking."
+ },
+ {
+  "id": "m2w-39c388cd",
+  "task": "Calculate the estimated car loan payment amount for an average credit-rated person for a 15,000-dollar car with a down payment of 2000 dollars and loan tenure of 48 months in zip 65215 and shop for the lowest-priced car.",
+  "website": "https://www.cars.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [
+   "aside"
+  ],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates feasibility with all requested inputs and lowest-price sorting. Both audited arms lacked evidence for average credit and lowest-price sorting; the missing start URL plausibly contributed to search detours, while Aside also encountered access-denied responses."
+ },
+ {
+  "id": "m2w-0170ca95",
+  "task": "Check if a visa is required to work in the UK for longer than 6 months in Healthcare as an American citizen.",
+  "website": "https://www.gov.uk/",
+  "level": "hard",
+  "arms": {
+   "aside": true,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates the exact nationality, purpose, duration, and healthcare path on GOV.UK. Our answer was substantively correct, but the supplied record lacks observed evidence establishing the American nationality requirement, so its failure is defensible."
+ },
+ {
+  "id": "m2w-05483c50",
+  "task": "Look for the best rated BBB accredited charity near 12023.",
+  "website": "https://www.bbb.org/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates that the requested filters and a qualified result were obtainable. Neither local arm verified all key points; the captcha marker alone does not establish blocking, and the missing start URL is not supported as a material cause."
+ },
+ {
+  "id": "m2w-070c907d",
+  "task": "Find a dentist who specializes in pediatric dentistry and is located near zip code 90210 (within 5-mile distance).",
+  "website": "https://www.healthgrades.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s public run demonstrates feasibility with an explicit five-mile filter and a pediatric dentist listed 2.0 miles away. Neither local arm verified distance; omitting Healthgrades’ start URL plausibly diverted them from its radius-filtered search."
+ },
+ {
+  "id": "m2w-0b2623e9",
+  "task": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.",
+  "website": "https://www.petfinder.com/",
+  "level": "hard",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [
+   "ours"
+  ],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s public run provides recent evidence of feasibility, although intakeDate is an imperfect proxy for days on Petfinder. Both local arms lacked verified qualifying results; ours encountered Akamai, and neither failure appears attributable to the missing start URL."
+ },
+ {
+  "id": "m2w-0b838cd5",
+  "task": "Find all the locations for the second-best-rated used car dealer less than 5 miles from New York.",
+  "website": "https://www.bbb.org/",
+  "level": "hard",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates feasibility using BBB’s distance filter, rating sort, and dealer profile. Both local arms missed essential constraints; omitting the start URL plausibly diverted them to Google, and neither failure shows evidence of anti-bot blocking."
+ },
+ {
+  "id": "m2w-1223b075",
+  "task": "Complete a multiplication quiz on https://www.coolmath4kids.com/, covering multiplication facts for 11-12. The quiz should consist of 10 questions, with unlimited time allowed for each. The goal is to achieve a perfect score of 10 out of 10.",
+  "website": "https://www.coolmath4kids.com/",
+  "level": "hard",
+  "arms": {
+   "aside": true,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run confirms the quiz remains doable with the required settings and a visible 10/10 result. Our agent reached the correct quiz and settings but stopped before completion, so its failure is supported."
+ },
+ {
+  "id": "m2w-0059adc6",
+  "task": "Find support services jobs in Bentonville, in the state of Arkansas.",
+  "website": "https://careers.walmart.com/",
+  "level": "medium",
+  "arms": {
+   "aside": true,
+   "ours": true
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates the correct Walmart Support Services filter for Bentonville, Arkansas. Both local arms instead reported generic support-related jobs without establishing that filter; omitting the start URL plausibly caused this wrong-site drift, and both local PASS verdicts were too lenient."
+ },
+ {
+  "id": "m2w-005be9dd",
+  "task": "Find the weight of baggage allowance for economy class on Qatar Airways.",
+  "website": "https://www.qatarairways.com/",
+  "level": "easy",
+  "arms": {
+   "aside": true,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run confirms the official site provides Economy carry-on and checked-baggage weights. Ours found carry-on weight but omitted available checked-baggage weights; no evidence indicates anti-bot blocking or a missing-start-URL problem."
+ },
+ {
+  "id": "m2w-01abae96",
+  "task": "Show me the code for the company that is the top mover in the Cboe Europe Technology Sector Index (BEPTEC) as of the latest market close.",
+  "website": "https://www.cboe.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s public run provides recent evidence that BEPTEC’s top-movers view and constituent codes remain accessible. Both local arms failed to establish the latest market close; the aside arm also selected a decline rather than the highest positive mover."
+ },
+ {
+  "id": "m2w-0632e496",
+  "task": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.",
+  "website": "https://cookpad.com/",
+  "level": "easy",
+  "arms": {
+   "aside": true,
+   "ours": true
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s recent public run demonstrates that suitable recipes remain available on Cookpad. Both local arms found relevant recipes on other sites; omitting the start URL plausibly caused this site mismatch, so their passes do not establish completion of the original Cookpad task."
+ },
+ {
+  "id": "m2w-07bdc595",
+  "task": "Select a high speed train ticket with a departure time before 23:00  from Shanghai to Beijing.",
+  "website": "https://us.trip.com/",
+  "level": "medium",
+  "arms": {
+   "aside": false,
+   "ours": false
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": true,
+  "fair_outcome": {
+   "aside": "fail",
+   "ours": "fail",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Aside’s public run supports feasibility: it selected G532 departing at 06:31 and reached passenger details. Both local arms failed to select a ticket; omitting the start URL plausibly contributed to ours using 12306 instead of Trip.com."
+ },
+ {
+  "id": "m2w-07ec4a12",
+  "task": "Check drug interaction for melatonin and Folate Forte.",
+  "website": "https://www.drugs.com/",
+  "level": "medium",
+  "arms": {
+   "aside": true,
+   "ours": true
+  },
+  "aside_public": "pass",
+  "feasible_today": "yes",
+  "judge_overstrict": [],
+  "antibot": [],
+  "start_url_mattered": false,
+  "fair_outcome": {
+   "aside": "pass",
+   "ours": "pass",
+   "ours_in_aside": "n/a"
+  },
+  "notes": "Both arms found Drugs.com evidence for the exact pair and correctly reported no interactions found. Aside’s recent public run confirms the interaction checker remains usable; no anti-bot blocks or failures attributable to the missing start URL were observed."
+ }
+]

@@ -33,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The agent browsed two gluten-free chocolate chip cookie recipe pages and reported nut-free options. Eat With Clarity explicitly describes its recipe as nut-free; the reported ingredient lists contain no nuts. The final answer identifies both recipes and includes cross-contact guidance.",
+  "reason": "The agent searched for and opened two gluten-free chocolate chip cookie recipes, checked their contents, and reported suitable nut-free options. Eat With Clarity explicitly states the recipe is nut-free; the observations support the requested browsing result, with clipped text not grounds for failure.",
   "failure_category": "none"
  }
 }

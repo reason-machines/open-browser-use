@@ -33,7 +33,7 @@
  "verdict": {
   "success": false,
   "score": 0.5,
-  "reason": "Confirmed a used car dealer and its listed address, but never applied or verified the less-than-5-mile constraint or sorted qualifying dealers by rating. Google search snippets do not establish Brooklyn Auto Mall as the second-best-rated eligible dealer.",
+  "reason": "The observations confirm Brooklyn Auto Mall is a used car dealer and support its reported address. However, the agent never applied or verified the less-than-5-mile constraint or sorted results by rating. Comparing selected Google snippets does not establish the second-best-rated eligible dealer, and all locations were not conclusively verified.",
   "failure_category": "incomplete"
  }
 }

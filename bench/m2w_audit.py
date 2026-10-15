@@ -22,7 +22,8 @@ SCHEMA = {"type": "object", "additionalProperties": False,
               "judge_overstrict": {"type": "array", "items": {"type": "string"}},
               "antibot": {"type": "array", "items": {"type": "string"}},
               "start_url_mattered": {"type": "boolean"},
-              "fair_outcome": {"type": "object", "additionalProperties": {"type": "string", "enum": ["pass", "fail", "n/a"]}},
+              "fair_outcome": {"type": "object", "additionalProperties": False, "required": ["aside", "ours", "ours_in_aside"],
+                               "properties": {k: {"type": "string", "enum": ["pass", "fail", "n/a"]} for k in ("aside", "ours", "ours_in_aside")}},
               "notes": {"type": "string"}}}
 
 
@@ -46,7 +47,7 @@ def main(run):
         for meta_p in sorted(rd.glob(f"*/{tid}/meta.json")):
             m = json.loads(meta_p.read_text())
             raw = "".join(p.read_text(errors="replace") for p in meta_p.parent.glob("*") if p.name in ("events.ndjson", "transcript.jsonl"))
-            hits = sorted({h.lower() for h in BLOCK.findall(raw)})
+            hits = sorted({m_.group(0).lower() for m_ in BLOCK.finditer(raw)})
             arms[m["agent"]] = {"success": m["verdict"].get("success"), "reason": m["verdict"].get("reason"),
                                 "final": m["result"]["final"][:1200], "steps": m["result"]["steps"], "antibot_markers": hits,
                                 "prompt_given": m["result"].get("prompt_given") or "(no start URL given)"}
@@ -68,7 +69,7 @@ Answer:
 - judge_overstrict: list the arms whose FAIL looks over-strict relative to the WebJudge protocol (key points satisfied, evidence present but judge demanded more).
 - antibot: arms that were blocked by captcha/anti-bot/region walls.
 - start_url_mattered: did not giving the start URL plausibly cause a failure (wrong site, time spent searching)?
-- fair_outcome: for each arm, your best estimate of the outcome under a fair protocol (pass/fail/n/a).
+- fair_outcome: for each arm (use n/a for an arm that did not run), your best estimate of the outcome under a fair protocol (pass/fail/n/a).
 - notes: one or two sentences."""
         out = rd / f"_audit_{tid}.json"
         schema = rd / "_audit_schema.json"
