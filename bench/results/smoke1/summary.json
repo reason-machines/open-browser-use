@@ -1,0 +1,36 @@
+[
+ {
+  "agent": "aside",
+  "stack": "aside",
+  "suite": "hard",
+  "task_id": "fx-shadow",
+  "category": "shadow-dom",
+  "model": "aside/gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer contains the exact required vault code, 09MLBWN, confirmed by the trajectory.",
+  "seconds": 23.9,
+  "steps": 3,
+  "tokens": 277274,
+  "timed_out": false,
+  "final": "Vault code: 09MLBWN"
+ },
+ {
+  "agent": "ours",
+  "stack": "obu",
+  "suite": "hard",
+  "task_id": "fx-shadow",
+  "category": "shadow-dom",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer exactly matches the required vault code 09MLBWN.",
+  "seconds": 30.8,
+  "steps": 6,
+  "tokens": 180882,
+  "timed_out": false,
+  "final": "09MLBWN"
+ }
+]

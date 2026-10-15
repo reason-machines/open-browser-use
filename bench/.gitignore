@@ -1,0 +1,9 @@
+# raw agent transcripts can contain third-party system prompts and page dumps: never commit
+results/**/transcript*
+results/**/events*.ndjson
+results/**/*.jsonl
+results/**/stdout.txt
+results/**/stderr.txt
+results/probe/
+.aside-sessions-created
+.native-manifest.backup.json

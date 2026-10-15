@@ -1,9 +1,0 @@
-{
-  "allowed_origins": [
-    "chrome-extension://pnbmoicbkopffjjgfgfglopechaiemkp/"
-  ],
-  "description": "Open Browser Use Chrome native messaging host",
-  "name": "com.ifuryst.open_browser_use.extension",
-  "path": "/Users/adi/.local/share/reason/desktop/open_browser_use/0.1.42/native/darwin-arm64/open-browser-use",
-  "type": "stdio"
-}
