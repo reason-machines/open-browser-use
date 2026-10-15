@@ -61,6 +61,9 @@ up to 64 MiB); 5 MB results are verified live.
 - One Chrome tab group per **root** session, created on first tab; subagents
   (`parent_session_id`) put tabs in the root's group but own them
   individually — `getTabs` and `executeCdp` only see the caller's own tabs.
+- `getTabs` entries: `active` is the session's *logical* active tab; `browserActive`
+  (the real `tab.active`) and `windowFocused` tell whether the user can see the tab —
+  obu-agent's close guard (lease expiry / reconcile) uses those, never `active`.
 - Group title is the brand mark only (`BRAND.groupTitle`, e.g. `Reason`), one
   colour (`BRAND.groupColor`); no task label, checkmark or status. Session
   labels are stored for diagnostics only.

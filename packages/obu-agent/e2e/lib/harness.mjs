@@ -102,7 +102,7 @@ async function spawnDaemon(env) {
   const socket = env.socket;
   const cmd = process.env.E2E_DAEMON_CMD
     ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
-    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--obu-socket", env.hostSocket]];
+    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--obu-socket", env.hostSocket, ...(process.env.E2E_LEASE_TTL_MS ? ["--lease-ttl-ms", process.env.E2E_LEASE_TTL_MS] : [])]];
   const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_RELAY_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
   let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); if (process.env.E2E_DAEMON_LOG) appendFileSync(process.env.E2E_DAEMON_LOG, d); });
   started.procs.push(daemon); env.daemon = daemon; env.daemonStderr = () => err;

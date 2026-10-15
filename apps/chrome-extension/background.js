@@ -792,7 +792,17 @@ class BrowserBackend {
   async getTabs(params) {
     const session = await this.requireSession(params);
     const tabs = await this.getSessionTabs(session.sessionId);
-    return await this.withLogicalActive(session.sessionId, tabs.map(toBrowserTab));
+    // `active` is the session's logical active tab; `browserActive` + `windowFocused` say
+    // whether the user can actually see the tab (the daemon's close guard needs the latter).
+    const focusedWindows = new Set(
+      (await chrome.windows.getAll().catch(() => [])).filter((w) => w.focused).map((w) => w.id)
+    );
+    const browserTabs = tabs.map((tab) => ({
+      ...toBrowserTab(tab),
+      browserActive: tab.active === true,
+      windowFocused: focusedWindows.has(tab.windowId)
+    }));
+    return await this.withLogicalActive(session.sessionId, browserTabs);
   }
 
   async getUserTabs(params) {

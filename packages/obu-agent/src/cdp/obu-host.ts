@@ -211,7 +211,17 @@ export class ObuHostBackend implements BrowserBackend {
     if (owner) {
       const tabs = (await this.#request("getTabs", this.#params(owner)).catch(() => undefined)) as any[] | undefined;
       const tab = tabs?.find((candidate) => candidate.id === tabId);
-      if (tab) return { tabId, url: tab.url ?? "", title: tab.title ?? "", active: tab.active };
+      // Extensions that report it: `browserActive` is the real tab state (`active` is the
+      // session's logical active tab, which the user may not be looking at).
+      if (tab) {
+        return {
+          tabId,
+          url: tab.url ?? "",
+          title: tab.title ?? "",
+          active: typeof tab.browserActive === "boolean" ? tab.browserActive : tab.active,
+          ...(typeof tab.windowFocused === "boolean" ? { windowFocused: tab.windowFocused } : {}),
+        };
+      }
       if (tabs) return undefined;
     }
     return (await this.listBrowserTabs()).find((tab) => tab.tabId === tabId);
