@@ -511,17 +511,27 @@ export class TabRuntime {
   async run<T>(focus: boolean, fn: () => Promise<T>): Promise<T> {
     await this.ensureSetup();
     this.#inCall++;
-    let focused = false;
+    // Focus emulation on the tab AND every OOPIF child session: focusing an
+    // element inside a cross-process frame without it makes Chrome move real
+    // (OS-level) focus to the frame, which brings Chrome to the front.
+    const focusedSessions: (string | undefined)[] = [];
     try {
       if (focus) {
-        focused = await this.send("Emulation.setFocusEmulationEnabled", { enabled: true }, { timeoutMs: 3_000 }).then(
-          () => true,
-          () => false,
+        const sessions = [undefined, ...[...this.#children.keys()]];
+        await Promise.all(
+          sessions.map((sessionId) =>
+            this.send("Emulation.setFocusEmulationEnabled", { enabled: true }, { sessionId, timeoutMs: 3_000 }).then(
+              () => void focusedSessions.push(sessionId),
+              () => undefined,
+            ),
+          ),
         );
       }
       return await fn();
     } finally {
-      if (focused) await this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { timeoutMs: 3_000 }).catch(() => undefined);
+      await Promise.all(
+        focusedSessions.map((sessionId) => this.send("Emulation.setFocusEmulationEnabled", { enabled: false }, { sessionId, timeoutMs: 3_000 }).catch(() => undefined)),
+      );
       this.#inCall--;
     }
   }
