@@ -352,7 +352,14 @@ export class TabRuntime {
     } catch {
       origin = "";
     }
-    return { ordinal: state.ordinal, frameId: state.frameId, sessionId: state.sessionId, utilityContextId: contextId, origin };
+    return {
+      ordinal: state.ordinal,
+      frameId: state.frameId,
+      sessionId: state.sessionId,
+      ...(state.parentId ? { parentFrameId: state.parentId } : {}),
+      utilityContextId: contextId,
+      origin,
+    };
   }
 
   /** Create (or find) the utility world of a frame and make sure `__obu` is installed. */

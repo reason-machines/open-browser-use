@@ -10,7 +10,7 @@
 // mode, extension_disconnected / daemon unavailable) is reported as TODO, not failure.
 // E2E_STRICT=1 turns every pending into a failure — that is the Round-1 merge gate.
 import { spawn } from "node:child_process";
-import { appendFileSync, mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
+import { appendFileSync, writeFileSync, mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { ObuAgentClient, agentSocketPath } from "../../dist/index.js";
@@ -49,13 +49,16 @@ async function setup() {
     // Native host manifest must exist BEFORE Chrome starts so the extension's first connectNative succeeds.
     const userDataDir = join(tmp, "profile");
     installNativeHost({ userDataDir, hostBin, hostSocket: env.hostSocket, extensionId, tmp });
+    mkdirSync(join(userDataDir, "Default"), { recursive: true });
+    writeFileSync(join(userDataDir, "Default", "Preferences"), JSON.stringify({ download: { default_directory: env.downloadsDir, prompt_for_download: false, directory_upgrade: true }, savefile: { default_directory: env.downloadsDir } }));
     const chrome = await launchChrome({ tmp, port: env.cdpPort, userDataDir });
     started.procs.push(chrome.proc);
     dbg("chrome up", chrome.bin, env.cdpPort);
     env.chrome = chrome; env.extensionId = extensionId;
     env.cdp = started.cdp = await Cdp.connect(await browserWsUrl(env.cdpPort));
-    // Point downloads at our temp dir (ground truth for per-tab download tests).
-    await env.cdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: env.downloadsDir, eventsEnabled: true }).catch(() => {});
+    // Downloads go to our temp dir via the profile's own preference (set before launch), NOT
+    // Browser.setDownloadBehavior: a CDP download override makes Chrome skip its
+    // "name (1).ext" uniquifying, so concurrent same-name downloads overwrite each other.
     env.extensionLoaded = await waitForExtension(env);
     dbg("extension loaded", env.extensionLoaded, env.extensionId);
     if (!env.extensionLoaded) env.notes.push(`extension service worker not found (id ${extensionId})`);

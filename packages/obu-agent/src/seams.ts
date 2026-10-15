@@ -26,8 +26,10 @@ export interface FrameHandle {
   /** 0 = main frame; K = K-th iframe in stitch order (refs `fKeN`). */
   ordinal: number;
   frameId: string;
-  /** Child session for OOPIFs; undefined for same-process frames. */
+  /** Child session for OOPIFs (and frames nested in them); undefined for main-process frames. */
   sessionId?: string;
+  /** Parent frame id; undefined for the main frame. Used to map coordinates through nested OOPIFs. */
+  parentFrameId?: string;
   /** Isolated world execution context id where `__obu` lives. */
   utilityContextId: number;
   origin: string;
