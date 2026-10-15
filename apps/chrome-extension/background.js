@@ -1,4 +1,15 @@
-const NATIVE_HOST_NAME = "com.ifuryst.open_browser_use.extension";
+// @obu-brand-begin — generated from apps/chrome-extension/brands/<brand>.json by
+// scripts/package-chrome-extension-brand.mjs (OBU_BRAND=<brand>). Edit the JSON, not this block.
+const BRAND = Object.freeze({
+  "id": "default",
+  "displayName": "Open Browser Use",
+  "nativeHostName": "com.ifuryst.open_browser_use.extension",
+  "groupSuffix": "OBU",
+  "groupColor": "grey",
+  "deliverableGroupTitle": "✅ Open Browser Use"
+});
+// @obu-brand-end
+const NATIVE_HOST_NAME = BRAND.nativeHostName;
 const NATIVE_HOST_STATUS_KEY = "OPEN_BROWSER_USE_NATIVE_HOST_STATUS";
 const SESSION_STATE_KEY = "OPEN_BROWSER_USE_SESSION_STATE";
 const WEBMCP_ENABLED_KEY = "OPEN_BROWSER_USE_WEBMCP_ENABLED";
@@ -10,9 +21,49 @@ const DEFAULT_WEBMCP_LIST_TIMEOUT_MS = 5_000;
 const WEBMCP_TIMEOUT_GRACE_MS = 1_500;
 const CURSOR_ARRIVAL_TIMEOUT_MS = 1_000;
 const MAX_USER_TABS = 1000;
-const DEFAULT_SESSION_GROUP_TITLE = "Task - OBU";
-const DELIVERABLE_GROUP_TITLE = "✅ Open Browser Use";
-const LEGACY_SESSION_GROUP_TITLE_PATTERN = /^Open Browser Use [0-9a-f]{8}$/i;
+const DEFAULT_SESSION_LABEL = "Task";
+const DEFAULT_SESSION_GROUP_TITLE = sessionGroupTitle(DEFAULT_SESSION_LABEL);
+const DELIVERABLE_GROUP_TITLE = BRAND.deliverableGroupTitle;
+const LEGACY_SESSION_GROUP_TITLE_PATTERN = /^(Open Browser Use [0-9a-f]{8}|Task - OBU)$/i;
+// Host→extension native-messaging frames are capped at 1 MB by Chrome; the host
+// splits larger JSON payloads into {chunk:{id,i,n,data}} slices (WS-B pairs).
+const CHUNK_TTL_MS = 30_000;
+const TARGET_ID_RETRY_DELAYS_MS = [0, 50, 100, 200, 400];
+const DOWNLOAD_CORRELATION_WINDOW_MS = 15_000;
+// Events the daemon must always see for a tab, regardless of its subscriptions:
+// dialogs would hang the tab, child sessions/downloads/file choosers drive state.
+const ALWAYS_FORWARDED_CDP_EVENTS = new Set([
+  "Page.javascriptDialogOpening",
+  "Page.javascriptDialogClosed",
+  "Page.fileChooserOpened",
+  "Page.downloadWillBegin",
+  "Page.downloadProgress",
+  "Browser.downloadWillBegin",
+  "Browser.downloadProgress",
+  "Target.attachedToTarget",
+  "Target.detachedFromTarget",
+  "Target.targetCrashed",
+  "Inspector.detached",
+  "Inspector.targetCrashed"
+]);
+const ERROR_CODES = Object.freeze({
+  profile_mismatch: -32010,
+  tab_not_owned: -32011,
+  close_guarded: -32012
+});
+
+class ExtensionError extends Error {
+  constructor(code, message, data) {
+    super(message);
+    this.code = code;
+    this.data = data;
+  }
+}
+
+function sessionGroupTitle(label) {
+  const trimmed = typeof label === "string" ? label.trim() : "";
+  return `${trimmed || DEFAULT_SESSION_LABEL} · ${BRAND.groupSuffix}`;
+}
 const WEBMCP_CAPABILITY = {
   id: "webmcp",
   description: "Fetch page-defined WebMCP tools bound to the current document and invoke them."
@@ -55,21 +106,33 @@ class JsonRpcPeer {
       if (typeof handler !== "function") {
         throw new Error(`No handler registered for method: ${message.method}`);
       }
-      const result = await handler.call(this.handlers, message.params ?? {});
+      const params = message.params ?? {};
+      await this.checkRoute(params);
+      const result = await handler.call(this.handlers, params);
       if (id !== undefined) {
         this.transport.sendMessage({ jsonrpc: "2.0", id, result: result ?? {} });
       }
     } catch (error) {
       if (id !== undefined) {
-        this.transport.sendMessage({
-          jsonrpc: "2.0",
-          id,
-          error: {
-            code: -32000,
-            message: error instanceof Error ? error.message : String(error)
-          }
-        });
+        this.transport.sendMessage({ jsonrpc: "2.0", id, error: toRpcError(error) });
       }
+    }
+  }
+
+  // Requests may carry route{profileId}; one host can front several Chrome
+  // profiles, so a request meant for another profile must never act here.
+  async checkRoute(params) {
+    const route = params && typeof params === "object" ? params.route : undefined;
+    if (!route || typeof route !== "object" || route.profileId == null) {
+      return;
+    }
+    const profileId = await this.handlers.getProfileId?.();
+    if (route.profileId !== profileId) {
+      throw new ExtensionError(
+        ERROR_CODES.profile_mismatch,
+        `profile_mismatch: request routed to profile ${String(route.profileId)}, this extension is ${profileId}`,
+        { code: "profile_mismatch", expected: profileId, received: route.profileId }
+      );
     }
   }
 
@@ -78,11 +141,71 @@ class JsonRpcPeer {
   }
 }
 
+function toRpcError(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (error instanceof ExtensionError) {
+    return { code: error.code, message, ...(error.data ? { data: error.data } : {}) };
+  }
+  return { code: -32000, message };
+}
+
+// Reassembles host→extension frames split as {chunk:{id,i,n,data}} where data
+// is the i-th slice of the JSON text of one message (0 ≤ i < n).
+class ChunkAssembler {
+  constructor({ now = () => Date.now(), ttlMs = CHUNK_TTL_MS } = {}) {
+    this.now = now;
+    this.ttlMs = ttlMs;
+    this.pending = new Map();
+  }
+
+  // Returns the parsed message when complete, null while waiting, and the
+  // input unchanged when it is not a chunk frame.
+  accept(frame) {
+    const chunk = frame && typeof frame === "object" ? frame.chunk : undefined;
+    if (!chunk || typeof chunk !== "object") {
+      return frame;
+    }
+    this.gc();
+    const { id, i, n, data } = chunk;
+    if (typeof id !== "string" || !Number.isInteger(i) || !Number.isInteger(n) || n <= 0 || i < 0 || i >= n || typeof data !== "string") {
+      throw new Error("Malformed chunk frame");
+    }
+    let entry = this.pending.get(id);
+    if (!entry) {
+      entry = { n, parts: new Array(n), received: 0, at: this.now() };
+      this.pending.set(id, entry);
+    }
+    if (entry.n !== n) {
+      this.pending.delete(id);
+      throw new Error(`Chunk ${id} changed part count`);
+    }
+    if (entry.parts[i] === undefined) {
+      entry.parts[i] = data;
+      entry.received += 1;
+    }
+    if (entry.received < entry.n) {
+      return null;
+    }
+    this.pending.delete(id);
+    return JSON.parse(entry.parts.join(""));
+  }
+
+  gc() {
+    const cutoff = this.now() - this.ttlMs;
+    for (const [id, entry] of this.pending) {
+      if (entry.at < cutoff) {
+        this.pending.delete(id);
+      }
+    }
+  }
+}
+
 class NativeTransport {
   constructor(hostName) {
     this.hostName = hostName;
     this.port = null;
     this.messageCallback = null;
+    this.chunks = new ChunkAssembler();
     this.reconnectAttempt = 0;
     this.status = {
       hostName: this.hostName,
@@ -119,8 +242,17 @@ class NativeTransport {
       this.port = port;
       this.reconnectAttempt = 0;
       this.setStatus({ state: "connected" });
-      port.onMessage.addListener((message) => {
-        this.messageCallback?.(message);
+      port.onMessage.addListener((frame) => {
+        let message;
+        try {
+          message = this.chunks.accept(frame);
+        } catch (error) {
+          console.warn("Dropping native frame:", error);
+          return;
+        }
+        if (message !== null) {
+          this.messageCallback?.(message);
+        }
       });
       port.onDisconnect.addListener(() => {
         this.port = null;
@@ -204,21 +336,47 @@ class SessionStore {
     await chrome.storage.local.set({ [SESSION_STATE_KEY]: this.state });
   }
 
-  async getSession(sessionId) {
+  // A child session (parentSessionId) shares its root's tab group and bound
+  // window but owns its own tabs (tabOrigins) — subagents never see each
+  // other's tabs through getTabs.
+  async getSession(sessionId, { parentSessionId, label } = {}) {
     await this.ready;
     const existing = this.state.sessions[sessionId];
     if (existing && typeof existing === "object") {
       return existing;
     }
+    let rootSessionId = null;
+    if (typeof parentSessionId === "string" && parentSessionId && parentSessionId !== sessionId) {
+      const parent = await this.getSession(parentSessionId);
+      rootSessionId = parent.rootSessionId ?? parentSessionId;
+    }
     const created = {
       chromeGroupId: null,
-      title: DEFAULT_SESSION_GROUP_TITLE,
+      windowId: null,
+      title: label ? sessionGroupTitle(label) : DEFAULT_SESSION_GROUP_TITLE,
       activeTabId: null,
-      tabOrigins: {}
+      tabOrigins: {},
+      ...(rootSessionId ? { rootSessionId, parentSessionId } : {})
     };
     this.state.sessions[sessionId] = created;
     await this.save();
     return created;
+  }
+
+  async getRoot(sessionId) {
+    const session = await this.getSession(sessionId);
+    const rootSessionId = session.rootSessionId ?? sessionId;
+    return { rootSessionId, root: rootSessionId === sessionId ? session : await this.getSession(rootSessionId) };
+  }
+
+  async findTabOwner(tabId) {
+    await this.ready;
+    for (const [sessionId, session] of Object.entries(this.state.sessions)) {
+      if (session?.tabOrigins && Object.hasOwn(session.tabOrigins, String(tabId))) {
+        return { sessionId, session, origin: session.tabOrigins[String(tabId)] };
+      }
+    }
+    return null;
   }
 
   async removeSession(sessionId) {
@@ -305,6 +463,7 @@ class BrowserBackend {
     this.cursorByTabId = new Map();
     this.downloadFilenamesById = new Map();
     this.downloadUrlsById = new Map();
+    this.downloadContextById = new Map();
     this.downloadsById = new Map();
     this.downloadWaiters = new Set();
     this.downloadChangeListeners = new Set();
@@ -312,6 +471,16 @@ class BrowserBackend {
     this.fileChoosersById = new Map();
     this.fileChooserWaitersByTabId = new Map();
     this.nextCursorMoveSequence = 1;
+    // Serialises every tab-group mutation: concurrent chrome.tabs.group calls
+    // for one session would otherwise race into duplicate groups.
+    this.groupQueue = Promise.resolve();
+    // sessionId -> Map<tabId, Set<domain>>; "*" subscribes to every domain.
+    this.subscriptions = new Map();
+    this.attachingTabs = new Map();
+    this.targetIdByTabId = new Map();
+    this.recentDownloadBegins = [];
+    this.notify = null;
+    this.profileId = null;
     chrome.debugger.onDetach.addListener((source) => {
       if (typeof source.tabId === "number") {
         this.attachedTabs.delete(source.tabId);
@@ -323,23 +492,58 @@ class BrowserBackend {
     return "pong";
   }
 
-  async getInfo() {
+  async getProfileId() {
+    if (this.profileId) {
+      return this.profileId;
+    }
     let { extensionInstanceId } = await chrome.storage.local.get("extensionInstanceId");
     if (typeof extensionInstanceId !== "string") {
       extensionInstanceId = crypto.randomUUID();
       await chrome.storage.local.set({ extensionInstanceId });
     }
+    this.profileId = extensionInstanceId;
+    return extensionInstanceId;
+  }
+
+  emit(method, params) {
+    try {
+      this.notify?.(method, params);
+    } catch {}
+  }
+
+  queueGroupOp(fn) {
+    const run = this.groupQueue.then(fn, fn);
+    this.groupQueue = run.catch(() => {});
+    return run;
+  }
+
+  async getInfo() {
+    const extensionInstanceId = await this.getProfileId();
     const webMcpEnabled = (await this.webMcpGate?.enabled?.()) === true;
     return {
-      name: "Open Browser Use Chrome",
+      name: `${BRAND.displayName} Chrome`,
       version: chrome.runtime.getManifest().version,
       type: "extension",
       capabilities: {
-        tab: webMcpEnabled ? [WEBMCP_CAPABILITY] : []
+        tab: webMcpEnabled ? [WEBMCP_CAPABILITY] : [],
+        // Agent-wire v2 features (docs: apps/chrome-extension/WIRE.md).
+        wire: [
+          "cdp-child-sessions",
+          "implicit-attach",
+          "subscribe",
+          "chunked-frames",
+          "route",
+          "lease-events",
+          "popup-adoption",
+          "download-correlation",
+          "close-guard"
+        ]
       },
       metadata: {
         extensionId: chrome.runtime.id,
         extensionInstanceId,
+        profileId: extensionInstanceId,
+        brand: BRAND.id,
         nativeHostName: NATIVE_HOST_NAME
       }
     };
@@ -347,10 +551,147 @@ class BrowserBackend {
 
   async createTab(params) {
     const session = await this.requireSession(params);
-    const chromeTab = await createBackgroundTab();
+    const { root } = await this.store.getRoot(session.sessionId);
+    const url = typeof params.url === "string" && params.url ? params.url : "about:blank";
+    const chromeTab = await createBackgroundTab(root, url);
     await this.ensureSessionGroup(session.sessionId, chromeTab.id, "agent");
     await this.setSessionActiveTab(session.sessionId, chromeTab.id);
-    return { ...toBrowserTab(chromeTab), active: true };
+    const targetId = await this.lookupTargetId(chromeTab.id).catch(() => null);
+    return { ...toBrowserTab(chromeTab), active: true, ...(targetId ? { targetId } : {}) };
+  }
+
+  // tabId → CDP targetId via chrome.debugger.getTargets (the target may appear
+  // a beat after tabs.create resolves, hence the short retry ladder).
+  async lookupTargetId(tabId) {
+    const cached = this.targetIdByTabId.get(tabId);
+    if (cached) {
+      return cached;
+    }
+    for (const delay of TARGET_ID_RETRY_DELAYS_MS) {
+      if (delay > 0) {
+        await sleep(delay);
+      }
+      const targets = await chrome.debugger.getTargets();
+      const match = targets.find((target) => target.tabId === tabId && target.type === "page") ??
+        targets.find((target) => target.tabId === tabId);
+      if (match?.id) {
+        this.targetIdByTabId.set(tabId, match.id);
+        return match.id;
+      }
+    }
+    return null;
+  }
+
+  async getTargetId(params) {
+    await this.requireSessionTab(params, "getTargetId");
+    const tabId = requireTabId(params, "getTargetId");
+    return { tabId, targetId: await this.lookupTargetId(tabId) };
+  }
+
+  // Closes one owned agent tab, honouring the close guard: never close a tab
+  // the user is looking at (active in the focused window) or one that has left
+  // the session's group; such a tab is released to the user instead.
+  async closeTab(params) {
+    const session = await this.requireSession(params);
+    const tabId = requireTabId(params, "closeTab");
+    const owner = await this.store.findTabOwner(tabId);
+    if (!owner || owner.sessionId !== session.sessionId) {
+      throw new ExtensionError(ERROR_CODES.tab_not_owned, `tab_not_owned: tab ${tabId} is not owned by browser session ${session.sessionId}`, { code: "tab_not_owned", tabId });
+    }
+    const tab = await chrome.tabs.get(tabId).catch(() => null);
+    const guard = tab ? await this.closeGuard(session.sessionId, tab, owner.origin) : null;
+    delete owner.session.tabOrigins[String(tabId)];
+    this.dropTabState(session.sessionId, tabId);
+    await this.store.save();
+    if (!tab) {
+      return { closed: false, released: false, reason: "gone" };
+    }
+    await this.detachMany([tabId]);
+    if (owner.origin === "user" || guard) {
+      await this.queueGroupOp(() => chrome.tabs.ungroup?.(tabId)).catch(() => {});
+      return { closed: false, released: true, reason: owner.origin === "user" ? "borrowed" : guard };
+    }
+    await chrome.tabs.remove(tabId);
+    return { closed: true, released: false };
+  }
+
+  // Returns null when the tab may be closed, or the reason it may not.
+  async closeGuard(sessionId, tab, origin) {
+    const { root } = await this.store.getRoot(sessionId);
+    const inGroup = typeof root.chromeGroupId === "number" && tab.groupId === root.chromeGroupId;
+    // Popup-window tabs cannot be grouped; they stay closable while ungrouped.
+    if (!inGroup && !(origin === "popup" && (tab.groupId ?? -1) === -1)) {
+      return "left_group";
+    }
+    if (tab.active) {
+      const win = await chrome.windows?.get?.(tab.windowId).catch(() => null);
+      if (win?.focused) {
+        return "user_viewing";
+      }
+    }
+    return null;
+  }
+
+  dropTabState(sessionId, tabId) {
+    this.cursorByTabId.delete(tabId);
+    this.targetIdByTabId.delete(tabId);
+    this.subscriptions.get(sessionId)?.delete(tabId);
+    if (this.activeTabsBySession.get(sessionId) === tabId) {
+      this.activeTabsBySession.delete(sessionId);
+    }
+  }
+
+  // Per-session CDP event subscription. Events for a tab nobody subscribed to
+  // are still broadcast (legacy clients); once any session subscribes to a tab
+  // only the listed domains (plus ALWAYS_FORWARDED_CDP_EVENTS) flow for it.
+  async subscribe(params) {
+    const session = await this.requireSession(params);
+    const tabId = requireTabId(params, "subscribe");
+    await this.requireSessionTab(params, "subscribe");
+    if (!Array.isArray(params.domains) || params.domains.some((domain) => typeof domain !== "string" || !domain)) {
+      throw new Error("subscribe requires domains to be an array of non-empty strings");
+    }
+    let tabs = this.subscriptions.get(session.sessionId);
+    if (!tabs) {
+      tabs = new Map();
+      this.subscriptions.set(session.sessionId, tabs);
+    }
+    tabs.set(tabId, new Set(params.domains));
+    return { tabId, domains: [...tabs.get(tabId)] };
+  }
+
+  async unsubscribe(params) {
+    const session = await this.requireSession(params);
+    const tabs = this.subscriptions.get(session.sessionId);
+    if (Number.isInteger(params.tabId)) {
+      tabs?.delete(params.tabId);
+    } else {
+      this.subscriptions.delete(session.sessionId);
+    }
+    if (tabs && tabs.size === 0) {
+      this.subscriptions.delete(session.sessionId);
+    }
+  }
+
+  // Returns the subscriber session ids for an event, [] when it should be
+  // dropped, or null for legacy broadcast (nobody subscribed to this tab).
+  cdpEventSubscribers(source, method) {
+    const tabId = source?.tabId;
+    const domain = typeof method === "string" ? method.split(".")[0] : "";
+    const subscribers = [];
+    let anySubscription = false;
+    for (const [sessionId, tabs] of this.subscriptions) {
+      const domains = tabs.get(tabId);
+      if (!domains) continue;
+      anySubscription = true;
+      if (domains.has("*") || domains.has(domain) || ALWAYS_FORWARDED_CDP_EVENTS.has(method)) {
+        subscribers.push(sessionId);
+      }
+    }
+    if (!anySubscription) {
+      return null;
+    }
+    return subscribers;
   }
 
   async getTabs(params) {
@@ -435,13 +776,18 @@ class BrowserBackend {
     if (tab.url?.startsWith("chrome://")) {
       throw new Error(`Chrome internal tab ${tabId} cannot be claimed`);
     }
-    if (typeof tab.groupId === "number" && tab.groupId !== -1) {
+    const tabOwner = await this.store.findTabOwner(tabId);
+    if (tabOwner && tabOwner.sessionId !== session.sessionId) {
+      throw new ExtensionError(ERROR_CODES.tab_not_owned, `Tab ${tabId} is already part of browser session ${tabOwner.sessionId}`, { code: "tab_not_owned", tabId, owner: tabOwner.sessionId });
+    }
+    if (!tabOwner && typeof tab.groupId === "number" && tab.groupId !== -1) {
       const owner = await this.store.findSessionByGroup(tab.groupId);
-      if (owner && owner.sessionId !== session.sessionId) {
-        throw new Error(`Tab ${tabId} is already part of browser session ${owner.sessionId}`);
+      const { rootSessionId } = await this.store.getRoot(session.sessionId);
+      if (owner && owner.sessionId !== rootSessionId) {
+        throw new ExtensionError(ERROR_CODES.tab_not_owned, `Tab ${tabId} is already part of browser session ${owner.sessionId}`, { code: "tab_not_owned", tabId, owner: owner.sessionId });
       }
     }
-    await this.ensureSessionGroup(session.sessionId, tab.id, "user");
+    await this.ensureSessionGroup(session.sessionId, tab.id, tabOwner?.origin ?? "user");
     await this.setSessionActiveTab(session.sessionId, tab.id);
     return { ...toBrowserTab(tab), active: true };
   }
@@ -476,6 +822,7 @@ class BrowserBackend {
     const userTabsToRelease = [];
     const deliverableTabs = [];
     const handoffTabs = [];
+    const guardedTabs = [];
     for (const tab of tabs) {
       if (!hasTabId(tab)) {
         continue;
@@ -489,12 +836,26 @@ class BrowserBackend {
         deliverableTabs.push(tab.id);
         continue;
       }
-      if (sessionState.tabOrigins[String(tab.id)] === "agent") {
-        agentTabsToClose.push(tab.id);
+      const origin = sessionState.tabOrigins[String(tab.id)];
+      if (origin === "agent" || origin === "popup") {
+        const guard = await this.closeGuard(session.sessionId, tab, origin);
+        if (guard) {
+          userTabsToRelease.push(tab.id);
+          guardedTabs.push({ tabId: tab.id, reason: guard });
+        } else {
+          agentTabsToClose.push(tab.id);
+        }
       } else {
         userTabsToRelease.push(tab.id);
       }
     }
+    // Drop ownership before mutating Chrome so our own ungroup/remove events
+    // are not mistaken for the user revoking a lease.
+    for (const tabId of [...agentTabsToClose, ...userTabsToRelease, ...deliverableTabs]) {
+      delete sessionState.tabOrigins[String(tabId)];
+      this.dropTabState(session.sessionId, tabId);
+    }
+    await this.store.save();
     // Detach every disposition, including handoff tabs we keep alive: leaving a
     // tab attached keeps Chrome's "started debugging this browser" banner up
     // after the turn ends. The debugger re-attaches lazily on the next CDP call
@@ -510,14 +871,12 @@ class BrowserBackend {
       await chrome.tabs.remove(agentTabsToClose.length === 1 ? agentTabsToClose[0] : agentTabsToClose);
     }
     if (userTabsToRelease.length > 0 && chrome.tabs.ungroup) {
-      await chrome.tabs.ungroup(userTabsToRelease.length === 1 ? userTabsToRelease[0] : userTabsToRelease);
+      await this.queueGroupOp(() =>
+        chrome.tabs.ungroup(userTabsToRelease.length === 1 ? userTabsToRelease[0] : userTabsToRelease)
+      );
     }
     if (deliverableTabs.length > 0) {
-      await this.moveToDeliverables(deliverableTabs);
-    }
-    for (const tabId of [...agentTabsToClose, ...userTabsToRelease, ...deliverableTabs]) {
-      delete sessionState.tabOrigins[String(tabId)];
-      this.cursorByTabId.delete(tabId);
+      await this.queueGroupOp(() => this.moveToDeliverables(deliverableTabs));
     }
     if (handoffTabs.length > 0) {
       sessionState.activeTabId = handoffTabs.includes(sessionState.activeTabId)
@@ -527,34 +886,69 @@ class BrowserBackend {
       await this.store.save();
     } else {
       this.activeTabsBySession.delete(session.sessionId);
-      await this.store.removeSession(session.sessionId);
+      this.subscriptions.delete(session.sessionId);
+      const hasChildren = Object.values(this.store.state.sessions).some(
+        (other) => other?.rootSessionId === session.sessionId
+      );
+      if (hasChildren) {
+        // Live subagents still use this root's group; keep it, drop the rest.
+        sessionState.activeTabId = null;
+        await this.store.save();
+      } else {
+        await this.store.removeSession(session.sessionId);
+      }
     }
+    return {
+      closedTabIds: agentTabsToClose,
+      releasedTabIds: userTabsToRelease,
+      keptTabIds: [...handoffTabs, ...deliverableTabs],
+      guardedTabs
+    };
   }
 
   async nameSession(params) {
     const session = await this.requireSession(params);
-    const name = typeof params.name === "string" && params.name.trim() ? params.name.trim() : DEFAULT_SESSION_GROUP_TITLE;
-    const sessionState = await this.store.getSession(session.sessionId);
-    sessionState.title = name;
+    const name = sessionGroupTitle(typeof params.name === "string" ? params.name : "");
+    // The group belongs to the root session; naming a subagent renames nothing.
+    const { rootSessionId, root } = await this.store.getRoot(session.sessionId);
+    if (rootSessionId !== session.sessionId) {
+      return;
+    }
+    root.title = name;
     await this.store.save();
-    if (typeof sessionState.chromeGroupId === "number") {
-      await chrome.tabGroups.update(sessionState.chromeGroupId, { title: name }).catch(() => {});
+    if (typeof root.chromeGroupId === "number") {
+      await this.queueGroupOp(() => chrome.tabGroups.update(root.chromeGroupId, { title: name })).catch(() => {});
     }
   }
 
   async attach(params) {
     await this.requireSessionTab(params, "attach");
     const tabId = requireTabId(params, "attach");
-    if (!this.attachedTabs.has(tabId)) {
-      try {
-        await chrome.debugger.attach({ tabId }, "1.3");
-      } catch (error) {
-        if (!String(error?.message ?? error).includes("Another debugger")) {
-          throw error;
-        }
-      }
-      this.attachedTabs.add(tabId);
+    const alreadyAttached = this.attachedTabs.has(tabId);
+    await this.ensureAttached(tabId);
+    return { tabId, alreadyAttached };
+  }
+
+  // Idempotent and safe under concurrency: parallel calls share one attach.
+  async ensureAttached(tabId) {
+    if (this.attachedTabs.has(tabId)) {
+      return;
     }
+    let pending = this.attachingTabs.get(tabId);
+    if (!pending) {
+      pending = (async () => {
+        try {
+          await chrome.debugger.attach({ tabId }, "1.3");
+        } catch (error) {
+          if (!String(error?.message ?? error).includes("Another debugger")) {
+            throw error;
+          }
+        }
+        this.attachedTabs.add(tabId);
+      })().finally(() => this.attachingTabs.delete(tabId));
+      this.attachingTabs.set(tabId, pending);
+    }
+    await pending;
   }
 
   async detach(params) {
@@ -565,12 +959,21 @@ class BrowserBackend {
 
   async executeCdp(params) {
     await this.requireSession(params);
-    const target = params.target && typeof params.target === "object" ? params.target : {};
-    const tabId = target.tabId;
+    const rawTarget = params.target && typeof params.target === "object" ? params.target : {};
+    const tabId = rawTarget.tabId;
+    // target.sessionId addresses a flat child session (OOPIF / worker) that was
+    // auto-attached under this tab (chrome.debugger DebuggerSession, Chrome ≥ 125).
+    const target = { ...rawTarget };
+    if (target.sessionId === undefined || target.sessionId === null || target.sessionId === "") {
+      delete target.sessionId;
+    } else if (typeof target.sessionId !== "string") {
+      throw new Error("executeCdp target.sessionId must be a string");
+    }
     if (typeof tabId === "number") {
       await this.requireSessionTab({ ...params, tabId }, "executeCdp");
+      // Implicit attach: no separate `attach` round trip before the first command.
       if (!this.attachedTabs.has(tabId)) {
-        throw new Error("Debugger unattached");
+        await this.ensureAttached(tabId);
       }
     }
     const timeoutMs =
@@ -893,20 +1296,81 @@ class BrowserBackend {
     return () => this.downloadChangeListeners.delete(listener);
   }
 
-  handleDownloadCreated(item) {
-    if (!this.isBrowserControlActive() || !Number.isInteger(item?.id)) {
+  recordDownloadBegin(tabId, params) {
+    const now = Date.now();
+    this.recentDownloadBegins = this.recentDownloadBegins.filter(
+      (entry) => now - entry.at < DOWNLOAD_CORRELATION_WINDOW_MS
+    );
+    this.recentDownloadBegins.push({
+      tabId,
+      url: typeof params.url === "string" ? params.url : "",
+      guid: typeof params.guid === "string" ? params.guid : undefined,
+      suggestedFilename: typeof params.suggestedFilename === "string" ? params.suggestedFilename : undefined,
+      at: now
+    });
+  }
+
+  // Best guess of the tab that started a chrome.downloads item: a recent
+  // Page.downloadWillBegin with the same URL, else a session tab whose URL is
+  // the referrer, else the only active session tab. Confidence is reported.
+  async guessDownloadTab(item, urls) {
+    const now = Date.now();
+    const begin = [...this.recentDownloadBegins]
+      .reverse()
+      .find((entry) => now - entry.at < DOWNLOAD_CORRELATION_WINDOW_MS && urls.includes(entry.url));
+    if (begin) {
+      this.recentDownloadBegins = this.recentDownloadBegins.filter((entry) => entry !== begin);
+      return { tabId: begin.tabId, guid: begin.guid, confidence: "cdp" };
+    }
+    const referrer = typeof item.referrer === "string" ? item.referrer : "";
+    const activeTabIds = [...this.activeTabsBySession.values()];
+    if (referrer) {
+      for (const tabId of activeTabIds) {
+        const tab = await chrome.tabs.get(tabId).catch(() => null);
+        if (tab?.url && tab.url === referrer) {
+          return { tabId, confidence: "referrer" };
+        }
+      }
+    }
+    if (activeTabIds.length === 1) {
+      return { tabId: activeTabIds[0], confidence: "only_active" };
+    }
+    return null;
+  }
+
+  async handleDownloadCreated(item) {
+    if (!Number.isInteger(item?.id)) {
       return;
     }
     const filename = typeof item.filename === "string" ? item.filename : "";
     const url =
-      typeof item.finalUrl === "string" ? item.finalUrl : typeof item.url === "string" ? item.url : "";
+      typeof item.finalUrl === "string" && item.finalUrl ? item.finalUrl : typeof item.url === "string" ? item.url : "";
+    const urls = [item.url, item.finalUrl].filter((value) => typeof value === "string" && value);
+    const guess = this.isBrowserControlActive() || this.recentDownloadBegins.length > 0
+      ? await this.guessDownloadTab(item, urls)
+      : null;
+    if (!this.isBrowserControlActive() && !guess) {
+      return;
+    }
+    const owner = guess ? await this.store.findTabOwner(guess.tabId) : null;
+    const context = {
+      ...(typeof item.referrer === "string" && item.referrer ? { referrer: item.referrer } : {}),
+      ...(typeof item.startTime === "string" ? { startTime: item.startTime } : {}),
+      ...(typeof item.mime === "string" && item.mime ? { mime: item.mime } : {}),
+      ...(Number.isFinite(item.totalBytes) && item.totalBytes >= 0 ? { totalBytes: item.totalBytes } : {}),
+      ...(guess ? { tabId: guess.tabId, tabConfidence: guess.confidence } : {}),
+      ...(guess?.guid ? { guid: guess.guid } : {}),
+      ...(owner ? { sessionId: owner.sessionId } : {})
+    };
     this.downloadFilenamesById.set(item.id, filename);
     this.downloadUrlsById.set(item.id, url);
+    this.downloadContextById.set(item.id, context);
     this.emitDownloadChange({
       id: String(item.id),
       filename,
       url,
-      status: "started"
+      status: "started",
+      ...context
     });
   }
 
@@ -931,11 +1395,13 @@ class BrowserBackend {
       id: String(delta.id),
       filename,
       url,
-      status
+      status,
+      ...(this.downloadContextById.get(delta.id) ?? {})
     });
     if (status === "complete" || status === "failed" || status === "canceled") {
       this.downloadFilenamesById.delete(delta.id);
       this.downloadUrlsById.delete(delta.id);
+      this.downloadContextById.delete(delta.id);
     }
   }
 
@@ -949,7 +1415,97 @@ class BrowserBackend {
     return Boolean(waiter);
   }
 
+  // --- Chrome tab events → lease / popup notifications -------------------
+
+  // A tab opened by one of a session's tabs (window.open, target=_blank,
+  // middle-click) is adopted by that session and reported as popupOpened.
+  async handleTabCreated(tab) {
+    if (!hasTabId(tab) || !Number.isInteger(tab.openerTabId)) {
+      return;
+    }
+    const owner = await this.store.findTabOwner(tab.openerTabId);
+    if (!owner || (await this.store.findTabOwner(tab.id))) {
+      return;
+    }
+    await this.ensureSessionGroup(owner.sessionId, tab.id, "agent").catch(() => {});
+    this.emit("popupOpened", {
+      tabId: tab.id,
+      openerTabId: tab.openerTabId,
+      sessionId: owner.sessionId,
+      ...(tab.pendingUrl || tab.url ? { url: tab.pendingUrl || tab.url } : {})
+    });
+  }
+
+  // Dragging an owned tab out of the agent group (or into another window)
+  // hands it to the user: ownership is dropped and the daemon gets leaseRevoked.
+  async handleTabUpdated(tabId, changeInfo, tab) {
+    if (!changeInfo || !Object.hasOwn(changeInfo, "groupId")) {
+      return;
+    }
+    // Our own group mutations are queued; let them land (root.chromeGroupId is
+    // assigned after chrome.tabs.group resolves) before judging the change.
+    await this.groupQueue;
+    const owner = await this.store.findTabOwner(tabId);
+    if (!owner || owner.origin === "popup") {
+      return;
+    }
+    const { root } = await this.store.getRoot(owner.sessionId);
+    const current = await chrome.tabs.get(tabId).catch(() => null);
+    const groupId = current ? current.groupId : changeInfo.groupId;
+    if (typeof root.chromeGroupId === "number" && groupId === root.chromeGroupId) {
+      return;
+    }
+    // A group can be emptied and re-created by Chrome when the last tab moves
+    // windows; treat any other group (or none) as the user taking the tab.
+    delete owner.session.tabOrigins[String(tabId)];
+    this.dropTabState(owner.sessionId, tabId);
+    await this.store.save();
+    this.emit("leaseRevoked", {
+      tabId,
+      sessionId: owner.sessionId,
+      reason: "group_exit",
+      groupId,
+      ...(tab?.url ? { url: tab.url } : {})
+    });
+  }
+
+  async handleTabRemoved(tabId) {
+    this.attachedTabs.delete(tabId);
+    const owner = await this.store.findTabOwner(tabId);
+    if (!owner) {
+      return;
+    }
+    delete owner.session.tabOrigins[String(tabId)];
+    this.dropTabState(owner.sessionId, tabId);
+    await this.store.save();
+    this.emit("tabClosed", { tabId, sessionId: owner.sessionId });
+  }
+
+  // Event fan-out for chrome.debugger.onEvent. Returns the notification params
+  // to send, or null to drop the event.
+  routeCdpEvent(source, method, params) {
+    this.handleCdpEvent(source, method, params);
+    const subscribers = this.cdpEventSubscribers(source, method);
+    if (subscribers !== null && subscribers.length === 0) {
+      return null;
+    }
+    return {
+      source,
+      method,
+      params,
+      ...(typeof source?.sessionId === "string" ? { sessionId: source.sessionId } : {}),
+      ...(subscribers ? { subscribers } : {})
+    };
+  }
+
   handleCdpEvent(source, method, params) {
+    if (
+      (method === "Page.downloadWillBegin" || method === "Browser.downloadWillBegin") &&
+      typeof source?.tabId === "number"
+    ) {
+      this.recordDownloadBegin(source.tabId, params ?? {});
+      return;
+    }
     if (method !== "Page.fileChooserOpened" || typeof source?.tabId !== "number") {
       return;
     }
@@ -1080,27 +1636,47 @@ class BrowserBackend {
     return result.result?.value;
   }
 
+  // One group per ROOT session (subagents share it); ownership stays per
+  // session in tabOrigins. Tabs that cannot be grouped (popup windows) are
+  // owned with origin "popup".
   async ensureSessionGroup(sessionId, tabId, origin) {
     const session = await this.store.getSession(sessionId);
-    let groupId = session.chromeGroupId;
-    if (typeof groupId === "number") {
-      try {
-        await chrome.tabGroups.get(groupId);
-        await chrome.tabs.group({ groupId, tabIds: [tabId] });
-      } catch {
-        groupId = null;
-      }
-    }
-    if (typeof groupId !== "number") {
-      groupId = await chrome.tabs.group({ tabIds: [tabId] });
-      session.chromeGroupId = groupId;
-    }
+    const { root } = await this.store.getRoot(sessionId);
     session.tabOrigins[String(tabId)] = origin;
     await this.store.save();
-    await chrome.tabGroups.update(groupId, {
-      title: session.title,
-      color: "blue",
-      collapsed: false
+    await this.queueGroupOp(async () => {
+      let groupId = root.chromeGroupId;
+      let created = false;
+      if (typeof groupId === "number") {
+        try {
+          await chrome.tabGroups.get(groupId);
+          await chrome.tabs.group({ groupId, tabIds: [tabId] });
+        } catch {
+          groupId = null;
+        }
+      }
+      if (typeof groupId !== "number") {
+        try {
+          groupId = await chrome.tabs.group({ tabIds: [tabId] });
+        } catch (error) {
+          if (origin === "agent" || origin === "popup") {
+            session.tabOrigins[String(tabId)] = "popup";
+            await this.store.save();
+            return;
+          }
+          throw error;
+        }
+        root.chromeGroupId = groupId;
+        created = true;
+        await this.store.save();
+      }
+      if (created) {
+        await chrome.tabGroups.update(groupId, {
+          title: root.title,
+          color: BRAND.groupColor,
+          collapsed: false
+        });
+      }
     });
   }
 
@@ -1112,19 +1688,44 @@ class BrowserBackend {
     await this.publishCursorState(tabId);
   }
 
+  // A session's tabs: its owned tabs still in the root group (plus popup-window
+  // tabs it adopted). The root also sees un-owned tabs a user dropped into its
+  // group (legacy behaviour); children never see siblings' or parent's tabs.
   async getSessionTabs(sessionId) {
     const session = await this.store.getSession(sessionId);
-    if (typeof session.chromeGroupId !== "number") {
-      return [];
+    const { rootSessionId, root } = await this.store.getRoot(sessionId);
+    const origins = session.tabOrigins ?? {};
+    const tabs = [];
+    if (typeof root.chromeGroupId === "number") {
+      let grouped;
+      try {
+        grouped = await chrome.tabs.query({ groupId: root.chromeGroupId });
+      } catch {
+        grouped = null;
+      }
+      if (grouped === null) {
+        if (rootSessionId === sessionId) {
+          await this.store.removeSession(sessionId);
+        }
+        return [];
+      }
+      for (const tab of grouped) {
+        if (!hasTabId(tab) || tab.url?.startsWith("chrome://")) continue;
+        if (Object.hasOwn(origins, String(tab.id))) {
+          tabs.push(tab);
+        } else if (rootSessionId === sessionId && !(await this.store.findTabOwner(tab.id))) {
+          tabs.push(tab);
+        }
+      }
     }
-    try {
-      return (await chrome.tabs.query({ groupId: session.chromeGroupId })).filter(
-        (tab) => hasTabId(tab) && !tab.url?.startsWith("chrome://")
-      );
-    } catch {
-      await this.store.removeSession(sessionId);
-      return [];
+    for (const [tabIdText, origin] of Object.entries(origins)) {
+      if (origin !== "popup") continue;
+      const tab = await chrome.tabs.get(Number(tabIdText)).catch(() => null);
+      if (hasTabId(tab) && !tabs.some((existing) => existing.id === tab.id)) {
+        tabs.push(tab);
+      }
     }
+    return tabs;
   }
 
   async requireSession(params) {
@@ -1137,7 +1738,10 @@ class BrowserBackend {
     if (typeof params.turn_id !== "string") {
       throw new Error("Missing required browser turn_id");
     }
-    await this.store.getSession(params.session_id);
+    await this.store.getSession(params.session_id, {
+      parentSessionId: typeof params.parent_session_id === "string" ? params.parent_session_id : undefined,
+      label: typeof params.label === "string" ? params.label : undefined
+    });
     return { sessionId: params.session_id, turnId: params.turn_id };
   }
 
@@ -1421,19 +2025,33 @@ function optionalPositiveInteger(value, fallback, field) {
   return value;
 }
 
-async function createBackgroundTab() {
-  const windowId = await chooseWindowId();
+// Opens a background tab in the session's bound window, never activating it or
+// focusing its window. The window is bound on first use: last-focused normal
+// window → the only normal window → the focused one.
+async function createBackgroundTab(rootState = null, url = "about:blank") {
+  let windowId = rootState?.windowId;
   if (typeof windowId === "number") {
-    const tab = await chrome.tabs.create({ active: false, url: "about:blank", windowId });
+    const bound = await chrome.windows.get(windowId).catch(() => null);
+    if (!bound || (bound.type && bound.type !== "normal")) {
+      windowId = null;
+    }
+  }
+  if (typeof windowId !== "number") {
+    windowId = await chooseWindowId();
+  }
+  if (typeof windowId === "number") {
+    const tab = await chrome.tabs.create({ active: false, url, windowId });
     if (hasTabId(tab)) {
+      if (rootState) rootState.windowId = windowId;
       return tab;
     }
   }
   const win = await chrome.windows.create({
     focused: false,
     type: "normal",
-    url: "about:blank"
+    url
   });
+  if (rootState && typeof win.id === "number") rootState.windowId = win.id;
   const tab = win.tabs?.find(hasTabId);
   if (!tab) {
     throw new Error("Created Chrome window has no tab");
@@ -1442,9 +2060,22 @@ async function createBackgroundTab() {
 }
 
 async function chooseWindowId() {
-  const windows = await chrome.windows.getAll({ windowTypes: ["normal"] });
-  const focused = windows.find((win) => win.focused && typeof win.id === "number");
-  return focused?.id ?? windows.find((win) => typeof win.id === "number")?.id ?? null;
+  const lastFocused = await chrome.windows.getLastFocused?.({ windowTypes: ["normal"] }).catch(() => null);
+  if (typeof lastFocused?.id === "number" && (!lastFocused.type || lastFocused.type === "normal")) {
+    return lastFocused.id;
+  }
+  const windows = (await chrome.windows.getAll({ windowTypes: ["normal"] })).filter(
+    (win) => typeof win.id === "number"
+  );
+  if (windows.length === 1) {
+    return windows[0].id;
+  }
+  const focused = windows.find((win) => win.focused);
+  return focused?.id ?? windows[0]?.id ?? null;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function readGroupTitles(tabs) {
@@ -1570,15 +2201,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   return false;
 });
+backend.notify = (method, params) => safeSendNotification(peer, method, params);
 chrome.debugger.onEvent.addListener((source, method, params) => {
-  backend.handleCdpEvent(source, method, params);
-  safeSendNotification(peer, "onCDPEvent", { source, method, params });
+  const routed = backend.routeCdpEvent(source, method, params);
+  if (routed) {
+    safeSendNotification(peer, "onCDPEvent", routed);
+  }
+});
+chrome.tabs.onCreated?.addListener((tab) => {
+  void backend.handleTabCreated(tab).catch(() => {});
+});
+chrome.tabs.onUpdated?.addListener((tabId, changeInfo, tab) => {
+  void backend.handleTabUpdated(tabId, changeInfo, tab).catch(() => {});
+});
+chrome.tabs.onRemoved?.addListener((tabId) => {
+  void backend.handleTabRemoved(tabId).catch(() => {});
 });
 backend.addDownloadChangeListener((change) => {
   safeSendNotification(peer, "onDownloadChange", change);
 });
 chrome.downloads.onCreated.addListener((item) => {
-  backend.handleDownloadCreated(item);
+  void backend.handleDownloadCreated(item).catch(() => {});
 });
 chrome.downloads.onChanged.addListener((delta) => {
   backend.handleDownloadChanged(delta);
