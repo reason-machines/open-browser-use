@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><title>Infinite scroll fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Feed</h1>
+<ul id="feed" aria-label="Feed"></ul>
+<p id="status" role="status">Loading…</p>
+<div id="sentinel" style="height:1px"></div>
+<script>
+// 10 pages x 20 posts from /api/items. Post 137 contains the needle. Loads when the sentinel
+// nears the viewport (IntersectionObserver) — agents must scroll (or the daemon must) to reach it.
+let page = 0, loading = false, done = false;
+async function load() {
+  if (loading || done) return; loading = true;
+  const r = await fetch("/api/items?page=" + page).then((r) => r.json());
+  const ul = document.getElementById("feed");
+  for (const it of r.items) { const li = document.createElement("li"); li.id = "post-" + it.id; li.innerHTML = `<article><h3>${it.title}</h3><p>${it.body}</p><button data-id="${it.id}">Like</button></article>`; ul.appendChild(li); }
+  page++; done = !r.more; loading = false; __fx.state.pages = page; __fx.log("page", page);
+  document.getElementById("status").textContent = done ? "End of feed" : "Scroll for more";
+}
+new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) load(); }, { rootMargin: "200px" }).observe(document.getElementById("sentinel"));
+document.getElementById("feed").addEventListener("click", (e) => { if (e.target.dataset.id) { __fx.state.liked = Number(e.target.dataset.id); __fx.log("like", __fx.state.liked); } });
+load();
+</script>

@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Inner frame form</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h2 id="h">Inner form (<span id="origin"></span>)</h2>
+<form id="f"><label>Card holder <input name="holder" id="holder"></label>
+<label>Coupon <input name="coupon"></label>
+<button id="go">Apply</button></form>
+<p id="out" role="status"></p>
+<iframe id="nested" title="nested frame" style="width:300px;height:80px"></iframe>
+<script>
+document.getElementById("origin").textContent = location.origin;
+const depth = Number(new URLSearchParams(location.search).get("depth") || 0);
+const nested = document.getElementById("nested");
+if (depth > 0) nested.src = "/iframe-leaf.html"; else nested.remove();
+document.getElementById("f").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const v = document.getElementById("holder").value;
+  __fx.state.applied = v;
+  document.getElementById("out").textContent = "Applied for " + v;
+  parent.postMessage({ fx: "inner-submit", origin: location.origin, holder: v }, "*");
+});
+</script>

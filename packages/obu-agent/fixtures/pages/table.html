@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>Table fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Quarterly revenue</h1>
+<table id="t">
+  <caption>Revenue by region</caption>
+  <thead><tr><th><button data-col="0">Region</button></th><th><button data-col="1">Revenue ($k)</button></th><th><button data-col="2">Growth %</button></th></tr></thead>
+  <tbody>
+    <tr><td>North</td><td>420</td><td>12.5</td></tr>
+    <tr><td>South</td><td>310</td><td>-3.1</td></tr>
+    <tr><td>East</td><td>515</td><td>8.0</td></tr>
+    <tr><td>West</td><td>275</td><td>21.7</td></tr>
+    <tr><td>Central</td><td>390</td><td>0.4</td></tr>
+  </tbody>
+</table>
+<ol id="fx-log"></ol>
+<script>
+let dir = 1;
+document.querySelectorAll("th button").forEach((b) => b.addEventListener("click", () => {
+  const col = Number(b.dataset.col); const body = document.querySelector("tbody");
+  const rows = [...body.rows].sort((a, c) => {
+    const x = a.cells[col].textContent, y = c.cells[col].textContent;
+    return (isNaN(x) ? x.localeCompare(y) : Number(x) - Number(y)) * dir;
+  });
+  rows.forEach((r) => body.appendChild(r));
+  __fx.state.order = rows.map((r) => r.cells[0].textContent);
+  __fx.log("sort", { col, dir }); dir = -dir;
+}));
+</script>

@@ -1,0 +1,25 @@
+<!doctype html><meta charset="utf-8"><title>Shadow DOM fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Web components</h1>
+<open-card id="open1"><span slot="label">Slotted label text</span></open-card>
+<closed-card id="closed1"></closed-card>
+<nested-host id="nest"></nested-host>
+<ol id="fx-log"></ol>
+<script>
+customElements.define("open-card", class extends HTMLElement {
+  constructor() { super(); const r = this.attachShadow({ mode: "open" });
+    r.innerHTML = `<div><slot name="label"></slot><label>Search <input id="q" placeholder="Search inside open shadow"></label>
+      <button id="open-btn">Open shadow button</button></div>`;
+    r.getElementById("open-btn").addEventListener("click", () => { __fx.log("open-click", r.getElementById("q").value); });
+  } });
+customElements.define("closed-card", class extends HTMLElement {
+  constructor() { super(); const r = this.attachShadow({ mode: "closed" });
+    r.innerHTML = `<label>Promo code <input id="promo"></label><button id="closed-btn">Closed shadow button</button>`;
+    r.getElementById("closed-btn").addEventListener("click", () => { __fx.log("closed-click", r.getElementById("promo").value); });
+  } });
+customElements.define("nested-host", class extends HTMLElement {
+  constructor() { super(); const r = this.attachShadow({ mode: "open" });
+    r.innerHTML = `<p>Outer shadow</p><open-card><span slot="label">Nested slotted</span></open-card><button id="deep">Deep button</button>`;
+    r.getElementById("deep").addEventListener("click", () => __fx.log("deep-click"));
+  } });
+</script>

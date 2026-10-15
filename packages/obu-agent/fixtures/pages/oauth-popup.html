@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Fixture sign-in</title>
+<h1>Authorize Fixture App</h1>
+<label>Username <input id="u" value=""></label>
+<button id="allow">Allow</button>
+<script>
+document.getElementById("allow").onclick = () => { opener && opener.postMessage({ fx: "oauth-done", user: document.getElementById("u").value || "anonymous" }, "*"); window.close(); };
+</script>

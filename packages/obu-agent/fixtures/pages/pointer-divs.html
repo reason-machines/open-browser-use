@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Pointer divs fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<style>.btn{cursor:pointer;display:inline-block;padding:6px 10px;border:1px solid #888;margin:4px}.parent{cursor:pointer}.menu{display:none;border:1px solid #444}.hov:hover .menu{display:block}</style>
+<h1>Div buttons</h1>
+<div class="btn" id="d1" onclick="__fx.log('d1')">Div with onclick</div>
+<div class="btn" id="d2" tabindex="0">Div with tabindex</div>
+<div class="parent" id="p1"><span id="inherit">Inherited pointer span</span></div>
+<div role="button" id="rb" aria-label="Role button div">⚙</div>
+<a id="noHref" onclick="__fx.log('anchor')">Anchor without href</a>
+<div class="hov" id="hov"><span>Hover me for menu</span><div class="menu"><button id="hidden-item" onclick="__fx.log('menu-item')">Menu item</button></div></div>
+<ol id="fx-log"></ol>
+<script>
+document.getElementById("d2").addEventListener("click", () => __fx.log("d2"));
+document.getElementById("d2").addEventListener("keydown", (e) => { if (e.key === "Enter") __fx.log("d2-enter"); });
+document.getElementById("p1").addEventListener("click", () => __fx.log("p1"));
+document.getElementById("rb").addEventListener("click", () => __fx.log("rb"));
+document.getElementById("hov").addEventListener("mouseenter", () => __fx.log("hover"));
+</script>

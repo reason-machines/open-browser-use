@@ -26,7 +26,12 @@
     "test": "pnpm build && node --test test/*.test.mjs",
     "fixtures": "node fixtures/server.mjs",
     "test:live": "pnpm build && node test/daemon-live.mjs",
-    "build:injected": "node scripts/build-injected.mjs"
+    "build:injected": "node scripts/build-injected.mjs",
+    "e2e": "pnpm build && node --test --test-reporter=spec e2e/all.test.mjs",
+    "e2e:strict": "pnpm build && E2E_STRICT=1 node --test --test-reporter=spec e2e/all.test.mjs",
+    "e2e:fixtures": "pnpm build && E2E_SUITES=fixtures node --test --test-reporter=spec e2e/all.test.mjs",
+    "bench:micro": "pnpm build && node e2e/bench/micro.mjs",
+    "bench:compare": "node e2e/bench/compare.mjs"
   },
   "files": [
     "dist/",

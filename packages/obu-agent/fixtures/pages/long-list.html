@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Long list fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>2,000-node page</h1>
+<nav aria-label="pager"><button id="first">First</button><button id="next">Next</button></nav>
+<ul id="list"></ul>
+<script>
+const ul = document.getElementById("list"); const frag = document.createDocumentFragment();
+for (let i = 0; i < 500; i++) {
+  const li = document.createElement("li");
+  li.innerHTML = `<a href="#item-${i}">Item ${i}</a> <span>price $${(i * 1.37).toFixed(2)}</span> <button data-i="${i}">Add ${i}</button>`;
+  frag.appendChild(li);
+}
+ul.appendChild(frag);
+ul.addEventListener("click", (e) => { if (e.target.dataset.i) __fx.log("add", Number(e.target.dataset.i)); });
+document.getElementById("next").onclick = () => { const li = document.createElement("li"); li.textContent = "Appended " + __fx.count("next"); ul.prepend(li); __fx.log("next"); };
+</script>

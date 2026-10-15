@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>Date picker fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<style>.cal{border:1px solid #444;display:inline-block;padding:6px}.cal button.day{width:34px}.cal[hidden]{display:none}</style>
+<h1>Book a stay</h1>
+<label>Native check-in <input type="date" id="native"></label>
+<div>
+  <label for="checkout">Check-out (custom picker)</label>
+  <input id="checkout" readonly placeholder="Select date" aria-haspopup="dialog">
+  <div class="cal" id="cal" role="dialog" aria-label="Choose check-out date" hidden>
+    <div><button id="prev" aria-label="Previous month">‹</button> <span id="month" aria-live="polite"></span> <button id="next" aria-label="Next month">›</button></div>
+    <div id="grid" role="grid"></div>
+  </div>
+</div>
+<ol id="fx-log"></ol>
+<script>
+// Fixed start month (March 2027) so tasks like "pick 14 May 2027" are deterministic.
+let y = 2027, m = 2; const names = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const cal = document.getElementById("cal"), inp = document.getElementById("checkout");
+function render() {
+  document.getElementById("month").textContent = names[m] + " " + y;
+  const grid = document.getElementById("grid"); grid.innerHTML = "";
+  const days = new Date(y, m + 1, 0).getDate();
+  for (let d = 1; d <= days; d++) { const b = document.createElement("button"); b.className = "day"; b.textContent = d; b.setAttribute("aria-label", `${d} ${names[m]} ${y}`); b.onclick = () => pick(d); grid.appendChild(b); }
+}
+function pick(d) { const v = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`; inp.value = v; cal.hidden = true; __fx.state.checkout = v; __fx.log("pick", v); }
+inp.onclick = () => { cal.hidden = false; render(); };
+document.getElementById("prev").onclick = () => { m--; if (m < 0) { m = 11; y--; } render(); };
+document.getElementById("next").onclick = () => { m++; if (m > 11) { m = 0; y++; } render(); };
+document.getElementById("native").onchange = (e) => { __fx.state.native = e.target.value; __fx.log("native", e.target.value); };
+</script>

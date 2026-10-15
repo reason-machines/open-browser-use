@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>SPA fixture — Home</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<nav><a href="/spa.html" data-route="home">Home</a> <a href="/spa/settings" data-route="settings">Settings</a> <a href="/spa/reports" data-route="reports">Reports</a></nav>
+<main id="view"><h1>Home</h1></main>
+<button id="slow">Load slow data (2 s)</button>
+<button id="spin">Start infinite spinner</button>
+<div id="spinner" role="progressbar" hidden aria-label="Loading">⏳</div>
+<ol id="fx-log"></ol>
+<script>
+const views = {
+  home: "<h1>Home</h1><p>Welcome home.</p>",
+  settings: "<h1>Settings</h1><label>Display name <input id='dn'></label><button id='save'>Save settings</button>",
+  reports: "<h1>Reports</h1><p id='loading'>Loading report…</p>",
+};
+function render(route, push) {
+  if (push) history.pushState({ route }, "", route === "home" ? "/spa.html" : "/spa/" + route);
+  document.title = "SPA fixture — " + route[0].toUpperCase() + route.slice(1);
+  document.getElementById("view").innerHTML = views[route];
+  __fx.state.route = route; __fx.log("route", route);
+  if (route === "reports") setTimeout(() => { const p = document.getElementById("loading"); if (p) p.outerHTML = "<table><tr><th>KPI</th><td>42</td></tr></table>"; __fx.log("report-loaded"); }, 600);
+  if (route === "settings") document.getElementById("save").onclick = () => __fx.log("saved", document.getElementById("dn").value);
+}
+document.querySelector("nav").addEventListener("click", (e) => { const a = e.target.closest("a"); if (!a) return; e.preventDefault(); render(a.dataset.route, true); });
+addEventListener("popstate", (e) => render((e.state && e.state.route) || "home", false));
+const initial = location.pathname.startsWith("/spa/") ? location.pathname.slice(5) : "home"; if (views[initial] && initial !== "home") render(initial, false);
+document.getElementById("slow").onclick = async () => { __fx.log("slow-start"); const r = await fetch("/slow?ms=2000").then((r) => r.json()); __fx.state.slow = r; __fx.log("slow-done"); document.getElementById("view").insertAdjacentHTML("beforeend", "<p id='slow-result'>Slow data loaded</p>"); };
+document.getElementById("spin").onclick = () => { const s = document.getElementById("spinner"); s.hidden = false; setInterval(() => { s.textContent = s.textContent === "⏳" ? "⌛" : "⏳"; }, 100); __fx.log("spin"); };
+</script>

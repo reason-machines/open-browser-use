@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><title>User sentinel tab</title>
+<script src="/fx.js"></script>
+<h1>User's foreground tab (focus-theft sentinel)</h1>
+<p>Any blur / visibility change recorded here while agents work in background tabs is focus theft.</p>
+<ol id="fx-log"></ol>
+<script>
+__fx.state.startVisible = document.visibilityState; __fx.state.startFocus = document.hasFocus();
+addEventListener("blur", () => __fx.log("blur")); addEventListener("focus", () => __fx.log("focus"));
+document.addEventListener("visibilitychange", () => __fx.log("visibility", document.visibilityState));
+</script>

@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><title>Dialogs fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>JavaScript dialogs</h1>
+<button id="alert">Show alert</button>
+<button id="confirm">Show confirm</button>
+<button id="prompt">Show prompt</button>
+<label><input type="checkbox" id="bu"> Warn before leaving (beforeunload)</label>
+<a id="leave" href="/form.html">Leave page</a>
+<dialog id="modal"><p>Native &lt;dialog&gt; modal</p><button id="close-modal">Close modal</button></dialog>
+<button id="open-modal">Open modal dialog element</button>
+<p id="out" role="status"></p>
+<ol id="fx-log"></ol>
+<script>
+const out = document.getElementById("out");
+document.getElementById("alert").onclick = () => { alert("Hello from alert"); __fx.log("alert-closed"); out.textContent = "alert closed"; };
+document.getElementById("confirm").onclick = () => { const r = confirm("Delete everything?"); __fx.state.confirm = r; __fx.log("confirm", r); out.textContent = "confirm=" + r; };
+document.getElementById("prompt").onclick = () => { const r = prompt("Your name?", "default"); __fx.state.prompt = r; __fx.log("prompt", r); out.textContent = "prompt=" + r; };
+document.getElementById("bu").onchange = (e) => { window.onbeforeunload = e.target.checked ? (ev) => { ev.preventDefault(); ev.returnValue = ""; } : null; };
+const m = document.getElementById("modal");
+document.getElementById("open-modal").onclick = () => m.showModal();
+document.getElementById("close-modal").onclick = () => { m.close(); __fx.log("modal-closed"); };
+</script>

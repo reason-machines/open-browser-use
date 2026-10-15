@@ -1,0 +1,41 @@
+<!doctype html><meta charset="utf-8"><title>Form fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Sign-up form</h1>
+<form id="f" novalidate>
+  <label>Full name <input name="name" id="name" autocomplete="off"></label><br>
+  <label for="email">Email</label> <input type="email" name="email" id="email"><br>
+  <label>Password <input type="password" name="password" id="password"></label><br>
+  <label>Age <input type="number" name="age" min="0" max="130"></label><br>
+  <label>Bio <textarea name="bio" rows="3"></textarea></label><br>
+  <label>Country
+    <select name="country" id="country">
+      <option value="">Choose…</option><option value="us">United States</option>
+      <option value="no">Norway</option><option value="jp">Japan</option>
+    </select></label><br>
+  <label>Start date <input type="date" name="start"></label>
+  <label>Meeting time <input type="time" name="time"></label>
+  <label>Favourite colour <input type="color" name="color" value="#336699"></label>
+  <label>Volume <input type="range" name="volume" min="0" max="10" value="3"></label><br>
+  <fieldset><legend>Plan</legend>
+    <label><input type="radio" name="plan" value="free" checked> Free</label>
+    <label><input type="radio" name="plan" value="pro"> Pro</label>
+    <label><input type="radio" name="plan" value="team"> Team</label>
+  </fieldset>
+  <label><input type="checkbox" name="terms" id="terms"> I accept the terms</label><br>
+  <label><input type="checkbox" name="news" checked> Newsletter</label><br>
+  <button type="submit" id="submit">Create account</button>
+  <button type="reset">Reset</button>
+</form>
+<p id="result" role="status"></p>
+<ol id="fx-log"></ol>
+<script>
+document.getElementById("f").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  data.terms = document.getElementById("terms").checked;
+  __fx.state.submitted = data;
+  __fx.log("submit", data);
+  document.getElementById("result").textContent = data.terms ? "Account created for " + (data.name || "?") : "Please accept the terms";
+});
+for (const el of document.querySelectorAll("input,select,textarea")) el.addEventListener("change", () => __fx.log("change", { name: el.name, value: el.type === "checkbox" ? el.checked : el.value }));
+</script>

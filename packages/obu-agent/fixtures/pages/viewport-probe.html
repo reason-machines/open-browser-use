@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Viewport probe</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<style>@media (max-width: 959px){#wide{display:none}#narrow{display:block}}@media (min-width: 960px){#narrow{display:none}}</style>
+<h1>Viewport probe</h1>
+<p id="wide">Desktop layout (≥ 960px)</p><p id="narrow">Mobile layout (&lt; 960px)</p>
+<pre id="out"></pre>
+<script>
+// Checks the side effects of Emulation.setDeviceMetricsOverride on owned tabs (PLAN D7):
+// sites reading screen.* / outer* must still see a coherent desktop.
+function probe() {
+  const p = { inner: [innerWidth, innerHeight], outer: [outerWidth, outerHeight], screen: [screen.width, screen.height], avail: [screen.availWidth, screen.availHeight],
+    dpr: devicePixelRatio, visibility: document.visibilityState, hasFocus: document.hasFocus(), mqDesktop: matchMedia("(min-width: 960px)").matches,
+    coherent: screen.width >= innerWidth && screen.height >= innerHeight && innerWidth > 0 };
+  __fx.state.probe = p; document.getElementById("out").textContent = JSON.stringify(p, null, 1); return p;
+}
+probe(); addEventListener("resize", () => __fx.log("resize", probe()));
+document.addEventListener("visibilitychange", () => __fx.log("visibility", probe().visibility));
+</script>
