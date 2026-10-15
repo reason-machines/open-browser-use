@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-saucedemo-checkout",
+ "category": "long-demo-checkout",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 26.3,
+  "steps": 15,
+  "tokens": 373716,
+  "final": "Item total $79.98; tax $6.40; total $86.38; confirmation heading “Checkout: Complete!”",
+  "raw_final": "Checkout complete. Item total: **$79.98**; tax: **$6.40**; total: **$86.38**. Confirmation heading: **“Checkout: Complete!”**\n\nFINAL ANSWER: Item total $79.98; tax $6.40; total $86.38; confirmation heading “Checkout: Complete!”",
+  "session_id": "bench-hard2-v1-h2-saucedemo-checkout",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The totals are correct and checkout finished, but the final answer omits the item names and reports “Checkout: Complete!” instead of the required confirmation heading “Thank you for your order!”.",
+  "failure_category": "wrong_answer"
+ }
+}

@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-multisite-report",
+ "category": "long-multi-site",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 45.7,
+  "steps": 18,
+  "tokens": 635822,
+  "final": "Python 3.15.0; Node.js LTS 24.22.0; Go 1.27.2; receipt checksum `1CXQ6MQ`. Reviewer: Grace.",
+  "raw_final": "FINAL ANSWER: Python 3.15.0; Node.js LTS 24.22.0; Go 1.27.2; receipt checksum `1CXQ6MQ`. Reviewer: Grace.",
+  "session_id": "bench-hard2-v1-h2-multisite-report",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three versions match the answer key, Grace was selected, and checksum 1CXQ6MQ was verified from the downloaded receipt file.",
+  "failure_category": "none"
+ }
+}

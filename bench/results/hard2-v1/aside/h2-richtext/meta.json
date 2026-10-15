@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-richtext",
+ "category": "rich-text-editor",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.9,
+  "steps": 3,
+  "tokens": 273903,
+  "final": "Document hash: `1XDK41R`",
+  "raw_final": "FINAL ANSWER: Document hash: `1XDK41R`",
+  "session_id": "X0mhwOTtURBioc0X",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The reported hash 1XDK41R does not match 1DZO0MR. The agent omitted the required period after “fast” when creating the document.",
+  "failure_category": "wrong_answer"
+ }
+}

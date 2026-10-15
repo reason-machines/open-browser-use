@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-practicetest-login",
+ "category": "login-test-site",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 15.1,
+  "steps": 6,
+  "tokens": 497873,
+  "final": "Incorrect username error: “Your username is invalid!” Successful login page heading: “Logged In Successfully”. Success-page button text: “Log out”.",
+  "raw_final": "FINAL ANSWER: Incorrect username error: “Your username is invalid!” Successful login page heading: “Logged In Successfully”. Success-page button text: “Log out”.",
+  "session_id": "BeGFITyeIXm7in9m",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all three required values exactly: “Your username is invalid!”, “Logged In Successfully”, and “Log out”. The trajectory verifies both login attempts in the requested order.",
+  "failure_category": "none"
+ }
+}

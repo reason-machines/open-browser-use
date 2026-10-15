@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-nested",
+ "category": "nested-iframes-shadow",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 44.9,
+  "steps": 15,
+  "tokens": 1107927,
+  "final": "19IL2HG",
+  "raw_final": "FINAL ANSWER: 19IL2HG",
+  "session_id": "liAmEQmEnqnMOZfJ",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer exactly matches the required calibration code, 19IL2HG, and the trajectory confirms it was displayed after verification.",
+  "failure_category": "none"
+ }
+}

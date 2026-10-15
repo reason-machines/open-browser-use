@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Correctly reported Orion-7974's ID 100894 and score 621.21, but left rank #250 and the top-100 ERROR count unverified. The agent stopped despite no timeout or tool errors.","failure_category":"gave_up"}

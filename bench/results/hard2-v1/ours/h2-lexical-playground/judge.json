@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"Final DOM verification shows the original demo content remained, with '# Bench Report* alphabetagamma' appended as plain text. The requested H1 and three-item list with only beta bold were not created.","failure_category":"interaction_failed"}

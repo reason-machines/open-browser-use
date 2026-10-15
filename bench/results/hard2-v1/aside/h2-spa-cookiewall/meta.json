@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-spa-cookiewall",
+ "category": "spa-cookie-wall",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 31.3,
+  "steps": 12,
+  "tokens": 902115,
+  "final": "INV-5071, $5,468.14; 4 APAC pages.",
+  "raw_final": "Functional cookies are enabled; Analytics and Marketing are off. APAC has **4 pages**. On page 3, the second row is invoice **INV-5071** for **$5,468.14**.\n\nFINAL ANSWER: INV-5071, $5,468.14; 4 APAC pages.",
+  "session_id": "3eBNEFd3EqQEEzMf",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains the correct invoice INV-5071, amount $5468.14, and total of 4 APAC pages. The trajectory also shows functional-only cookie preferences were saved.",
+  "failure_category": "none"
+ }
+}

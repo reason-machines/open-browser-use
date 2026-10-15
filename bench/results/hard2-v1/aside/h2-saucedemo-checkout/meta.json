@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-saucedemo-checkout",
+ "category": "long-demo-checkout",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 37.7,
+  "steps": 11,
+  "tokens": 863017,
+  "final": "Item total: $79.98; tax: $6.40; total: $86.38; confirmation heading: “Thank you for your order!”",
+  "raw_final": "FINAL ANSWER: Item total: $79.98; tax: $6.40; total: $86.38; confirmation heading: “Thank you for your order!”",
+  "session_id": "rrt8xj2NYyXfb1H6",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The final answer correctly reports all totals and the confirmation heading, but omits the required item names and individual prices: Sauce Labs Fleece Jacket ($49.99) and Sauce Labs Backpack ($29.99). The trajectory verifies the checkout was completed correctly.",
+  "failure_category": "incomplete"
+ }
+}

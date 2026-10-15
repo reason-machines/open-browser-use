@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Entered the required text and hashtag and verified Post was enabled, without clicking Post. However, Microsoft remained plain suggestion text rather than a selected mention, no image was attached, and closing the tab did not verify the required Discard flow.","failure_category":"interaction_failed"}

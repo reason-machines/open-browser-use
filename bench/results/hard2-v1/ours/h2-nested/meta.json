@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-nested",
+ "category": "nested-iframes-shadow",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 185.8,
+  "steps": 46,
+  "tokens": 1655550,
+  "final": "19IL2HG",
+  "raw_final": "FINAL ANSWER: 19IL2HG",
+  "session_id": "bench-hard2-v1-h2-nested",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer exactly matches the required calibration code 19IL2HG, which was also confirmed in the page output.",
+  "failure_category": "none"
+ }
+}

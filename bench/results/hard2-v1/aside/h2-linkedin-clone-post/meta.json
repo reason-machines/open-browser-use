@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-linkedin-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 47.4,
+  "steps": 15,
+  "tokens": 1120041,
+  "final": "Post ID `1GRPQQT` (local test fixture; Connections only; image attached; Reason Machines mention selected).",
+  "raw_final": "Posted in the local test fixture with the audience set to **Connections only**, the **Reason Machines** company mention selected from suggestions, and the image attached.\n\n**Post ID:** `1GRPQQT`\n\nFINAL ANSWER: Post ID `1GRPQQT` (local test fixture; Connections only; image attached; Reason Machines mention selected).",
+  "session_id": "ebEXD6qBnj7ilwd2",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports Post ID 1GRPQQT, matching the answer key and confirmed by the trajectory.",
+  "failure_category": "none"
+ }
+}

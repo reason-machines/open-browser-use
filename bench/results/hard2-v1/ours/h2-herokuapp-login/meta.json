@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-herokuapp-login",
+ "category": "login-test-site",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 26.3,
+  "steps": 13,
+  "tokens": 333808,
+  "final": "Successful sign-in flash: “You logged into a secure area!” Logout flash: “You logged out of the secure area!” Sign-in with password `nope` flash: “Your password is invalid!”",
+  "raw_final": "FINAL ANSWER: Successful sign-in flash: “You logged into a secure area!” Logout flash: “You logged out of the secure area!” Sign-in with password `nope` flash: “Your password is invalid!”",
+  "session_id": "bench-hard2-v1-h2-herokuapp-login",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three required flash messages exactly, and the trajectory verifies each one.",
+  "failure_category": "none"
+ }
+}

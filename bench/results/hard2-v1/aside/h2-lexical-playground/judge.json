@@ -1,0 +1,1 @@
+{"success":true,"score":1.0,"reason":"The final DOM read shows exactly an H1 'Bench Report' followed by a UL containing alpha, beta inside <strong>, and gamma, with no leftover editor content. The final answer matches this evidence.","failure_category":"none"}

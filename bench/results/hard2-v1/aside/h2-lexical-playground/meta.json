@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-lexical-playground",
+ "category": "rich-text-editor",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 41.8,
+  "steps": 10,
+  "tokens": 810442,
+  "final": "H1 “Bench Report”; UL with LI “alpha” (plain), LI “beta” (bold), and LI “gamma” (plain).",
+  "raw_final": "Verified the editor contains an H1, “Bench Report,” followed by one bulleted list. Its items are `alpha`, **`beta`**, and `gamma`; the DOM renders beta inside `<strong>`.\n\nFINAL ANSWER: H1 “Bench Report”; UL with LI “alpha” (plain), LI “beta” (bold), and LI “gamma” (plain).",
+  "session_id": "GsaUElIMXVTHFMMn",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final DOM read shows exactly an H1 'Bench Report' followed by a UL containing alpha, beta inside <strong>, and gamma, with no leftover editor content. The final answer matches this evidence.",
+  "failure_category": "none"
+ }
+}

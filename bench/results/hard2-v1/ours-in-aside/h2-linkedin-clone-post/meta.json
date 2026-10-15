@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-linkedin-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 197.3,
+  "steps": 42,
+  "tokens": 1050327,
+  "final": "I couldn’t complete the post: the local file chooser timed out twice, so I couldn’t attach `/Users/adi/Downloads/obu-bench/post-image.png`. I did select Connections only and insert Reason Machines from the mention suggestions, but I did not post. No Post ID was generated.",
+  "raw_final": "FINAL ANSWER: I couldn’t complete the post: the local file chooser timed out twice, so I couldn’t attach `/Users/adi/Downloads/obu-bench/post-image.png`. I did select Connections only and insert Reason Machines from the mention suggestions, but I did not post. No Post ID was generated.",
+  "session_id": "bench-hard2-v1-h2-linkedin-clone-post",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent did not attach the image or post, and its final answer omitted the required Post ID 1GRPQQT. File chooser calls timed out twice, preventing completion.",
+  "failure_category": "download_or_upload"
+ }
+}

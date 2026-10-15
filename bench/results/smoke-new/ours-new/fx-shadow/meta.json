@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-shadow",
+ "category": "shadow-dom",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.2,
+  "steps": 3,
+  "tokens": 109574,
+  "final": "orchid-42",
+  "raw_final": "The vault passphrase is `orchid-42`.\n\nFINAL ANSWER: orchid-42",
+  "session_id": "bench-smoke-new-fx-shadow",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/shadow.html and follow the instructions on the page. Report the vault code."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent reported the passphrase orchid-42 instead of the required vault code 09MLBWN. It unlocked the vault but did not retrieve the resulting code.",
+  "failure_category": "incomplete"
+ }
+}

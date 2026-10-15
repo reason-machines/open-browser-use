@@ -1,0 +1,45 @@
+{
+ "requires_login": [
+  "x"
+ ],
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-x-old-post-thread",
+ "category": "real-social-read",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.5,
+  "steps": 8,
+  "tokens": 210478,
+  "final": "No matching post was shown. Text: unavailable; date: unavailable; reply count: unavailable; first 3 reply handles: unavailable.",
+  "raw_final": "X returned no results for `from:paulg until:2009-06-01` or the expanded `from:paulg until:2010-01-01` search, so I couldn’t identify an oldest post or inspect its replies.\n\nFINAL ANSWER: No matching post was shown. Text: unavailable; date: unavailable; reply count: unavailable; first 3 reply handles: unavailable.",
+  "session_id": "bench-hard2-v1-h2-x-old-post-thread",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The searches visibly returned no results, and the agent reported no post text, date, reply count, or reply handles. The required post and reply inspection were not completed.",
+  "failure_category": "incomplete"
+ }
+}

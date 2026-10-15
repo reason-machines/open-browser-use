@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent reported the passphrase orchid-42 instead of the required vault code 09MLBWN. It unlocked the vault but did not retrieve the resulting code.","failure_category":"incomplete"}

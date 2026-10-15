@@ -1,0 +1,60 @@
+[
+ {
+  "agent": "ours-new",
+  "stack": "new",
+  "suite": "hard",
+  "task_id": "fx-dialogs",
+  "category": "js-dialogs",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer reports 033II4Y, matching the answer key and the verified page result.",
+  "seconds": 22.0,
+  "steps": 6,
+  "tokens": 181510,
+  "timed_out": false,
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "final": "Result code: 033II4Y"
+ },
+ {
+  "agent": "ours-new",
+  "stack": "new",
+  "suite": "hard",
+  "task_id": "fx-shadow",
+  "category": "shadow-dom",
+  "model": "gpt-6-luna",
+  "success": false,
+  "score": 0,
+  "failure_category": "incomplete",
+  "reason": "The agent reported the passphrase orchid-42 instead of the required vault code 09MLBWN. It unlocked the vault but did not retrieve the resulting code.",
+  "seconds": 14.2,
+  "steps": 3,
+  "tokens": 109574,
+  "timed_out": false,
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "final": "orchid-42"
+ }
+]

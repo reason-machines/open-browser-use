@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-multisite-report",
+ "category": "long-multi-site",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 39.8,
+  "steps": 10,
+  "tokens": 630574,
+  "final": "Python **3.15.0** ([python.org](https://www.python.org/downloads/)), Node.js LTS **24.22.0** ([nodejs.org](https://nodejs.org/en/download)), Go **1.27.2** ([go.dev](https://go.dev/dl/)); receipt checksum: **1CXQ6MQ**.",
+  "raw_final": "The local receipt was generated with reviewer **Grace**.\n\nFINAL ANSWER: Python **3.15.0** ([python.org](https://www.python.org/downloads/)), Node.js LTS **24.22.0** ([nodejs.org](https://nodejs.org/en/download)), Go **1.27.2** ([go.dev](https://go.dev/dl/)); receipt checksum: **1CXQ6MQ**.",
+  "session_id": "ibLDD1gt8D0vmdPT",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three correct versions and checksum 1CXQ6MQ. The trajectory confirms Grace was selected and the receipt file contained those values.",
+  "failure_category": "none"
+ }
+}

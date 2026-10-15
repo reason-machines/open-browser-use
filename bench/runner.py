@@ -223,11 +223,25 @@ def target_args(agent, task):
     """Where our agent's browser lives: a Chrome profile, or the OBU extension inside Aside.app."""
     if agent == "ours-in-aside":
         return ["--socket", resolve_aside_socket()]
+    if agent == "ours-new":
+        return []
     return ["--profile", profile_for(task)]
+
+
+NEW_STACK_MCP = os.environ.get("BENCH_NEW_MCP", "/tmp/obn/inst/bin/reason-browser-agent-mcp")
+NEW_GUIDE = Path(os.environ.get("BENCH_NEW_GUIDE", str(Path.home() / "Code/open-browser-use-forks/main/docs/agent/REPL-GUIDE.md")))
+NEW_PREAMBLE = """You control a real Chrome browser through the browser_* MCP tools (browser_tabs_open, browser_snapshot, browser_act, browser_navigate, browser_wait, browser_evaluate, browser_screenshot, browser_repl, browser_finish). Your tabs are your own background tabs. Prefer `browser_repl` (code mode) for multi-step work; the structured tools are fine for single steps. Do not use shell commands to fetch web content; you may read local files (e.g. downloaded files at the path the browser reports) with shell. When finished call `browser_finish`.
+
+{guide}
+
+Task:
+"""
 
 
 def mcp_server(stack, session_id, target):
     """Adapter: which MCP server backs our agent. Swap stacks with --stack."""
+    if stack == "new":  # obu-agent daemon via the Reason Agent extension (ours-new arm)
+        return NEW_STACK_MCP, ["--session", session_id, "--label", session_id[-40:]]
     if stack == "obu":
         return "obu", ["mcp", *target, "--session-id", session_id, "--timeout", "60s"]
     if stack == "obu-agent":  # new daemon (packages/obu-agent); thin MCP proxy over the resident daemon
@@ -236,6 +250,8 @@ def mcp_server(stack, session_id, target):
 
 
 def finalize_obu(stack, session_id, target):
+    if stack == "new":
+        return  # the daemon closes a session's tabs on browser_finish / lease expiry; hygiene() closes leftovers
     if stack == "obu":
         subprocess.run(["obu", *target, "finalize-tabs", "--session-id", session_id, "--keep", "[]"],
                        stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
@@ -285,7 +301,8 @@ def run_ours(task, tdir, stack, run_id, target):
            "-c", "mcp_servers.obu.tool_timeout_sec=120",
            "-c", "mcp_servers.obu.startup_timeout_sec=30",
            "-c", 'mcp_servers.obu.default_tools_approval_mode="approve"',
-           OURS_PREAMBLE + task["prompt"] + suffix_for(task)]
+           (NEW_PREAMBLE.replace("{guide}", NEW_GUIDE.read_text() if NEW_GUIDE.exists() else "") if stack == "new" else OURS_PREAMBLE)
+           + task["prompt"] + suffix_for(task)]
     code, secs = run_proc(cmd, tdir / "transcript.jsonl", tdir / "stderr.txt", task["timeout_s"])
     steps, tok, final_text, traj, errors = parse_ours_transcript(tdir / "transcript.jsonl")
     return {"exit": code, "timed_out": code is None, "seconds": round(secs, 1), "steps": steps, "tokens": tok,
@@ -298,7 +315,9 @@ def run_ours(task, tdir, stack, run_id, target):
 # (all windows, all profiles) of the app the agent drives before and after the task. Per-agent
 # concurrency defaults to 1 so new tabs are attributable: Aside drives Aside.app, ours drives Chrome.
 
-APP_FOR = {"aside": "Aside", "ours": "Google Chrome", "ours-old": "Google Chrome", "ours-in-aside": "Aside"}
+APP_FOR = {"aside": "Aside", "ours": "Google Chrome", "ours-old": "Google Chrome", "ours-in-aside": "Aside",
+           "ours-new": "cft"}  # cft = throwaway Chrome for Testing running the new stack (bench/cft-new-stack.sh)
+CFT_PORT = int(os.environ.get("BENCH_CFT_PORT", "9471"))
 # ours-old always uses the original `obu mcp` stack, so it stays a fixed comparison point when --stack obu-agent lands.
 TAB_SCRIPT = """tell application "%s"
 set out to ""
@@ -312,6 +331,13 @@ end tell"""
 
 
 def tab_snapshot(app):
+    if app == "cft":
+        import urllib.request
+        try:
+            pages = json.load(urllib.request.urlopen(f"http://127.0.0.1:{CFT_PORT}/json/list", timeout=5))
+        except Exception:
+            return None
+        return {p["id"]: p.get("url", "") for p in pages if p.get("type") == "page"}
     try:
         r = subprocess.run(["osascript", "-e", TAB_SCRIPT % app], capture_output=True, text=True, timeout=20)
     except subprocess.TimeoutExpired:
@@ -327,6 +353,14 @@ def tab_snapshot(app):
 
 
 def close_tabs(app, ids):
+    if app == "cft":
+        import urllib.request
+        for i in ids:
+            try:
+                urllib.request.urlopen(f"http://127.0.0.1:{CFT_PORT}/json/close/{i}", timeout=5).read()
+            except Exception:
+                pass
+        return
     for i in ids:
         subprocess.run(["osascript", "-e", f'tell application "{app}" to close (every tab of every window whose id is {int(i)})'],
                        capture_output=True, timeout=20)
@@ -472,6 +506,8 @@ Do not browse or run commands; judge only from the text above."""
 def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
     if agent == "ours-old":
         stack = "obu"
+    if agent == "ours-new":
+        stack = "new"
     tdir = run_dir / agent / task["id"]
     tdir.mkdir(parents=True, exist_ok=True)
     meta_path = tdir / "meta.json"
@@ -500,7 +536,7 @@ def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
         res["prompt_given"] = task["prompt"]
         (tdir / "trajectory.json").write_text(json.dumps(traj, indent=1, ensure_ascii=False))
     verdict = judge(task, res, traj, tdir)
-    meta = {"requires_login": task.get("requires_login"), "agent": agent, "stack": "aside" if agent == "aside" else stack, "task_id": task["id"],
+    meta = {"requires_login": task.get("requires_login"), "agent": agent, "stack": "aside" if agent == "aside" else ("new" if agent == "ours-new" else ("obu" if agent == "ours-old" else stack)), "task_id": task["id"],
             "category": task["category"], "suite": task["suite"], "model": ASIDE_MODEL if agent == "aside" else AGENT_MODEL,
             "judge_model": JUDGE_MODEL, "result": res, "verdict": verdict}
     meta_path.write_text(json.dumps(meta, indent=1, ensure_ascii=False))
@@ -617,6 +653,8 @@ def main():
             for ag in agents:
                 if a.skip_existing and (run_dir / ag / t["id"] / "meta.json").exists() and not a.rejudge:
                     continue
+                if ag == "ours-new" and (t.get("profile") == "real" or t.get("requires_login")) and not os.environ.get("BENCH_NEW_REAL"):
+                    continue  # new stack runs on a throwaway CfT profile: no user logins until the user loads it in Profile 1
                 futs.append(pools[ag].submit(run_one, ag, t, run_dir, a.stack, run_id, a.rejudge))
         for f in cf.as_completed(futs):
             try:

@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-herokuapp-login",
+ "category": "login-test-site",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 13.9,
+  "steps": 5,
+  "tokens": 420173,
+  "final": "Successful sign-in: “You logged into a secure area!” Logout: “You logged out of the secure area!” Incorrect password: “Your password is invalid!” I closed the tab.",
+  "raw_final": "FINAL ANSWER: Successful sign-in: “You logged into a secure area!” Logout: “You logged out of the secure area!” Incorrect password: “Your password is invalid!” I closed the tab.",
+  "session_id": "Q03Ptc3gxV0lhq5x",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all three required flash messages, each confirmed by the trajectory.",
+  "failure_category": "none"
+ }
+}

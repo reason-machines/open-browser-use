@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Rank #250 and Orion-7974 are correct, but the top-100 ERROR count is 19 instead of 20. The agent reconstructed the sort with ascending ID tie-breaking, while the page's descending sort uses descending ID tie-breaking.","failure_category":"wrong_answer"}

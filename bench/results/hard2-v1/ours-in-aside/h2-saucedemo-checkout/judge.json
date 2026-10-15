@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The totals are correct and checkout completed, but the final answer reports “Checkout: Complete!” instead of the required confirmation heading “Thank you for your order!” and omits the item names.","failure_category":"wrong_answer"}

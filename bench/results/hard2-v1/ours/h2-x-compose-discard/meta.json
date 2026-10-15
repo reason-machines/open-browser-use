@@ -1,0 +1,47 @@
+{
+ "requires_login": [
+  "x"
+ ],
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-x-compose-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 313.7,
+  "steps": 39,
+  "tokens": 1247119,
+  "final": "The composer showed “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI” after I selected the `OpenAI` / `@OpenAI` suggestion. The image was **not attached**: the file chooser timed out, and direct file assignment was denied. The Post button was enabled. I cleared the composer text and attempted to close the tab; the browser’s discard confirmation and Drafts/unsent list could not be verified because the browser tools timed out. So I **cannot confirm that a draft was discarded or that no draft was saved**.",
+  "raw_final": "FINAL ANSWER: The composer showed “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI” after I selected the `OpenAI` / `@OpenAI` suggestion. The image was **not attached**: the file chooser timed out, and direct file assignment was denied. The Post button was enabled. I cleared the composer text and attempted to close the tab; the browser’s discard confirmation and Drafts/unsent list could not be verified because the browser tools timed out. So I **cannot confirm that a draft was discarded or that no draft was saved**.",
+  "session_id": "bench-hard2-v1-h2-x-compose-discard",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 11,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://x.com/home"
+   ],
+   "closed_by_harness": 1,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Entered the requested text and hashtag, selected the @OpenAI suggestion, and verified Post was enabled without clicking it. However, image attachment failed, no ready-state snapshot/screenshot was captured, and Discard plus an empty drafts list were never verified. File chooser and cleanup tools repeatedly timed out.",
+  "failure_category": "tool_error_or_infra"
+ }
+}
