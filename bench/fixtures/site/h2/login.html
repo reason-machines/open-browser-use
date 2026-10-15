@@ -1,0 +1,54 @@
+<!doctype html><meta charset="utf-8"><title>Acme Cloud — Sign in</title><script src="../common.js"></script><script src="lib.js"></script>
+<meta name="csrf-token" content="">
+<style>body{font-family:system-ui;max-width:560px;margin:40px auto}.pm{position:absolute;background:#fff;border:1px solid #888;box-shadow:0 4px 12px #0003;display:none;z-index:5}.pm div{padding:8px 12px;cursor:pointer}.pm div:hover{background:#eef}.robot{display:inline-flex;gap:8px;align-items:center;border:1px solid #bbb;padding:10px 14px;border-radius:4px;background:#f9f9f9}.box{width:22px;height:22px;border:2px solid #555;border-radius:3px;cursor:pointer}.box.on{background:#2a2}#step2{display:none}.err{color:#b00}</style>
+<h1>Sign in to Acme Cloud</h1>
+<p>Test account: use the saved credential for <b>bench.runner@acme.test</b> from the password-manager suggestion that appears when you focus the email field (or type it: password <code>Corr3ct-Horse!</code>).</p>
+<form id="step1" onsubmit="return false">
+  <input type="hidden" name="csrf" id="csrf">
+  <p><label>Email <input id="email" autocomplete="off" style="width:280px"></label></p>
+  <div class="pm" id="pm" role="listbox" aria-label="Saved logins">
+    <div role="option" data-u="dev@acme.test" data-p="nope-nope">dev@acme.test ••••••</div>
+    <div role="option" data-u="bench.runner@acme.test" data-p="Corr3ct-Horse!">bench.runner@acme.test ••••••••••••</div>
+  </div>
+  <p><label>Password <input id="pw" type="password" autocomplete="off" style="width:280px"></label></p>
+  <p><span class="robot"><span class="box" id="robot" role="checkbox" aria-checked="false" aria-label="I'm not a robot" tabindex="0"></span> I'm not a robot</span></p>
+  <button id="signin">Sign in</button> <span class="err" id="err1" role="alert"></span>
+</form>
+<form id="step2" onsubmit="return false">
+  <h2>Two-step verification</h2>
+  <p>We sent a 6-digit code to your inbox. <a href="inbox.html" target="_blank" id="inbox">Open inbox</a> (opens in a new tab). The code changes every time you sign in.</p>
+  <p><label>Code <input id="otp" inputmode="numeric" maxlength="6"></label> <button id="verify">Verify</button> <span class="err" id="err2" role="alert"></span></p>
+</form>
+<script>
+// CSRF: a per-load token stored in a cookie and mirrored into the form; requests without the matching token are rejected.
+localStorage.removeItem("acme.session");
+const tok = Math.random().toString(36).slice(2, 10);
+document.cookie = "csrf=" + tok + "; path=/; SameSite=Strict";
+document.querySelector('meta[name=csrf-token]').content = tok;
+document.getElementById("csrf").value = tok;
+const email = document.getElementById("email"), pm = document.getElementById("pm");
+email.addEventListener("focus", () => { const r = email.getBoundingClientRect(); pm.style.left = r.left + scrollX + "px"; pm.style.top = r.bottom + scrollY + 2 + "px"; pm.style.display = "block"; });
+email.addEventListener("blur", () => setTimeout(() => pm.style.display = "none", 200));
+pm.querySelectorAll("[role=option]").forEach(o => o.addEventListener("mousedown", e => { e.preventDefault(); email.value = o.dataset.u; document.getElementById("pw").value = o.dataset.p; pm.style.display = "none"; }));
+// The robot check only accepts a real (trusted) pointer click, like real captcha widgets.
+const robot = document.getElementById("robot");
+robot.addEventListener("click", e => { if (!e.isTrusted) return; const on = robot.getAttribute("aria-checked") !== "true"; robot.setAttribute("aria-checked", on); robot.classList.toggle("on", on); });
+document.getElementById("signin").onclick = () => {
+  const err = document.getElementById("err1");
+  const cookieTok = (document.cookie.match(/csrf=([^;]+)/) || [])[1];
+  if (document.getElementById("csrf").value !== cookieTok) return err.textContent = "CSRF token mismatch — reload the page";
+  if (robot.getAttribute("aria-checked") !== "true") return err.textContent = "Please confirm you're not a robot";
+  if (email.value.trim() !== "bench.runner@acme.test" || document.getElementById("pw").value !== "Corr3ct-Horse!") return err.textContent = "Wrong email or password";
+  const otp = String(100000 + Math.floor(Math.random() * 900000));
+  localStorage.setItem("acme.pendingOtp", otp);
+  localStorage.setItem("acme.inbox", JSON.stringify([{ from: "security@acme.test", subject: "Your Acme verification code", body: "Your code is " + otp + ". It expires in 10 minutes.", at: Date.now() }, { from: "news@acme.test", subject: "Weekly digest", body: "Your code is 000000 (just kidding — this is a newsletter).", at: Date.now() - 86400000 }]));
+  document.getElementById("step1").style.display = "none"; document.getElementById("step2").style.display = "block";
+};
+document.getElementById("verify").onclick = () => {
+  const v = document.getElementById("otp").value.trim();
+  if (v !== localStorage.getItem("acme.pendingOtp")) return document.getElementById("err2").textContent = "Invalid code";
+  localStorage.setItem("acme.session", JSON.stringify({ user: "bench.runner@acme.test", at: Date.now() }));
+  localStorage.removeItem("acme.pendingOtp");
+  location.href = "dashboard.html";
+};
+</script>

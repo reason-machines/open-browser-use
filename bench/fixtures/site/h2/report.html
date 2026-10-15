@@ -1,0 +1,20 @@
+<!doctype html><meta charset="utf-8"><title>Toolchain report</title><script src="../common.js"></script>
+<style>body{font-family:system-ui;max-width:640px;margin:30px auto}label{display:block;margin:10px 0}input,select{width:240px}</style>
+<h1>Toolchain version report</h1>
+<form id="f" onsubmit="return false">
+<label>Latest stable Python (python.org) <input id="py" placeholder="e.g. 3.12.4"></label>
+<label>Latest Node.js LTS (nodejs.org) <input id="node" placeholder="e.g. 20.15.1"></label>
+<label>Latest stable Go (go.dev) <input id="go" placeholder="e.g. 1.22.5"></label>
+<label>Reviewer <select id="rev"><option value="">--</option><option>Ada</option><option>Grace</option><option>Linus</option></select></label>
+<button id="gen">Generate receipt</button>
+</form><p id="msg" role="status"></p>
+<script>
+const clean = s => s.trim().replace(/^(v|go|python\s*)/i, "");
+document.getElementById("gen").onclick = () => {
+  const py = clean(document.getElementById("py").value), node = clean(document.getElementById("node").value), go = clean(document.getElementById("go").value), rev = document.getElementById("rev").value;
+  if (!py || !node || !go || !rev) return document.getElementById("msg").textContent = "All fields are required";
+  const receipt = { python: py, node, go, reviewer: rev, checksum: benchCode(`report|${py}|${node}|${go}|${rev}`) };
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(receipt, null, 2)], { type: "application/json" })); a.download = "toolchain-receipt.json"; document.body.appendChild(a); a.click(); a.remove();
+  document.getElementById("msg").textContent = "Receipt downloaded (toolchain-receipt.json). The checksum is only in the file.";
+};
+</script>

@@ -1,0 +1,25 @@
+<!doctype html><meta charset="utf-8"><title>Sprint board</title><script src="../common.js"></script>
+<style>body{font-family:system-ui;margin:30px}.board{display:flex;gap:16px}.col{width:220px;min-height:300px;background:#f1f2f4;border-radius:8px;padding:8px}.col h3{margin:4px}.card{background:#fff;border-radius:6px;padding:10px;margin:8px 0;box-shadow:0 1px 2px #0003;cursor:grab}.col.over{outline:2px dashed #36c}</style>
+<h1>Sprint board</h1>
+<p>Using drag and drop, move <b>Fix login bug</b>, <b>Write docs</b> and <b>Ship v2</b> into the <b>Done</b> column so that Done contains exactly those three cards in that order from top to bottom. Then press <b>Close sprint</b> and report the sprint code.</p>
+<div class="board" id="board"></div><p><button id="close">Close sprint</button></p><p id="out" role="status"></p>
+<script>
+const cols = { "To do": ["Write docs", "Refactor API", "Ship v2"], "In progress": ["Fix login bug", "Design review"], "Done": ["Kickoff"] };
+const board = document.getElementById("board");
+for (const [name, cards] of Object.entries(cols)) {
+  const c = document.createElement("div"); c.className = "col"; c.dataset.col = name; c.innerHTML = `<h3>${name}</h3>`;
+  cards.forEach(t => { const d = document.createElement("div"); d.className = "card"; d.draggable = true; d.textContent = t; c.appendChild(d); });
+  board.appendChild(c);
+}
+let dragged = null;
+board.addEventListener("dragstart", e => { dragged = e.target.closest(".card"); e.dataTransfer.setData("text/plain", dragged.textContent); e.dataTransfer.effectAllowed = "move"; });
+board.addEventListener("dragover", e => { const col = e.target.closest(".col"); if (!col) return; e.preventDefault(); col.classList.add("over"); });
+board.addEventListener("dragleave", e => { const col = e.target.closest(".col"); if (col) col.classList.remove("over"); });
+board.addEventListener("drop", e => {
+  const col = e.target.closest(".col"); if (!col) return; e.preventDefault(); col.classList.remove("over");
+  const text = e.dataTransfer.getData("text/plain"); const card = [...board.querySelectorAll(".card")].find(c => c.textContent === text); if (!card) return;
+  const after = [...col.querySelectorAll(".card")].find(c => c !== card && e.clientY < c.getBoundingClientRect().top + c.offsetHeight / 2);
+  after ? col.insertBefore(card, after) : col.appendChild(card);
+});
+document.getElementById("close").onclick = () => { const done = [...document.querySelector('[data-col="Done"]').querySelectorAll(".card")].map(c => c.textContent); document.getElementById("out").textContent = "Sprint code: " + benchCode("kanban:" + done.join(",")); };
+</script>

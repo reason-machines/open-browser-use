@@ -1,0 +1,54 @@
+<!doctype html><meta charset="utf-8"><title>Onboarding wizard</title><script src="../common.js"></script><script src="lib.js"></script>
+<style>body{font-family:system-ui;max-width:760px;margin:30px auto}.steps{display:flex;gap:6px;margin-bottom:16px}.steps span{padding:4px 10px;border-radius:12px;background:#eee}.steps span.on{background:#36c;color:#fff}.plan{display:inline-block;border:2px solid #ccc;border-radius:8px;padding:14px;margin:6px;cursor:pointer;width:150px}.plan[aria-checked=true]{border-color:#36c;background:#eef3ff}.cal{display:inline-block;vertical-align:top;margin-right:16px}.grid{display:grid;grid-template-columns:repeat(7,32px);gap:2px}.grid div{height:28px;line-height:28px;text-align:center}.grid .d{cursor:pointer}.grid .d:hover{background:#def}.grid .in{background:#cde}.grid .edge{background:#36c;color:#fff}.combo-list{border:1px solid #999;max-width:360px;display:none}.combo-list div{padding:6px 10px;cursor:pointer}.combo-list div[aria-selected=true]{background:#e8f0fe}.err{color:#b00}.nav{margin-top:18px}</style>
+<h1>Workspace setup</h1>
+<p>Complete the wizard: choose the <b>Team</b> plan; set team size to <b>12</b> with the stepper; pick the trip date range <b>26 February 2027 → 3 March 2027</b>; set the office address to <b>1 Springfield Ave, Portland</b> using the address autocomplete; confirm on the review step and report the workspace code.</p>
+<div class="steps" id="steps"></div><div id="view"></div><p class="err" id="err" role="alert"></p>
+<div class="nav"><button id="back">Back</button> <button id="next">Next</button></div>
+<script>
+const st = { plan: null, size: 1, start: null, end: null, addr: "", step: 0 };
+const S = ["Plan", "Team", "Dates", "Address", "Review"];
+const M = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+let calY = 2026, calM = 9;
+const ADDR = ["1 Springfield Ave, Portland", "1 Springfield Ave, Springfield", "10 Springfield Rd, Portland", "1 Spring St, Portland", "12 Springfield Ave, Portland"];
+function visible() { return S.filter((s, i) => !(s === "Team" && st.plan !== "Team")); }
+function iso(y, m, d) { return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`; }
+function month(y, m) {
+  const c = document.createElement("div"); c.className = "cal";
+  c.innerHTML = `<b>${M[m]} ${y}</b><div class="grid"></div>`; const g = c.querySelector(".grid");
+  "Su Mo Tu We Th Fr Sa".split(" ").forEach(w => { const d = document.createElement("div"); d.textContent = w; g.appendChild(d); });
+  for (let i = 0; i < new Date(y, m, 1).getDay(); i++) g.appendChild(document.createElement("div"));
+  for (let d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) {
+    const x = document.createElement("div"), v = iso(y, m, d); x.className = "d"; x.textContent = d; x.setAttribute("role", "button"); x.setAttribute("aria-label", `${M[m]} ${d}, ${y}`);
+    if (v === st.start || v === st.end) x.classList.add("edge"); else if (st.start && st.end && v > st.start && v < st.end) x.classList.add("in");
+    x.onclick = () => { if (!st.start || st.end) { st.start = v; st.end = null; } else if (v < st.start) { st.start = v; } else st.end = v; render(); };
+    g.appendChild(x);
+  }
+  return c;
+}
+function render() {
+  const vis = visible(), name = vis[st.step];
+  document.getElementById("steps").innerHTML = vis.map((s, i) => `<span class="${i === st.step ? "on" : ""}">${i + 1}. ${s}</span>`).join("");
+  const v = document.getElementById("view"); v.innerHTML = ""; document.getElementById("err").textContent = "";
+  if (name === "Plan") ["Starter", "Team", "Enterprise"].forEach(p => { const d = document.createElement("div"); d.className = "plan"; d.setAttribute("role", "radio"); d.setAttribute("aria-checked", st.plan === p); d.innerHTML = `<b>${p}</b><br><small>${p === "Team" ? "$12/seat" : p === "Starter" ? "Free" : "Contact us"}</small>`; d.onclick = () => { st.plan = p; render(); }; v.appendChild(d); });
+  if (name === "Team") { v.innerHTML = `<p>Team size</p><button id="minus" aria-label="Decrease team size">−</button> <span id="size" role="spinbutton" aria-valuenow="${st.size}">${st.size}</span> <button id="plus" aria-label="Increase team size">+</button><p><small>Max 50. The value cannot be typed.</small></p>`; document.getElementById("minus").onclick = () => { st.size = Math.max(1, st.size - 1); render(); }; document.getElementById("plus").onclick = () => { st.size = Math.min(50, st.size + 1); render(); }; }
+  if (name === "Dates") { v.innerHTML = `<p>Select start and end dates. <button id="pm">‹ Prev</button> <button id="nm">Next ›</button> <span id="rng">${st.start || "—"} → ${st.end || "—"}</span></p>`; v.appendChild(month(calY, calM)); const ny = calM === 11 ? calY + 1 : calY, nm = (calM + 1) % 12; v.appendChild(month(ny, nm)); document.getElementById("pm").onclick = () => { if (--calM < 0) { calM = 11; calY--; } render(); }; document.getElementById("nm").onclick = () => { if (++calM > 11) { calM = 0; calY++; } render(); }; }
+  if (name === "Address") {
+    v.innerHTML = `<p><label>Office address <input id="addr" role="combobox" aria-autocomplete="list" aria-expanded="false" style="width:360px" autocomplete="off"></label></p><div class="combo-list" id="cl" role="listbox"></div><p><small>You must pick a suggestion; free text is not accepted.</small></p>`;
+    const inp = document.getElementById("addr"), cl = document.getElementById("cl"); inp.value = st.addr; let picked = st.addr;
+    inp.oninput = () => { picked = ""; st.addr = ""; const q = inp.value.toLowerCase(); const ms = q.length < 3 ? [] : ADDR.filter(a => a.toLowerCase().includes(q)); cl.innerHTML = ""; ms.forEach(a => { const o = document.createElement("div"); o.setAttribute("role", "option"); o.textContent = a; o.onmousedown = e => { e.preventDefault(); inp.value = a; st.addr = a; cl.style.display = "none"; inp.setAttribute("aria-expanded", "false"); }; cl.appendChild(o); }); cl.style.display = ms.length ? "block" : "none"; inp.setAttribute("aria-expanded", ms.length > 0); };
+  }
+  if (name === "Review") { v.innerHTML = `<p>Plan: ${st.plan}</p>${st.plan === "Team" ? `<p>Team size: ${st.size}</p>` : ""}<p>Dates: ${st.start} → ${st.end}</p><p>Address: ${st.addr}</p><label><input type="checkbox" id="ok"> Everything looks right</label>`; }
+  document.getElementById("next").textContent = name === "Review" ? "Confirm" : "Next";
+  document.getElementById("back").disabled = st.step === 0;
+}
+document.getElementById("back").onclick = () => { st.step = Math.max(0, st.step - 1); render(); };
+document.getElementById("next").onclick = () => {
+  const vis = visible(), name = vis[st.step], err = document.getElementById("err");
+  if (name === "Plan" && !st.plan) return err.textContent = "Choose a plan";
+  if (name === "Dates" && !(st.start && st.end)) return err.textContent = "Choose a start and end date";
+  if (name === "Address" && !st.addr) return err.textContent = "Pick an address from the suggestions";
+  if (name === "Review") { if (!document.getElementById("ok").checked) return err.textContent = "Please confirm the summary"; document.getElementById("view").innerHTML = `<p role="status">Workspace code: ${benchCode(`wiz|${st.plan}|${st.plan === "Team" ? st.size : "-"}|${st.start}..${st.end}|${st.addr}`)}</p>`; document.getElementById("next").disabled = true; return; }
+  st.step++; render();
+};
+render();
+</script>

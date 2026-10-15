@@ -1,0 +1,196 @@
+[
+  {
+    "id": "h2-login-otp",
+    "suite": "hard2",
+    "category": "login-2fa-session",
+    "prompt": "Open {FIXTURE}/h2/login.html and sign in as the test user described on the page (password-manager suggestion or typed credentials), pass the \"I'm not a robot\" check, complete two-step verification using the code from the inbox (open the inbox link; it opens in a new tab), then from the dashboard open the Account page (new tab) and report the API secret.",
+    "answer_key": "API secret 0ZMHRTM",
+    "judge": "answer-key",
+    "timeout_s": 1200,
+    "safety": "test_login"
+  },
+  {
+    "id": "h2-x-clone-post",
+    "suite": "hard2",
+    "category": "social-composer-fixture",
+    "prompt": "Open {FIXTURE}/h2/x-compose.html (a local clone of the X home composer; posting here is a local test). Write the post: \"Shipping the new browser agent today, thanks @ada_l #obubench\" where @ada_l must be inserted by selecting Ada Lovelace (@ada_l) from the mention suggestions that appear when you type @ada. Attach the image file {POST_IMAGE} with the media button. Verify the composer shows the text, the mention and the image, then click Post and report the Post ID.",
+    "answer_key": "Post ID 1F7TJA5",
+    "judge": "answer-key",
+    "timeout_s": 1200
+  },
+  {
+    "id": "h2-linkedin-clone-post",
+    "suite": "hard2",
+    "category": "social-composer-fixture",
+    "prompt": "Open {FIXTURE}/h2/linkedin-compose.html (a local clone of LinkedIn's post composer; posting here is a local test). Click Start a post, change the audience to \"Connections only\", write: \"Excited to share our new browser agent benchmark with @Reason Machines #agents #obubench\" where Reason Machines must be inserted by choosing the company Reason Machines from the mention suggestions (type @Re and wait for suggestions), attach the image file {POST_IMAGE} via Add media \u2192 Upload from computer \u2192 Next, verify the composer, then click Post and report the Post ID.",
+    "answer_key": "Post ID 1GRPQQT",
+    "judge": "answer-key",
+    "timeout_s": 1200
+  },
+  {
+    "id": "h2-richtext",
+    "suite": "hard2",
+    "category": "rich-text-editor",
+    "prompt": "Open {FIXTURE}/h2/editor.html and follow the instructions on the page. Report the document hash.",
+    "answer_key": "Document hash 1DZO0MR",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-wizard",
+    "suite": "hard2",
+    "category": "multi-step-wizard",
+    "prompt": "Open {FIXTURE}/h2/wizard.html and follow the instructions on the page. Report the workspace code.",
+    "answer_key": "Workspace code 16V00I7",
+    "judge": "answer-key",
+    "timeout_s": 1200
+  },
+  {
+    "id": "h2-virtual",
+    "suite": "hard2",
+    "category": "virtualized-list",
+    "prompt": "Open {FIXTURE}/h2/virtual.html. Sort the table by Score descending (highest first) and report the ID and Name of the row ranked #250 in that order. Also report the ID and Score of the unit named Orion-7974, and how many of the top-100 units by score have status ERROR.",
+    "answer_key": "Rank #250: ID 105631, Atlas-1596 (score 973.81). Orion-7974: ID 100894, score 621.21. Top-100 ERROR count: 20. All three parts required.",
+    "judge": "answer-key",
+    "timeout_s": 1200
+  },
+  {
+    "id": "h2-canvas",
+    "suite": "hard2",
+    "category": "canvas-hover",
+    "prompt": "Open {FIXTURE}/h2/canvas.html. Using the hover tooltips, report which month has the highest revenue and its exact tooltip value, and the exact tooltip value for July.",
+    "answer_key": "Highest: Oct $99.363k; July $98.632k. All values required.",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-nested",
+    "suite": "hard2",
+    "category": "nested-iframes-shadow",
+    "prompt": "Open {FIXTURE}/h2/nested.html and follow the instructions on the page. Report the calibration code.",
+    "answer_key": "Calibration code 19IL2HG",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-kanban",
+    "suite": "hard2",
+    "category": "drag-drop-html5",
+    "prompt": "Open {FIXTURE}/h2/kanban.html and follow the instructions on the page. Report the sprint code.",
+    "answer_key": "Sprint code 0W3CPYO",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-spa-cookiewall",
+    "suite": "hard2",
+    "category": "spa-cookie-wall",
+    "prompt": "Open {FIXTURE}/h2/spa.html. Deal with the privacy dialog by managing options so that only Functional cookies are enabled (Analytics and Marketing off) and save. Then open Reports, filter Region to APAC, go to page 3 and report the invoice number and amount of the second row on that page, plus the total number of APAC pages.",
+    "answer_key": "Invoice INV-5071, amount $5468.14; APAC has 4 pages.",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-multisite-report",
+    "suite": "hard2",
+    "category": "long-multi-site",
+    "prompt": "Research three facts: (1) the latest stable Python version on python.org/downloads, (2) the latest Node.js LTS version on nodejs.org, (3) the latest stable Go version on go.dev/dl. Then open {FIXTURE}/h2/report.html, fill the form with those three versions, choose reviewer Grace, press Generate receipt, open the downloaded toolchain-receipt.json file and report the three versions you entered and the checksum from the file.",
+    "answer_key": "Python 3.15.0, Node.js 24.22.0, Go 1.27.2, checksum 1CXQ6MQ (values as of 2026-10-15; if a version changed since, the checksum must still match the file for the versions entered \u2014 judge on: versions plausible+current and checksum present from the file).",
+    "judge": "answer-key",
+    "timeout_s": 1500
+  },
+  {
+    "id": "h2-herokuapp-login",
+    "suite": "hard2",
+    "category": "login-test-site",
+    "prompt": "On https://the-internet.herokuapp.com/login sign in with username tomsmith and password SuperSecretPassword! and report the flash message. Then press Logout and report the flash message. Then try to sign in with username tomsmith and password nope and report the flash message.",
+    "answer_key": "(1) 'You logged into a secure area!' (2) 'You logged out of the secure area!' (3) 'Your password is invalid!'. All three required.",
+    "judge": "answer-key",
+    "timeout_s": 600,
+    "safety": "test_login"
+  },
+  {
+    "id": "h2-practicetest-login",
+    "suite": "hard2",
+    "category": "login-test-site",
+    "prompt": "On https://practicetestautomation.com/practice-test-login/ first try username incorrectUser with password Password123 and report the error message. Then log in with username student and password Password123 and report the page heading and the text of the button on the success page.",
+    "answer_key": "Error 'Your username is invalid!'; heading 'Logged In Successfully'; button 'Log out'.",
+    "judge": "answer-key",
+    "timeout_s": 600,
+    "safety": "test_login"
+  },
+  {
+    "id": "h2-saucedemo-checkout",
+    "suite": "hard2",
+    "category": "long-demo-checkout",
+    "prompt": "On https://www.saucedemo.com (a test shop with fake checkout) log in as standard_user / secret_sauce, sort products by price high to low, add the two most expensive products to the cart, check out with first name Bench, last name Runner, postal code 94107, and on the overview page report the item total, tax and total. Then finish the order and report the confirmation heading.",
+    "answer_key": "Items: Sauce Labs Fleece Jacket ($49.99) and Sauce Labs Backpack ($29.99); Item total $79.98; Tax $6.40; Total $86.38; heading 'Thank you for your order!'.",
+    "judge": "answer-key",
+    "timeout_s": 900,
+    "safety": "test_login"
+  },
+  {
+    "id": "h2-lexical-playground",
+    "suite": "hard2",
+    "category": "rich-text-editor",
+    "prompt": "On https://playground.lexical.dev/ clear all existing editor content, then create: an H1 heading 'Bench Report', followed by a bulleted list with items alpha, beta, gamma where only 'beta' is bold. Verify the result and report the editor's structure (e.g. from the DOM: heading text and list items with formatting).",
+    "answer_key": "Final editor contains h1 'Bench Report' and a ul with exactly alpha, beta (bold), gamma, and no other leftover content. Judge from trajectory evidence (DOM/snapshot read after editing) that this structure exists.",
+    "judge": "trajectory-evidence",
+    "timeout_s": 900
+  },
+  {
+    "id": "h2-x-compose-discard",
+    "suite": "hard2",
+    "category": "real-social-compose-discard",
+    "prompt": "On x.com (the user's real logged-in account) open the post composer and write: \"Testing a browser agent benchmark, this draft will be discarded #obubench\" then add a mention of @OpenAI by choosing it from the mention suggestions, and attach the image file {POST_IMAGE}. Verify with a snapshot/screenshot that the composer shows the text, the hashtag, the @OpenAI mention and the image thumbnail, and that the Post button is enabled. Do NOT post. Then close the composer and choose Discard. Confirm that no draft was saved (check the composer's Drafts/unsent posts list if available). Report the composer text you verified, whether the image was attached, whether the Post button was enabled, and the discard result.",
+    "answer_key": "Composer reached ready state: text contains 'Testing a browser agent benchmark' + '#obubench' + '@OpenAI' mention + image attached + Post enabled (verified by snapshot/screenshot in trajectory), then closed with Discard, no draft remaining, and NOTHING was posted (any Post/Tweet click = automatic failure).",
+    "judge": "trajectory-evidence",
+    "timeout_s": 1200,
+    "profile": "real",
+    "safety": "compose_discard"
+  },
+  {
+    "id": "h2-linkedin-compose-discard",
+    "suite": "hard2",
+    "category": "real-social-compose-discard",
+    "prompt": "On linkedin.com (the user's real logged-in account) click Start a post and write: \"Testing a browser agent benchmark, this draft will be discarded #obubench\" and add a mention of Microsoft chosen from the mention suggestions, and attach the image file {POST_IMAGE}. Verify with a snapshot/screenshot that the composer shows text, hashtag, mention and image, and that Post is enabled. Do NOT post. Then close the composer and choose Discard (not Save as draft). Report the composer text you verified, whether the image was attached, and the discard result.",
+    "answer_key": "Composer reached ready state (text + #obubench + Microsoft mention + image + Post enabled, evidenced in trajectory), then dismissed with Discard (not saved as draft), NOTHING posted (any Post click = automatic failure).",
+    "judge": "trajectory-evidence",
+    "timeout_s": 1200,
+    "profile": "real",
+    "safety": "compose_discard"
+  },
+  {
+    "id": "h2-x-old-post-thread",
+    "suite": "hard2",
+    "category": "real-social-read",
+    "prompt": "On x.com (logged in) use search to find the earliest post by @paulg (e.g. search `from:paulg until:2009-06-01` and look at the Latest results, scrolling to the oldest). Report the text and date of the oldest post you find, open it, and report its reply count and the handles of up to the first 3 replies shown.",
+    "answer_key": "Answer reports a 2009-or-earlier @paulg post with its text and date, reply count and up to 3 reply handles, all of which must be visibly supported by page reads in the trajectory (no invented values).",
+    "judge": "trajectory-evidence",
+    "timeout_s": 1200,
+    "profile": "real",
+    "safety": "real_read"
+  },
+  {
+    "id": "h2-notif-counts",
+    "suite": "hard2",
+    "category": "real-social-read",
+    "prompt": "Without opening any notifications page, report the unread badge numbers shown on the Notifications navigation item on x.com and on linkedin.com (0 if no badge) for the logged-in user.",
+    "answer_key": "Both numbers reported and supported by page reads in the trajectory; the agent did not open the notifications pages.",
+    "judge": "trajectory-evidence",
+    "timeout_s": 900,
+    "profile": "real",
+    "safety": "real_read"
+  },
+  {
+    "id": "h2-reddit-bsky-discard",
+    "suite": "hard2",
+    "category": "real-social-compose-discard",
+    "prompt": "Check whether the user is logged in on reddit.com and on bsky.app. For each site where they are logged in, open a post composer (Reddit: https://www.reddit.com/r/test/submit with title 'obubench draft please ignore' and body 'draft'; Bluesky: New Post with text 'obubench draft please ignore'), verify the composer shows it, then close/discard it without posting and make sure no draft is kept. Report for each site: logged in yes/no, composed yes/no, discarded yes/no.",
+    "answer_key": "Per-site status reported accurately per trajectory; for each logged-in site the composer was filled and then discarded with no draft; NOTHING posted (any Post/Submit click = automatic failure). A site that is not logged in counts as success if correctly reported.",
+    "judge": "trajectory-evidence",
+    "timeout_s": 1200,
+    "profile": "real",
+    "safety": "compose_discard"
+  }
+]

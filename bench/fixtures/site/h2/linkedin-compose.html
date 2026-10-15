@@ -1,0 +1,55 @@
+<!doctype html><meta charset="utf-8"><title>Feed | LinkedIn-clone</title><script src="../common.js"></script><script src="lib.js"></script>
+<style>body{font-family:system-ui;background:#f4f2ee;margin:0}.feed{max-width:560px;margin:24px auto}.card{background:#fff;border-radius:8px;border:1px solid #ddd;padding:12px 16px;margin-bottom:10px}.start{width:100%;text-align:left;border:1px solid #999;border-radius:24px;padding:12px 16px;background:#fff;color:#555;cursor:pointer;font-size:15px}.overlay{position:fixed;inset:0;background:#0009;display:none;align-items:flex-start;justify-content:center;padding-top:60px;z-index:20}.modal{background:#fff;border-radius:8px;width:560px;max-height:80vh;overflow:auto}.mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.mb{padding:14px 18px}.ed{min-height:140px;font-size:16px;outline:none}.ed:empty::before{content:attr(data-placeholder);color:#777}.mf{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.primary{margin-left:auto;background:#0a66c2;color:#fff;border:none;border-radius:16px;padding:6px 16px;font-weight:600;cursor:pointer}.primary:disabled{background:#ccc;cursor:default}.ghost{border:none;background:none;cursor:pointer;font-size:15px;padding:6px 8px;border-radius:4px}.ghost:hover{background:#eee}.who{border:none;background:none;cursor:pointer;text-align:left;padding:6px;border-radius:8px}.who:hover{background:#eee}.thumb{max-width:100%;border-radius:6px;margin-top:8px}label.opt{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #eee;cursor:pointer}</style>
+<div class="feed">
+  <div class="card"><button class="start" id="start">Start a post</button></div>
+  <div id="posts"><div class="card"><b>Acme Corp</b><br>We are hiring!</div></div>
+</div>
+<div class="overlay" id="ov">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Create post" id="m-compose">
+    <div class="mh"><button class="who" id="aud-btn"><b>Bench Runner</b><br><small id="aud-label">Post to Anyone ▾</small></button><button class="ghost" id="close" aria-label="Dismiss">✕</button></div>
+    <div class="mb"><div class="ed" id="ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Text editor for creating content" data-placeholder="What do you want to talk about?"></div><div id="media-slot"></div></div>
+    <div class="mf"><button class="ghost" id="add-media" aria-label="Add media">🖼 Add media</button><button class="ghost" aria-label="Create an event" disabled>📅</button><button class="primary" id="post" disabled>Post</button></div>
+  </div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Post settings" id="m-aud" style="display:none">
+    <div class="mh"><b>Post settings</b><button class="ghost" id="aud-back" aria-label="Back">←</button></div>
+    <div class="mb"><p>Who can see your post?</p>
+      <label class="opt"><input type="radio" name="aud" value="Anyone" checked> Anyone<br><small>Anyone on or off LinkedIn-clone</small></label>
+      <label class="opt"><input type="radio" name="aud" value="Connections only"> Connections only</label>
+      <label class="opt"><input type="radio" name="aud" value="Group"> Group</label></div>
+    <div class="mf"><button class="primary" id="aud-done">Done</button></div>
+  </div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Editor" id="m-media" style="display:none">
+    <div class="mh"><b>Editor</b><button class="ghost" id="media-back" aria-label="Back">←</button></div>
+    <div class="mb"><p>Select files to begin</p><button class="primary" style="margin:0" id="upload-btn">Upload from computer</button><input type="file" id="file" accept="image/*" style="display:none"><div id="media-prev"></div></div>
+    <div class="mf"><button class="primary" id="media-next" disabled>Next</button></div>
+  </div>
+</div>
+<div class="overlay" id="discard-ov"><div class="modal" role="alertdialog" aria-label="Discard post"><div class="mb"><b>Discard post?</b><p>You haven't finished your post yet.</p></div><div class="mf"><button class="ghost" id="keep">Continue editing</button><button class="primary" id="discard">Discard</button></div></div></div>
+<script>
+const $ = id => document.getElementById(id);
+const ed = $("ed");
+attachMentions(ed, [{ handle: "reason-labs", name: "Reason Labs" }, { handle: "reason-machines", name: "Reason Machines" }, { handle: "reasonable-ai", name: "Reasonable AI" }], { minChars: 2, delay: 350, chipText: p => p.name });
+let audience = "Anyone", imgSha = null, pendingFile = null;
+function show(id) { ["m-compose", "m-aud", "m-media"].forEach(m => $(m).style.display = m === id ? "block" : "none"); }
+function update() { $("post").disabled = norm(ed.innerText).length === 0; }
+ed.addEventListener("input", update);
+$("start").onclick = () => { $("ov").style.display = "flex"; show("m-compose"); setTimeout(() => ed.focus(), 50); };
+$("aud-btn").onclick = () => show("m-aud");
+$("aud-back").onclick = () => show("m-compose");
+$("aud-done").onclick = () => { audience = document.querySelector("input[name=aud]:checked").value; $("aud-label").textContent = "Post to " + audience + " ▾"; show("m-compose"); };
+$("add-media").onclick = () => show("m-media");
+$("media-back").onclick = () => show("m-compose");
+$("upload-btn").onclick = () => $("file").click();
+$("file").onchange = () => { pendingFile = $("file").files[0]; if (!pendingFile) return; $("media-prev").innerHTML = `<img class="thumb" alt="Selected image">`; $("media-prev").firstChild.src = URL.createObjectURL(pendingFile); $("media-next").disabled = false; };
+$("media-next").onclick = async () => { imgSha = await sha12(pendingFile); $("media-slot").innerHTML = `<img class="thumb" alt="Attached image">`; $("media-slot").firstChild.src = URL.createObjectURL(pendingFile); show("m-compose"); };
+function reset() { ed.innerHTML = ""; imgSha = null; pendingFile = null; $("media-slot").innerHTML = ""; $("media-prev").innerHTML = ""; $("file").value = ""; audience = "Anyone"; $("aud-label").textContent = "Post to Anyone ▾"; document.querySelector("input[value=Anyone]").checked = true; update(); }
+$("close").onclick = () => { if (norm(ed.innerText) || imgSha) $("discard-ov").style.display = "flex"; else $("ov").style.display = "none"; };
+$("keep").onclick = () => $("discard-ov").style.display = "none";
+$("discard").onclick = () => { $("discard-ov").style.display = "none"; $("ov").style.display = "none"; reset(); };
+$("post").onclick = () => {
+  const text = norm(ed.innerText), id = benchCode(`li|${audience}|${text}|${mentionsIn(ed).join(",")}|${imgSha || "none"}`);
+  const c = document.createElement("div"); c.className = "card"; c.innerHTML = `<b>Bench Runner</b> · <small class="aud"></small><p class="txt"></p><small class="pid" role="status"></small>`;
+  c.querySelector(".aud").textContent = audience; c.querySelector(".txt").textContent = text + (imgSha ? " [image]" : ""); c.querySelector(".pid").textContent = "Post ID: " + id;
+  $("posts").prepend(c); $("ov").style.display = "none"; reset();
+};
+</script>

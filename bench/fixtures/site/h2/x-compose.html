@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>Home / X-clone</title><script src="../common.js"></script><script src="lib.js"></script>
+<style>body{font-family:system-ui;margin:0;background:#fff;color:#0f1419}.wrap{max-width:600px;margin:0 auto;border-left:1px solid #eee;border-right:1px solid #eee;min-height:100vh}header{padding:14px 16px;font-weight:700;font-size:20px;border-bottom:1px solid #eee}.composer{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #eee}.avatar{width:40px;height:40px;border-radius:50%;background:#7a9}.ed{min-height:52px;font-size:20px;outline:none;padding:8px 0}.ed:empty::before{content:attr(data-placeholder);color:#536471}.bar{display:flex;align-items:center;gap:8px;border-top:1px solid #eee;padding-top:8px;margin-top:8px}.icon{border:none;background:none;color:#1d9bf0;font-size:18px;cursor:pointer;padding:6px;border-radius:50%}.icon:hover{background:#e8f5fd}.post{margin-left:auto;background:#0f1419;color:#fff;border:none;border-radius:20px;padding:8px 18px;font-weight:700;cursor:pointer}.post:disabled{opacity:.5;cursor:default}.preview{position:relative;margin-top:8px;display:none}.preview img{max-width:100%;border-radius:16px}.preview button{position:absolute;top:6px;left:6px;background:#0f1419cc;color:#fff;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer}.count{color:#536471;font-size:13px}.tweet{padding:12px 16px;border-bottom:1px solid #eee}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d9bf0;color:#fff;padding:12px 18px;border-radius:6px;display:none}</style>
+<div class="wrap"><header>Home</header>
+<div class="composer"><div class="avatar"></div><div style="flex:1">
+  <div class="ed" id="ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Post text" data-placeholder="What is happening?!"></div>
+  <div class="preview" id="preview"><img id="pimg" alt="Image attached"><button id="rm" aria-label="Remove media">✕</button></div>
+  <div class="bar">
+    <button class="icon" id="media" aria-label="Add photos or video" title="Media">🖼</button>
+    <input type="file" id="file" accept="image/*" style="display:none" data-testid="fileInput">
+    <button class="icon" aria-label="Add poll" disabled>📊</button><button class="icon" aria-label="Add emoji" disabled>😊</button>
+    <span class="count" id="count">280</span>
+    <button class="post" id="post" disabled data-testid="tweetButtonInline">Post</button>
+  </div>
+</div></div>
+<div id="timeline"><div class="tweet"><b>Acme News</b> @acmenews · 2h<br>Welcome to the timeline clone.</div></div></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const ed = document.getElementById("ed"), post = document.getElementById("post"), file = document.getElementById("file");
+attachMentions(ed, [{ handle: "ada_y", name: "Ada Yonath" }, { handle: "ada_l", name: "Ada Lovelace" }, { handle: "adafruit", name: "Adafruit" }, { handle: "obu_dev", name: "Open Browser Use" }]);
+let imgSha = null;
+function update() { const n = norm(ed.innerText).length; document.getElementById("count").textContent = 280 - n; post.disabled = n === 0 || n > 280; }
+ed.addEventListener("input", update);
+document.getElementById("media").onclick = () => file.click();
+file.onchange = async () => { const f = file.files[0]; if (!f) return; imgSha = await sha12(f); document.getElementById("pimg").src = URL.createObjectURL(f); document.getElementById("preview").style.display = "block"; };
+document.getElementById("rm").onclick = () => { imgSha = null; file.value = ""; document.getElementById("preview").style.display = "none"; };
+post.onclick = () => {
+  const text = norm(ed.innerText), id = benchCode(`x|${text}|${mentionsIn(ed).join(",")}|${imgSha || "none"}`);
+  const t = document.createElement("div"); t.className = "tweet"; t.innerHTML = `<b>Bench Runner</b> @bench_runner · now<br><span class="txt"></span><br><small class="pid"></small>`;
+  t.querySelector(".txt").textContent = text + (imgSha ? " [image]" : ""); t.querySelector(".pid").textContent = "Post ID: " + id;
+  document.getElementById("timeline").prepend(t);
+  ed.innerHTML = ""; imgSha = null; file.value = ""; document.getElementById("preview").style.display = "none"; update();
+  const toast = document.getElementById("toast"); toast.textContent = "Your post was sent. Post ID: " + id; toast.style.display = "block";
+};
+</script>

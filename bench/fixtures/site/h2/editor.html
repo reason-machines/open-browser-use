@@ -1,0 +1,38 @@
+<!doctype html><meta charset="utf-8"><title>Docs — Rich text</title><script src="../common.js"></script><script src="lib.js"></script>
+<style>body{font-family:system-ui;max-width:720px;margin:30px auto}.tb button{margin-right:4px;padding:4px 10px}.ed{border:1px solid #aaa;min-height:200px;padding:12px;outline:none;margin-top:6px}</style>
+<h1>Release notes editor</h1>
+<p>Clear the editor, then produce exactly this document using the toolbar or keyboard shortcuts: a level-2 heading <b>Release notes</b>; a paragraph <b>The new agent is fast.</b> where only the word <i>fast</i> is bold; a bulleted list with the items <b>tabs</b>, <b>snapshots</b>, <b>uploads</b>. Then press Export and report the document hash.</p>
+<div class="tb" role="toolbar" aria-label="Formatting">
+  <button data-cmd="bold" aria-label="Bold (Cmd+B)"><b>B</b></button><button data-cmd="italic" aria-label="Italic (Cmd+I)"><i>I</i></button>
+  <button data-block="h2" aria-label="Heading 2">H2</button><button data-block="p" aria-label="Normal text">¶</button>
+  <button data-cmd="insertUnorderedList" aria-label="Bulleted list">• List</button>
+  <button id="export">Export</button>
+</div>
+<div class="ed" id="ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Document body"><p>Draft: replace me. This text is <i>placeholder</i>.</p></div>
+<p id="out" role="status"></p>
+<script>
+document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("mousedown", e => { e.preventDefault(); document.execCommand(b.dataset.cmd); }));
+document.querySelectorAll("[data-block]").forEach(b => b.addEventListener("mousedown", e => { e.preventDefault(); document.execCommand("formatBlock", false, b.dataset.block); }));
+function inline(n) {
+  if (n.nodeType === 3) return n.textContent;
+  const inner = [...n.childNodes].map(inline).join("");
+  const tag = n.nodeName.toLowerCase(), w = n.style && n.style.fontWeight;
+  if (tag === "b" || tag === "strong" || w === "bold" || +w >= 600) return inner.trim() ? "**" + inner + "**" : inner;
+  if (tag === "i" || tag === "em") return inner.trim() ? "_" + inner + "_" : inner;
+  return inner;
+}
+function serialize(root) {
+  const out = [];
+  for (const n of root.childNodes) {
+    if (n.nodeType === 3) { if (norm(n.textContent)) out.push("p:" + norm(n.textContent)); continue; }
+    const tag = n.nodeName.toLowerCase();
+    if (tag === "ul" || tag === "ol") out.push(tag + ":" + [...n.querySelectorAll(":scope > li")].map(li => norm(inline(li))).join(";"));
+    else if (/^h[1-6]$/.test(tag)) out.push(tag + ":" + norm(inline(n)));
+    else if ((tag === "p" || tag === "div") && n.querySelector("ul,ol,h1,h2,h3,h4,h5,h6,p,div")) { const inner = serialize(n); if (inner) out.push(inner); }
+    else if (tag === "p" || tag === "div") { const t = norm(inline(n)); if (t) out.push("p:" + t.replace(/\*\*\s*\*\*/g, "")); }
+    else if (tag !== "br") { const t = norm(inline(n)); if (t) out.push("p:" + t); }
+  }
+  return out.join("|");
+}
+document.getElementById("export").onclick = () => { const s = serialize(document.getElementById("ed")); const o = document.getElementById("out"); o.textContent = "Document hash: " + benchCode("doc:" + s); o.dataset.structure = s; };
+</script>

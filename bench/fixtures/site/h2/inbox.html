@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Acme Mail — Inbox</title>
+<style>body{font-family:system-ui;max-width:640px;margin:30px auto}.m{border-bottom:1px solid #ddd;padding:10px;cursor:pointer}.m b{display:block}.body{display:none;color:#333;margin-top:6px}.m.open .body{display:block}</style>
+<h1>Inbox</h1><div id="list"></div>
+<script>
+const msgs = JSON.parse(localStorage.getItem("acme.inbox") || "[]");
+const list = document.getElementById("list");
+if (!msgs.length) list.textContent = "No messages.";
+msgs.forEach(m => { const d = document.createElement("div"); d.className = "m"; d.innerHTML = `<b></b><span></span><div class="body"></div>`; d.querySelector("b").textContent = m.subject; d.querySelector("span").textContent = "from " + m.from; d.querySelector(".body").textContent = m.body; d.onclick = () => d.classList.toggle("open"); list.appendChild(d); });
+</script>

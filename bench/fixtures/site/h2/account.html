@@ -1,0 +1,6 @@
+<!doctype html><meta charset="utf-8"><title>Acme Cloud — Account</title><script src="../common.js"></script>
+<h1>Account</h1><p id="out" role="status"></p>
+<script>
+let s = JSON.parse(localStorage.getItem("acme.session") || "null"); if (s && Date.now() - s.at > 15 * 60 * 1000) s = null;
+document.getElementById("out").textContent = s ? "API secret: " + benchCode("acct:" + s.user) : "Not signed in — session missing. Sign in first.";
+</script>

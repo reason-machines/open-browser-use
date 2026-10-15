@@ -1,0 +1,38 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-iframe",
+ "category": "iframe-oopif",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 22.5,
+  "steps": 13,
+  "tokens": 317538,
+  "final": "1PXLPZB",
+  "raw_final": "FINAL ANSWER: 1PXLPZB",
+  "session_id": "bench-baseline-v2-fx-iframe",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains the required confirmation code 1PXLPZB, verified in the trajectory.",
+  "failure_category": "none"
+ }
+}

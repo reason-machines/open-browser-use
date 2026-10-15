@@ -1,0 +1,3 @@
+<!doctype html><meta charset="utf-8"><title>Acme Cloud — Dashboard</title>
+<h1>Dashboard</h1><p id="who"></p><p>Your API secret is shown on the <a href="account.html" target="_blank">Account page</a> (opens in a new tab).</p>
+<script>let s = JSON.parse(localStorage.getItem("acme.session") || "null"); if (s && Date.now() - s.at > 15 * 60 * 1000) s = null; if (!s) location.href = "login.html"; else document.getElementById("who").textContent = "Signed in as " + s.user;</script>

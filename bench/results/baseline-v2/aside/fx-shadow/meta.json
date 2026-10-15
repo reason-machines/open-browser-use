@@ -1,0 +1,38 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-shadow",
+ "category": "shadow-dom",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 15.5,
+  "steps": 3,
+  "tokens": 275190,
+  "final": "09MLBWN",
+  "raw_final": "FINAL ANSWER: 09MLBWN",
+  "session_id": "5vZPkw4xb3v2NbCo",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required vault code 09MLBWN, confirmed by the trajectory.",
+  "failure_category": "none"
+ }
+}

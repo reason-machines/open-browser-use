@@ -1,0 +1,4 @@
+<!doctype html><meta charset="utf-8"><title>Level 1</title>
+<p style="font-family:system-ui">Level 1 (cross-site frame). The panel is one level deeper.</p>
+<iframe id="f2" style="width:660px;height:340px;border:2px dashed #888"></iframe>
+<script>document.getElementById("f2").src = "http://127.0.0.1:" + location.port + "/h2/nested-2.html";</script>

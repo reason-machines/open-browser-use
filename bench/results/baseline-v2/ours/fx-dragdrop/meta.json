@@ -1,0 +1,38 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-dragdrop",
+ "category": "drag-drop",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 58.9,
+  "steps": 30,
+  "tokens": 524923,
+  "final": "Code unavailable — the cards could not be reordered.",
+  "raw_final": "I couldn’t complete the drag because the mouse events weren’t reaching the page’s pointer handlers. The cards remain unsorted, so no code was revealed.\n\nFINAL ANSWER: Code unavailable — the cards could not be reordered.",
+  "session_id": "bench-baseline-v2-fx-dragdrop",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer omitted the required code 03LGSL9. Repeated drag attempts failed to reorder the cards or reveal the code.",
+  "failure_category": "interaction_failed"
+ }
+}

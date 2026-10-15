@@ -1,0 +1,42 @@
+<!doctype html><meta charset="utf-8"><title>Insights</title>
+<style>body{font-family:system-ui;margin:0}nav{background:#223;padding:10px 20px}nav a{color:#fff;margin-right:16px}main{padding:20px;max-width:760px}.wall{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:9}.wall .box{background:#fff;padding:22px;border-radius:8px;width:420px}.sw{display:flex;justify-content:space-between;padding:6px 0}.skel{height:18px;background:linear-gradient(90deg,#eee,#ddd,#eee);margin:8px 0;border-radius:4px}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #ddd;padding:6px;text-align:left}.lb{position:relative;display:inline-block}.lb-list{position:absolute;background:#fff;border:1px solid #999;display:none;z-index:2}.lb-list div{padding:6px 14px;cursor:pointer}.lb-list div:hover{background:#eef}</style>
+<nav><a href="#/">Home</a><a href="#/reports">Reports</a><a href="#/settings">Settings</a></nav><main id="main"></main>
+<script>
+// Consent: the wall re-appears on every route change until preferences are SAVED with analytics OFF,
+// marketing OFF and functional ON ("Accept all" is remembered but makes Reports show a paywall).
+let consent = null;
+function wall() {
+  if (consent && consent.saved) return;
+  const w = document.createElement("div"); w.className = "wall"; w.innerHTML = `<div class="box" role="dialog" aria-label="Privacy choices"><h3>Your privacy</h3><p>We use cookies for analytics and marketing.</p><div id="opts" style="display:none"><div class="sw"><span>Functional</span><input type="checkbox" id="c-fn"></div><div class="sw"><span>Analytics</span><input type="checkbox" id="c-an" checked></div><div class="sw"><span>Marketing</span><input type="checkbox" id="c-mk" checked></div><button id="save">Save preferences</button></div><p id="btns"><button id="all">Accept all</button> <button id="manage">Manage options</button></p></div>`;
+  document.body.appendChild(w);
+  w.querySelector("#all").onclick = () => { consent = { saved: true, all: true }; w.remove(); route(); };
+  w.querySelector("#manage").onclick = () => { w.querySelector("#opts").style.display = "block"; w.querySelector("#btns").style.display = "none"; };
+  w.querySelector("#save").onclick = () => { const fn = w.querySelector("#c-fn").checked, an = w.querySelector("#c-an").checked, mk = w.querySelector("#c-mk").checked; w.remove(); if (fn && !an && !mk) consent = { saved: true, all: false }; else consent = { saved: false }; route(); };
+}
+let seed = 99; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const regions = ["EMEA", "APAC", "AMER"];
+const rows = Array.from({ length: 120 }, (_, i) => ({ id: "INV-" + (5000 + i), region: regions[Math.floor(rnd() * 3)], amount: (100 + rnd() * 9900).toFixed(2) }));
+let filter = "All", page = 1;
+function reports(m) {
+  if (consent && consent.all) { m.innerHTML = "<h2>Reports</h2><p>Reports are unavailable with your current privacy choices (marketing personalisation enabled). Reset choices in Settings.</p>"; return; }
+  m.innerHTML = `<h2>Reports</h2><div class="skel"></div><div class="skel"></div><div class="skel"></div>`;
+  setTimeout(() => {
+    const list = rows.filter(r => filter === "All" || r.region === filter), pages = Math.ceil(list.length / 10);
+    page = Math.min(page, pages);
+    m.innerHTML = `<h2>Reports</h2><p>Region: <span class="lb"><button id="lbb" aria-haspopup="listbox">${filter} ▾</button><div class="lb-list" role="listbox" id="lbl">${["All", ...regions].map(r => `<div role="option">${r}</div>`).join("")}</div></span></p>
+      <table><thead><tr><th>Invoice</th><th>Region</th><th>Amount</th></tr></thead><tbody>${list.slice((page - 1) * 10, page * 10).map(r => `<tr><td>${r.id}</td><td>${r.region}</td><td>$${r.amount}</td></tr>`).join("")}</tbody></table>
+      <p><button id="prev" ${page <= 1 ? "disabled" : ""}>Previous</button> Page ${page} of ${pages} <button id="next" ${page >= pages ? "disabled" : ""}>Next</button></p>`;
+    m.querySelector("#lbb").onclick = () => { const l = m.querySelector("#lbl"); l.style.display = l.style.display === "block" ? "none" : "block"; };
+    m.querySelectorAll("[role=option]").forEach(o => o.onclick = () => { filter = o.textContent; page = 1; reports(m); });
+    m.querySelector("#prev").onclick = () => { page--; reports(m); }; m.querySelector("#next").onclick = () => { page++; reports(m); };
+  }, 1500);
+}
+function route() {
+  const m = document.getElementById("main"), r = location.hash || "#/";
+  if (r === "#/reports") reports(m);
+  else if (r === "#/settings") { m.innerHTML = `<h2>Settings</h2><button id="reset">Reset privacy choices</button>`; m.querySelector("#reset").onclick = () => { consent = null; route(); }; }
+  else m.innerHTML = `<h2>Welcome</h2><p>Open Reports from the navigation.</p>`;
+  wall();
+}
+addEventListener("hashchange", route); route();
+</script>

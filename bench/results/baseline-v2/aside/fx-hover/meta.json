@@ -1,0 +1,38 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-hover",
+ "category": "hover-menus",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.1,
+  "steps": 4,
+  "tokens": 341695,
+  "final": "0SAJR18",
+  "raw_final": "FINAL ANSWER: 0SAJR18",
+  "session_id": "la539WVhaNkJ88Ad",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 1,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required SKU 0SAJR18, verified in the page status after following the menu.",
+  "failure_category": "none"
+ }
+}

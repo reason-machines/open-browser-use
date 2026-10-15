@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><title>Level 2</title><script src="../common.js"></script>
+<p style="font-family:system-ui">Level 2 (cross-site again).</p>
+<calib-panel></calib-panel>
+<script>
+customElements.define("calib-panel", class extends HTMLElement {
+  connectedCallback() {
+    const r = this.attachShadow({ mode: "open" });
+    r.innerHTML = `<style>.track{position:relative;width:400px;height:8px;background:#ccc;border-radius:4px;margin:30px 10px}.h{position:absolute;top:-8px;width:24px;height:24px;border-radius:50%;background:#36c;cursor:grab}.v{font:16px monospace}</style>
+      <div style="font-family:system-ui">Gain: <span class="v" id="val">0</span>
+      <div class="track" id="track"><div class="h" id="h" role="slider" tabindex="0" aria-label="Gain" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div>
+      <label><input type="checkbox" id="lock"> Lock</label> <button id="verify">Verify</button><p id="out" role="status"></p></div>`;
+    let val = 0, drag = false;
+    const h = r.getElementById("h"), tr = r.getElementById("track");
+    const set = v => { val = Math.max(0, Math.min(100, Math.round(v))); h.style.left = (val * 4 - 12) + "px"; h.setAttribute("aria-valuenow", val); r.getElementById("val").textContent = val; };
+    set(0);
+    h.addEventListener("pointerdown", e => { drag = true; h.setPointerCapture(e.pointerId); });
+    h.addEventListener("pointermove", e => { if (drag) set((e.clientX - tr.getBoundingClientRect().left) / 4); });
+    h.addEventListener("pointerup", () => drag = false);
+    h.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowUp") set(val + 1); if (e.key === "ArrowLeft" || e.key === "ArrowDown") set(val - 1); if (e.key === "PageUp") set(val + 10); if (e.key === "PageDown") set(val - 10); e.preventDefault(); });
+    r.getElementById("verify").onclick = () => { r.getElementById("out").textContent = r.getElementById("lock").checked ? "Calibration code: " + benchCode("nested:" + val) : "Lock the panel first"; };
+  }
+});
+</script>
