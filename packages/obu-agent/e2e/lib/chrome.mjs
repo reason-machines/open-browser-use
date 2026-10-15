@@ -5,7 +5,7 @@ import { spawn, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, writeFileSync, chmodSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { createServer } from "node:net";
 
 export const REPO_ROOT = resolve(new URL("../../../../", import.meta.url).pathname);
@@ -60,7 +60,7 @@ export function buildHost(tmp) {
  */
 export function installNativeHost({ userDataDir, hostBin, hostSocket, extensionId, tmp }) {
   const wrapper = join(tmp, "native-host.sh");
-  writeFileSync(wrapper, `#!/bin/sh\n# e2e dev native host (Chrome passes the caller origin as an arg; ignored)\necho "$(date +%s) launched $*" >> "${join(tmp, "native-host.log")}"\nexec "${hostBin}" host --socket-path "${hostSocket}" 2>> "${join(tmp, "native-host.log")}"\n`);
+  writeFileSync(wrapper, `#!/bin/sh\n# e2e dev native host (Chrome passes the caller origin as an arg; ignored)\necho "$(date +%s) launched $*" >> "${join(tmp, "native-host.log")}"\n# --socket-dir pins active.json + relay.token next to our socket (never the user's /tmp/open-browser-use);\n# OBU_AGENT=off: the harness runs its own daemon.\nOBU_AGENT=off exec "${hostBin}" host --socket-dir "${dirname(hostSocket)}" --socket-path "${hostSocket}" 2>> "${join(tmp, "native-host.log")}"\n`);
   chmodSync(wrapper, 0o755);
   const dir = join(userDataDir, "NativeMessagingHosts");
   mkdirSync(dir, { recursive: true });

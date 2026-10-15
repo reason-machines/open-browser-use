@@ -10,9 +10,9 @@
 // mode, extension_disconnected / daemon unavailable) is reported as TODO, not failure.
 // E2E_STRICT=1 turns every pending into a failure — that is the Round-1 merge gate.
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync, existsSync, mkdirSync, writeSync } from "node:fs";
+import { mkdtempSync, rmSync, existsSync, mkdirSync, writeSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { ObuAgentClient, agentSocketPath } from "../../dist/index.js";
 import { startFixtures } from "../../fixtures/server.mjs";
 import { Cdp, attachPage, browserWsUrl, listTargets } from "./cdp.mjs";
@@ -75,7 +75,7 @@ async function setup() {
     if (why) { env.unavailable = why; return env; }
   }
   try {
-    env.client = await new ObuAgentClient(socket).connect();
+    env.client = await new ObuAgentClient(socket, { token: agentToken(socket) }).connect();
     env.info = await env.client.call("daemon.info", {});
     dbg("daemon", JSON.stringify(env.info));
   } catch (e) { env.unavailable = `daemon unreachable at ${socket}: ${e.message}`; return env; }
@@ -89,12 +89,18 @@ async function setup() {
   return env;
 }
 
+/** The daemon's client token: agent.token next to its socket (0600), absent with --no-auth. */
+function agentToken(socket) {
+  const path = join(dirname(socket), "agent.token");
+  return existsSync(path) ? readFileSync(path, "utf8").trim() : undefined;
+}
+
 async function spawnDaemon(env) {
   const socket = env.socket;
   const cmd = process.env.E2E_DAEMON_CMD
     ? ["/bin/sh", ["-c", process.env.E2E_DAEMON_CMD]]
-    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--host-socket", env.hostSocket]];
-  const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_HOST_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
+    : [process.execPath, [join(REPO_ROOT, "packages/obu-agent/dist/daemon/main.js"), "--profile", "e2e", "--socket", socket, "--obu-socket", env.hostSocket]];
+  const daemon = spawn(cmd[0], cmd[1], { stdio: ["ignore", "ignore", "pipe"], env: { ...process.env, OBU_RELAY_SOCKET: env.hostSocket, OBU_AGENT_SOCKET: socket, OBU_DOWNLOADS_DIR: env.downloadsDir, OBU_BRAND_DIR: `obu-e2e-${process.pid}` } });
   let err = ""; daemon.stderr.on("data", (d) => { err = (err + d).slice(-4000); });
   started.procs.push(daemon); env.daemon = daemon; env.daemonStderr = () => err;
   const t = Date.now();
@@ -114,7 +120,7 @@ export async function restartDaemon(env) {
   rmSync(env.socket, { force: true });
   const why = await spawnDaemon(env);
   if (why) throw new Error(why);
-  env.client = await new ObuAgentClient(env.socket).connect();
+  env.client = await new ObuAgentClient(env.socket, { token: agentToken(env.socket) }).connect();
   env.info = await env.client.call("daemon.info", {});
   return env.client;
 }
