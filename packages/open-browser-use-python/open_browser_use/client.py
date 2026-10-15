@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 import socket
+import stat
 import struct
+import sys
 import time
 from dataclasses import dataclass
 from typing import Any, Callable, Literal
@@ -20,6 +23,9 @@ class OpenBrowserUseClient:
     session_id: str = "open-browser-use-python"
     turn_id: str | None = None
     timeout: float = 10.0
+    # Relay token file. Precedence: OBU_RELAY_AUTH=uid (no token) >
+    # OBU_RELAY_TOKEN_PATH > token_path > <socket dir>/relay.token.
+    token_path: str | None = None
 
     def __post_init__(self) -> None:
         if self.turn_id is None:
@@ -27,12 +33,17 @@ class OpenBrowserUseClient:
         self._next_id = 1
         self._socket: socket.socket | None = None
         self._notification_handlers: list[NotificationHandler] = []
+        self._chunks = ChunkAssembler()
 
     def connect(self) -> "OpenBrowserUseClient":
         if self._socket is None:
             sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             sock.settimeout(self.timeout)
             sock.connect(self.socket_path)
+            token = read_relay_token(self.socket_path, self.token_path)
+            if token:
+                # Relays that don't require a token drop this frame.
+                sock.sendall(encode_frame({"auth": token}))
             self._socket = sock
         return self
 
@@ -70,7 +81,14 @@ class OpenBrowserUseClient:
         }
         self._socket.sendall(encode_frame(request))
         while True:
-            response = read_frame(self._socket)
+            try:
+                message = self._chunks.accept(read_frame(self._socket))
+            except EOFError:
+                self.close()
+                raise
+            if message is None:
+                continue
+            response = message
             if response.get("id") == request_id:
                 if "error" in response:
                     message = response["error"].get("message", "Open Browser Use request failed")
@@ -79,6 +97,11 @@ class OpenBrowserUseClient:
             if "id" not in response and isinstance(response.get("method"), str):
                 self._dispatch_notification(response)
                 continue
+            if response.get("id") is None and isinstance(response.get("error"), dict):
+                # Connection-level relay error (e.g. unauthorized); the relay
+                # closes the socket after it.
+                self.close()
+                raise RuntimeError(f"Open Browser Use relay: {response['error'].get('message', 'error')}")
             raise RuntimeError(f"unexpected response id: {response.get('id')!r}")
 
     def _dispatch_notification(self, notification: JsonObject) -> None:
@@ -402,6 +425,59 @@ class OpenBrowserUseCdp:
             return
         self.client.attach(tab_id)
         self._attached_tab_ids.add(tab_id)
+
+
+def read_relay_token(socket_path: str, token_path: str | None = None) -> str | None:
+    """Resolve and read the relay token (see OpenBrowserUseClient.token_path).
+
+    A missing file means the relay runs without token auth."""
+    if os.environ.get("OBU_RELAY_AUTH") == "uid":
+        return None
+    path = os.environ.get("OBU_RELAY_TOKEN_PATH") or token_path or os.path.join(os.path.dirname(socket_path), "relay.token")
+    try:
+        mode = os.stat(path).st_mode
+    except FileNotFoundError:
+        return None
+    if sys.platform != "win32" and stat.S_IMODE(mode) & 0o077:
+        raise RuntimeError(f"relay token file {path} must be mode 0600")
+    with open(path, encoding="utf-8") as handle:
+        token = handle.read().strip()
+    return token or None
+
+
+class ChunkAssembler:
+    """Reassembles {"chunk":{id,i,n,data}} envelopes (WIRE.md framing: data is
+    the i-th slice of the message's JSON text). Other messages pass through."""
+
+    def __init__(self, ttl: float = 60.0) -> None:
+        self._ttl = ttl
+        self._pending: dict[str, tuple[list[str | None], int, float]] = {}
+
+    def accept(self, message: JsonObject) -> JsonObject | None:
+        chunk = message.get("chunk") if isinstance(message, dict) else None
+        if not isinstance(chunk, dict):
+            return message
+        cid, i, n, data = chunk.get("id"), chunk.get("i"), chunk.get("n"), chunk.get("data")
+        if not (isinstance(cid, str) and isinstance(i, int) and isinstance(n, int) and isinstance(data, str) and 0 <= i < n):
+            raise RuntimeError("Malformed Open Browser Use chunk frame")
+        now = time.monotonic()
+        for key in [k for k, (_, _, at) in self._pending.items() if now - at > self._ttl]:
+            del self._pending[key]
+        parts, received, at = self._pending.get(cid, ([None] * n, 0, now))
+        if len(parts) != n:
+            del self._pending[cid]
+            raise RuntimeError(f"Open Browser Use chunk {cid} changed part count")
+        if parts[i] is None:
+            parts[i] = data
+            received += 1
+        if received < n:
+            self._pending[cid] = (parts, received, at)
+            return None
+        self._pending.pop(cid, None)
+        value = json.loads("".join(p for p in parts if p is not None))
+        if not isinstance(value, dict):
+            raise RuntimeError("Open Browser Use response must be a JSON object")
+        return value
 
 
 def encode_frame(value: JsonObject) -> bytes:
