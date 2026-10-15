@@ -193,6 +193,13 @@ export const MCP_TOOL_DEFS: McpToolDef[] = [
     ),
   },
   {
+    name: "browser_repl",
+    method: "repl.run",
+    description:
+      "Code mode: run JavaScript in your persistent browser sandbox (top-level await; variables persist between calls; print with console.log). Globals: page (Playwright-style: goto, click/fill/type/press/check/selectOption/setInputFiles by ref 'e12' | CSS | Locator, getByRole/getByText/locator, evaluate, waitForEvent('download'|'popup'|'dialog'), screenshot, pdf), context.newPage(), snapshot(), display(img), fs (./artifacts only). Batch several actions plus a final console.log(await snapshot()) in ONE call; actions wait for the page to settle, never sleep. See docs/agent/REPL-GUIDE.md.",
+    inputSchema: object({ code: { type: "string", description: "JavaScript to run." }, timeoutMs: { type: "integer", description: "Default 30000, max 300000." } }, ["code"]),
+  },
+  {
     name: "browser_finish",
     method: "session.close",
     description:

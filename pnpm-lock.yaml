@@ -30,6 +30,10 @@ importers:
         version: 5.9.3
 
   packages/obu-agent:
+    dependencies:
+      acorn:
+        specifier: ^8.15.0
+        version: 8.19.0
     devDependencies:
       '@types/node':
         specifier: ^22.10.2
@@ -152,6 +156,12 @@ packages:
   /abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
     engines: {node: ^18.17.0 || >=20.5.0}
+    dev: false
+
+  /acorn@8.19.0:
+    resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
     dev: false
 
   /agent-base@7.1.4:

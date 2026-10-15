@@ -136,6 +136,8 @@ active tab (I1). Every page result carries `events: SystemEvent[]`.
 | `wait` | `{for:'download'\|'popup'\|'dialog'\|'selector'\|'text'\|'url'\|'settled', selector?, text?, url?, dialogAction?, timeoutMs?=30000}` | `{ok, event?, download?, tab?, warnings?}` |
 | `network.capture` (r2) | `{op:'start'\|'stop', filter?}` | `{requests[]}` — auth/cookie headers redacted, bodies to files |
 | `fetchInPage` (r2) | `{url, init?, allowCrossOrigin?=false}` | `{status, headers, bodyPath, bytes}` |
+| `repl.run` (r2-repl) | `{code, timeoutMs?=30000 (max 300000)}` | `{ok, output, value?, error?{name,message,code?,stack?}, images[{path,mime}], warnings?, artifactsDir, ms, events}` — persistent per-session JS sandbox, see §Code mode |
+| `repl.reset` (r2-repl) | `{}` | `{ok:true}` — drops the session's bindings (also on `session.close`) |
 
 `act` actions: `click dblclick hover fill type press select check uncheck drag upload scroll`.
 `press` keys use Playwright syntax (`Enter`, `ControlOrMeta+A`, `Shift+Tab`).
@@ -145,7 +147,7 @@ session.heartbeat, session.events, tabs.list, snapshot, screenshot`.
 
 MCP tool names: `browser_tabs_list/open/attach/select/close, browser_snapshot,
 browser_act, browser_navigate, browser_screenshot, browser_wait,
-browser_evaluate, browser_cdp, browser_finish (= session.close)`.
+browser_evaluate, browser_cdp, browser_repl (= repl.run), browser_finish (= session.close)`.
 
 ## System events
 
@@ -321,3 +323,36 @@ then stop. `annotate` wraps the capture in `__obu.annotate(true/false)`.
 Auto-accept `alert`/`beforeunload`; accept `confirm` and report; dismiss
 `prompt` and report — unless a `wait{for:'dialog', dialogAction}` is pending.
 Never leave a tab hung on a dialog.
+
+### Code mode — `repl.run` (r2-repl; `src/repl/`)
+
+- One `node:vm` context per session, created on first `repl.run`, dropped on
+  `repl.reset`, `session.close`, or when the session no longer exists.
+- Cell transform (acorn): top-level `const/let/var/function/class` become
+  assignments on the sandbox global, so bindings persist; function
+  declarations are hoisted; the last expression statement is the `value`.
+  Top-level `await` works. `import`/`export` are refused.
+- Globals: `page` (the session's active tab until `goto` opens one),
+  `context` (`newPage()` = `tabs.open`, owned + background), `snapshot()`,
+  `display(img)`, `sleep(ms ≤ 5000)` (warns), `fs` (`readFile/writeFile/
+  exists/list`, confined to `artifactsDir`), `Buffer`, `URL`, timers. No
+  `require`, `process`, network or child processes. node:vm is a capability
+  boundary, not a security boundary.
+- Every browser call goes through the daemon's own handler table with the
+  session injected (`act` with `snapshot:'none'`, `navigate`, `snapshot`,
+  `evaluate` (isolated world by default), `wait`, `screenshot`, `cdp`,
+  `tabs.*`), so settle/actionability/errors are identical to the fat tools.
+  `repl.*` and `session.close` are not callable from inside the sandbox.
+- Locators are lazy: a ref (`e12`, `f1e3`) → `act{ref}`; CSS → `act{selector}`
+  (`.nth(i>0)` resolves to a ref via `__obu.refOf`); `getByRole/getByText/
+  getByLabel` resolve against a scoped full snapshot (`selector:':root'`, which
+  does not move the agent's diff baseline) by role + accessible name.
+- `waitForEvent('download')` returns a `Download`; if the backend reported no
+  file path, `path()/text()/buffer()` re-fetch the URL inside the page (same
+  cookies) into `artifacts/downloads/` and add a warning.
+- Errors thrown in the cell are returned (`ok:false`, `error`), never as a
+  JSON-RPC error, so earlier `console.log` output is kept. Daemon errors keep
+  their typed `code` (`stale_ref`, `not_actionable`, `timeout`, …).
+- Timeouts: the synchronous part is cut by `vm` `timeout`; pending promises by
+  a race. Output is capped at 60K chars.
+
