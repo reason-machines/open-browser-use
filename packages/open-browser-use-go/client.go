@@ -26,9 +26,13 @@ type Params map[string]any
 type Options struct {
 	SocketPath string
 	SocketDir  string
-	SessionID  string
-	TurnID     string
-	Timeout    time.Duration
+	// TokenPath overrides the relay token file (default: active.json's
+	// tokenPath, else <socket dir>/relay.token; OBU_RELAY_TOKEN_PATH and
+	// OBU_RELAY_AUTH=uid take precedence).
+	TokenPath string
+	SessionID string
+	TurnID    string
+	Timeout   time.Duration
 }
 
 type Notification struct {
@@ -43,6 +47,7 @@ type Client struct {
 
 	mu                   sync.Mutex
 	conn                 net.Conn
+	chunks               *wire.Reassembler
 	nextID               int64
 	notificationHandlers []NotificationHandler
 }
@@ -122,7 +127,7 @@ func (c *Client) Request(method string, params Params) (any, error) {
 	}
 	for {
 		var response rpcMessage
-		if err := wire.ReadJSON(c.conn, &response); err != nil {
+		if err := c.readMessageLocked(&response); err != nil {
 			return nil, err
 		}
 		if response.ID != nil && idMatches(response.ID, requestID) {
@@ -140,6 +145,13 @@ func (c *Client) Request(method string, params Params) (any, error) {
 				Params: response.Params,
 			})
 			continue
+		}
+		if response.ID == nil && response.Error != nil {
+			// Connection-level error from the relay (e.g. unauthorized); the
+			// relay closes the socket after it.
+			_ = c.conn.Close()
+			c.conn = nil
+			return nil, fmt.Errorf("open browser use relay: %s", response.Error.Message)
 		}
 		return nil, fmt.Errorf("unexpected response id: %v", response.ID)
 	}
@@ -297,19 +309,46 @@ func (c *Client) connectLocked() error {
 		return nil
 	}
 	socketPath := c.options.SocketPath
+	tokenPath := c.options.TokenPath
 	if socketPath == "" {
 		record, err := host.ReadActiveSocketRecord(c.options.SocketDir)
 		if err != nil {
 			return err
 		}
 		socketPath = record.SocketPath
+		if tokenPath == "" {
+			tokenPath = record.TokenPath
+		}
 	}
-	conn, err := net.DialTimeout("unix", socketPath, c.options.Timeout)
+	conn, err := host.DialRelayWithToken(socketPath, tokenPath, c.options.Timeout)
 	if err != nil {
 		return err
 	}
 	c.conn = conn
+	c.chunks = wire.NewReassembler()
 	return nil
+}
+
+// readMessageLocked reads the next whole JSON-RPC message, reassembling
+// {"chunk":…} envelopes (WIRE.md framing) if the peer splits large messages.
+func (c *Client) readMessageLocked(out any) error {
+	for {
+		payload, err := wire.ReadFrame(c.conn, wire.DefaultMaxFrame)
+		if err != nil {
+			return err
+		}
+		if wire.IsChunk(payload) {
+			whole, err := c.chunks.Add(payload)
+			if err != nil {
+				return err
+			}
+			if whole == nil {
+				continue
+			}
+			payload = whole
+		}
+		return json.Unmarshal(payload, out)
+	}
 }
 
 func (c *Client) dispatchNotificationLocked(notification Notification) {
