@@ -2,3 +2,4 @@
 - heading "Slotted title" [level=2]
 - button "Shadow button" [ref=e1]
 - textbox "Shadow input" [ref=e2]
+- button "Closed button" [ref=e3]

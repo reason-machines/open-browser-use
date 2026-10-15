@@ -105,7 +105,7 @@ describe("live snapshot engine", { skip: chrome ? false : "Chrome for Testing no
           const golden = join(GOLDEN_DIR, `${file.replace(/\.html$/, "")}${mode === "interactive" ? ".interactive" : ""}.yaml`);
           if (process.env.UPDATE_GOLDEN || !existsSync(golden)) writeFileSync(golden, got);
           assert.equal(got, readFileSync(golden, "utf8"), `${golden} (UPDATE_GOLDEN=1 to regenerate)`);
-          assert.deepEqual(s.warnings, []);
+          assert.deepEqual(s.warnings.filter((w) => !/folded to fit/.test(w)), []);
         }
       } finally {
         await p.close();
@@ -177,9 +177,46 @@ describe("live snapshot engine", { skip: chrome ? false : "Chrome for Testing no
     await p.close();
   });
 
-  test("maxChars → snapshot_too_large with advice, never truncated", async () => {
+  test("maxChars with budget off → snapshot_too_large with advice, never truncated", async () => {
     const p = await browser.newPage(`${server.base}/long-list.html`);
-    await assert.rejects(takeSnapshot(p.page, { maxChars: 5_000 }), (e) => e instanceof ObuError && e.code === "snapshot_too_large" && /interactive/.test(e.data.advice));
+    await assert.rejects(takeSnapshot(p.page, { maxChars: 5_000, budget: 0 }), (e) => e instanceof ObuError && e.code === "snapshot_too_large" && /interactive/.test(e.data.advice));
+    await p.close();
+  });
+
+  test("budget: big pages fold off-screen parts into [collapsed] refs instead of failing", async () => {
+    const p = await browser.newPage(`${server.base}/long-list.html`);
+    const s = await takeSnapshot(p.page, { maxChars: 5_000 });
+    assert.ok(s.tree.length <= 5_000, `${s.tree.length}`);
+    assert.ok(s.tree.includes('link "Item 0" [ref=e1]'), "on-screen items stay");
+    const fold = /- group \[ref=(e\d+)\] \[collapsed\]: "(\d+) refs/.exec(s.tree);
+    assert.ok(fold, s.tree.slice(-400));
+    assert.match(s.warnings.join(" "), /folded/);
+    // Expanding the folded run starts at its first item, not at the top of the list.
+    const firstFolded = Number(/starts at: Item (\d+)/.exec(s.tree)[1]);
+    const x = await takeSnapshot(p.page, { ref: fold[1], maxChars: 5_000 });
+    assert.ok(x.tree.includes(`link "Item ${firstFolded}"`), x.tree.slice(0, 600));
+    assert.ok(!x.tree.includes('link "Item 0" '), "items before the run are folded away");
+    // Refs of on-screen items are stable with budget on.
+    const again = await takeSnapshot(p.page, { maxChars: 5_000 });
+    assert.ok(again.tree.includes('link "Item 0" [ref=e1]'));
+    await p.close();
+  });
+
+  test("budget: interactive feeds fit 8K and keep the first screen of actions", async () => {
+    for (const [file, mustHave] of [["feed-x.html", ['textbox "Post text"', 'button "Post" ', 'link "Ada Lovelace"', 'button "0 Likes. Like"']], ["feed-linkedin.html", ['button "Start a post"', 'link "Person 0"', 'button "React Like"']]]) {
+      const p = await browser.newPage(`${server.base}/${file}`);
+      const s = await takeSnapshot(p.page, { interactive: true });
+      assert.ok(s.tree.length <= 8_000, `${file} ${s.tree.length}`);
+      for (const m of mustHave) assert.ok(s.tree.includes(m), `${file} missing ${m}`);
+      assert.ok(s.tree.includes("[collapsed]"), file);
+      await p.close();
+    }
+  });
+
+  test("closed shadow roots are walked via CDP", async () => {
+    const p = await browser.newPage(`${server.base}/closed-shadow.html`);
+    const s = await takeSnapshot(p.page, { interactive: true });
+    for (const m of ['textbox "Card number"', 'button "Pay now"', 'link "Terms in closed root"']) assert.ok(s.tree.includes(m), s.tree);
     await p.close();
   });
 

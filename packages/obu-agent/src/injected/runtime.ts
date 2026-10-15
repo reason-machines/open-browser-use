@@ -46,6 +46,15 @@ export function installObu(): void {
   const fingerprintOfRef = new Map<string, Fingerprint>();
   let refCounter = 0;
   let currentOrdinal = 0;
+  /** Folded-run refs: ref → {container, start}. snapshot({ref}) expands the container from `start` on. */
+  const runOfRef = new Map<string, { container: WeakRef<Element>; start: WeakRef<Element> }>();
+  const runRefOfStart = new WeakMap<Element, string>();
+  /** Closed shadow roots handed to us by the daemon (DOM.getDocument{pierce} + DOM.resolveNode). */
+  const closedRoots = new WeakMap<Element, ShadowRoot>();
+  function shadowOf(el: Element | null | undefined): ShadowRoot | null {
+    if (!el) return null;
+    return el.shadowRoot || closedRoots.get(el) || null;
+  }
 
   const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "META", "LINK", "NOSCRIPT", "TEMPLATE", "HEAD", "TITLE", "BASE"]);
 
@@ -98,8 +107,8 @@ export function installObu(): void {
 
   function deepElementFromPoint(x: number, y: number): Element | null {
     let el = document.elementFromPoint(x, y);
-    while (el && el.shadowRoot) {
-      const inner = el.shadowRoot.elementFromPoint(x, y);
+    while (el && shadowOf(el)) {
+      const inner = shadowOf(el)!.elementFromPoint(x, y);
       if (!inner || inner === el) break;
       el = inner;
     }
@@ -496,7 +505,7 @@ export function installObu(): void {
       if (depth > 0 && tag === "IMG") return normalizeWs(el.getAttribute("alt") || "");
       const parts: string[] = [pseudoText(el, "::before")];
       const children: Node[] = [];
-      if (el.shadowRoot) children.push(...Array.from(el.shadowRoot.childNodes));
+      if (shadowOf(el)) children.push(...Array.from(shadowOf(el)!.childNodes));
       else if (tag === "SLOT") children.push(...(el as HTMLSlotElement).assignedNodes({ flatten: true }));
       else children.push(...Array.from(el.childNodes));
       for (const c of children) {
@@ -578,6 +587,14 @@ export function installObu(): void {
     /** Name was computed from descendant content (dropped when the children render it). */
     nameFromContent?: boolean;
     el?: Element;
+    /** Transparent grouping (an unwrapped DOM container kept as a unit for budget compaction). Renders its children in place. */
+    group?: boolean;
+    /** Set when budget compaction folded this subtree; rendered instead of the children. */
+    collapsed?: string;
+    /** Synthetic chunk of a long sibling run: geometry = span of its first..last child. */
+    span?: boolean;
+    /** Merged folded run: element its expansion starts from. */
+    start?: Element;
   }
 
   function assignRef(el: Element, role: string, name: string): string {
@@ -607,12 +624,13 @@ export function installObu(): void {
 
   function deepActiveElement(): Element | null {
     let a: Element | null = document.activeElement;
-    while (a && a.shadowRoot && a.shadowRoot.activeElement) a = a.shadowRoot.activeElement;
+    while (a && shadowOf(a) && shadowOf(a)!.activeElement) a = shadowOf(a)!.activeElement;
     return a;
   }
 
   function childNodesOf(el: Element | Document | ShadowRoot): Node[] {
-    if ((el as Element).shadowRoot) return Array.from((el as Element).shadowRoot!.childNodes);
+    const sr = (el as Element).nodeType === 1 ? shadowOf(el as Element) : null;
+    if (sr) return Array.from(sr.childNodes);
     if ((el as Element).tagName === "SLOT") {
       const assigned = (el as HTMLSlotElement).assignedNodes({ flatten: true });
       return assigned.length ? assigned : Array.from(el.childNodes);
@@ -847,12 +865,25 @@ export function installObu(): void {
     }
   }
 
+  /**
+   * Unwrap `n` but, in budget mode, keep its children together as a
+   * transparent group so the budget pass can fold them as one unit.
+   */
+  function unwrap(n: AriaNode, grouping: boolean): (AriaNode | string)[] {
+    const kids = n.children;
+    if (!grouping || !n.el || kids.length < 2) return kids;
+    let nodes = 0;
+    for (const c of kids) if (typeof c !== "string") nodes++;
+    if (nodes < 2) return kids;
+    return [{ role: "group", name: "", props: [], children: kids, interactive: false, keep: false, el: n.el, group: true }];
+  }
+
   /** Returns replacement nodes for `n` (unwrapping, dropping). */
-  function compact(n: AriaNode, interactiveOnly: boolean): (AriaNode | string)[] {
+  function compact(n: AriaNode, interactiveOnly: boolean, grouping = false): (AriaNode | string)[] {
     const kids: (AriaNode | string)[] = [];
     for (const c of n.children) {
       if (typeof c === "string") kids.push(c);
-      else kids.push(...compact(c, interactiveOnly));
+      else kids.push(...compact(c, interactiveOnly, grouping));
     }
     n.children = kids;
     normalizeChildren(n);
@@ -860,7 +891,7 @@ export function installObu(): void {
     if (interactiveOnly) {
       // Keep only refs, landmarks, headings and dialogs (+ their ancestors).
       const hasKeptDesc = n.children.some((c) => typeof c !== "string");
-      if (!n.keep) return n.children;
+      if (!n.keep) return unwrap(n, grouping);
       if (!hasKeptDesc && !n.ref && n.role !== "heading" && !n.name) return [];
       return [n];
     }
@@ -879,18 +910,350 @@ export function installObu(): void {
 
     if (n.role === "generic" && !n.ref && !n.name && !n.props.length) {
       // Unwrap empty generic wrappers.
-      return n.children;
+      return unwrap(n, grouping);
     }
     if (n.role === "generic" && !n.ref && !n.name && n.props.length === 1 && n.props[0] === "scrollable" && !n.children.length) {
       return [];
     }
     if ((n.role === "list" || n.role === "group" || n.role === "rowgroup" || n.role === "figure" || n.role === "label" || n.role === "strong" || n.role === "emphasis" || n.role === "code" || n.role === "status") && !n.ref && !n.name && !n.props.length) {
       if (!n.children.length) return [];
-      if (n.role === "rowgroup" || n.role === "label" || n.role === "strong" || n.role === "emphasis" || n.role === "status") return n.children;
+      if (n.role === "rowgroup" || n.role === "label" || n.role === "strong" || n.role === "emphasis" || n.role === "status") return unwrap(n, grouping);
       if (n.role === "code" && n.children.every((c) => typeof c === "string")) return n.children;
     }
     if (!n.ref && !n.name && !n.children.length && !n.props.length && n.role !== "separator" && n.role !== "img") return [];
     return [n];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Budget compaction: fold far-away / bulky subtrees into one-line summaries
+  // with a ref the agent can snapshot({ref}) to expand. Never drops refs that
+  // are on screen while far-away content can still be folded.
+  // ---------------------------------------------------------------------------
+
+  interface BudgetCtx {
+    /** Viewport band [top, bottom] in client coordinates (scoped snapshots: the scope root's top). */
+    bandTop: number;
+    bandBottom: number;
+    focused: Element | null;
+    refNodes: { ref: string; role: string; name: string }[];
+    collapsed: number;
+    /** Expanding a folded run: everything above its first item folds before anything below. */
+    aboveFirst?: boolean;
+  }
+
+  const CITATION = /^(\[(\d+|[a-z]{1,2}|note \d+|citation needed|nb \d+)\]|\^|↑)$/i;
+
+  function renderedLength(nodes: (AriaNode | string)[]): number {
+    const out: string[] = [];
+    render(nodes, "", out);
+    let n = 0;
+    for (const l of out) n += l.length + 1;
+    return n;
+  }
+
+  /** Cheap rewrites that lose nothing an agent acts on. */
+  function tidyForBudget(nodes: (AriaNode | string)[], interactiveOnly: boolean): (AriaNode | string)[] {
+    const out: (AriaNode | string)[] = [];
+    let prevUrl = "";
+    for (const c of nodes) {
+      if (typeof c === "string") {
+        out.push(!interactiveOnly && c.length > 400 ? cut(c, 280) + ` (+${c.length - 280} chars)` : c);
+        prevUrl = "";
+        continue;
+      }
+      if (c.role === "link" && CITATION.test(c.name)) continue; // footnote markers
+      const urlIdx = c.props.findIndex((p) => p.startsWith("url="));
+      if (urlIdx >= 0) {
+        const full = c.props[urlIdx].slice(4);
+        let u = full;
+        if (u.startsWith("#") || (u.includes("#") && u.split("#")[0] === location.pathname)) {
+          c.props.splice(urlIdx, 1);
+          u = "";
+        } else {
+          const q = u.indexOf("?");
+          if (q >= 0 && u.length - q > 32) u = u.slice(0, q) + "?…";
+          if (u.length > 90) u = u.slice(0, 89) + "…";
+          c.props[urlIdx] = `url=${u}`;
+        }
+        // Image link + title link to the same place (same full href): keep the named one.
+        if (u && full === prevUrl && c.role === "link" && !c.children.length) {
+          const last = out[out.length - 1];
+          if (last && typeof last !== "string" && last.role === "link") {
+            if (!last.name && c.name) out[out.length - 1] = c;
+            continue;
+          }
+        }
+        prevUrl = u ? full : "";
+      } else prevUrl = "";
+      c.children = tidyForBudget(c.children, interactiveOnly);
+      out.push(c);
+    }
+    return out;
+  }
+
+  interface Cand {
+    node: AriaNode;
+    parent: Cand | null;
+    cost: number;
+    dist: number;
+    depth: number;
+    /** Top edge relative to the band top (on-screen ordering: lower parts fold first). */
+    y: number;
+  }
+
+  function lineCost(n: AriaNode, depth: number): number {
+    return depth * 2 + 3 + header(n).length + (n.value ? n.value.length + 4 : 0);
+  }
+
+  function nodeRect(n: AriaNode): DOMRect | null {
+    if (!n.el) return null;
+    const r = n.span ? new DOMRect(0, 0, 0, 0) : n.el.getBoundingClientRect();
+    if (r.width || r.height) return r;
+    // display:contents wrappers → union of first/last element children with boxes.
+    const kids = n.children.filter((c): c is AriaNode => typeof c !== "string" && !!c.el);
+    if (!kids.length) return null;
+    const a = kids[0].el!.getBoundingClientRect();
+    const b = kids[kids.length - 1].el!.getBoundingClientRect();
+    return new DOMRect(Math.min(a.left, b.left), Math.min(a.top, b.top), Math.max(a.right, b.right) - Math.min(a.left, b.left), Math.max(a.bottom, b.bottom) - Math.min(a.top, b.top));
+  }
+
+  function summarize(n: AriaNode): string {
+    const counts = new Map<string, number>();
+    const names: string[] = [];
+    let heading = "";
+    const walk = (c: AriaNode | string) => {
+      if (typeof c === "string") return;
+      if (c.role === "heading" && !heading) heading = c.name;
+      if (c.ref && c !== n) {
+        counts.set(c.role, (counts.get(c.role) ?? 0) + 1);
+        if (c.name && names.length < 3 && !names.includes(c.name)) names.push(cut(c.name, 32));
+      }
+      if (c.collapsed && c !== n) {
+        const m = /^(\d+) refs?/.exec(c.collapsed);
+        if (m) counts.set("item", (counts.get("item") ?? 0) + Number(m[1]));
+      }
+      for (const k of c.children) walk(k);
+    };
+    for (const k of n.children) walk(k);
+    let total = 0;
+    for (const v of counts.values()) total += v;
+    const parts = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([r, k]) => `${k} ${r}${k > 1 ? "s" : ""}`);
+    let s = total ? `${total} ref${total > 1 ? "s" : ""} (${parts.join(", ")})` : "text only";
+    if (heading && heading !== n.name) s += ` · ${cut(heading, 48)}`;
+    else if (names.length) s += ` · ${names.join(" | ")}`;
+    return s;
+  }
+
+  function containsFocus(n: AriaNode, focused: Element | null): boolean {
+    return !!(focused && n.el && (n.el === focused || containsComposed(n.el, focused)));
+  }
+
+  function collapseNode(n: AriaNode, bctx: BudgetCtx): void {
+    if (n.span) n.start = firstElementOf(n) ?? undefined; // children are about to go
+    n.collapsed = summarize(n);
+    n.children = [];
+    if (!n.ref && n.el) {
+      const role = n.group ? "group" : n.role;
+      n.ref = assignRef(n.el, role, n.group ? "" : n.name);
+      if (!bctx.refNodes.some((r) => r.ref === n.ref)) bctx.refNodes.push({ ref: n.ref, role, name: n.group ? "" : n.name });
+    }
+    n.value = undefined;
+    bctx.collapsed++;
+  }
+
+  function lowestCommonAncestor(els: Element[]): Element | null {
+    if (!els.length) return null;
+    const chain: Element[] = [];
+    for (let e: Element | null = els[0]; e; e = parentElementComposed(e)) chain.push(e);
+    let best = 0;
+    for (const el of els.slice(1)) {
+      while (best < chain.length && !containsComposed(chain[best], el)) best++;
+    }
+    return chain[best] ?? null;
+  }
+
+  function firstElementOf(n: AriaNode): Element | null {
+    if (n.start) return n.start;
+    if (!n.span) return n.el ?? null;
+    for (const k of n.children) if (typeof k !== "string" && k.el) return firstElementOf(k);
+    return n.el ?? null;
+  }
+
+  /** Stable ref for "container, from `start` on" (does not disturb element refs). */
+  function runRef(container: Element, start: Element, bctx: BudgetCtx): string {
+    const prev = runRefOfStart.get(start);
+    const prefix = currentOrdinal === 0 ? "e" : `f${currentOrdinal}e`;
+    let ref = prev && runOfRef.get(prev)?.container.deref() === container && prev.startsWith(prefix) ? prev : "";
+    if (!ref) {
+      do {
+        ref = `${prefix}${++refCounter}`;
+      } while (elementOfRef.has(ref) && elementOfRef.get(ref)?.deref()?.isConnected);
+      runRefOfStart.set(start, ref);
+      runOfRef.set(ref, { container: new WeakRef(container), start: new WeakRef(start) });
+    }
+    elementOfRef.set(ref, new WeakRef(container));
+    if (!bctx.refNodes.some((r) => r.ref === ref)) bctx.refNodes.push({ ref, role: "group", name: "" });
+    return ref;
+  }
+
+  function refCountOf(collapsed: string | undefined): number {
+    const m = /(\d+) refs?/.exec(collapsed || "");
+    return m ? Number(m[1]) : 0;
+  }
+
+  /** Merge runs of ≥2 folded siblings into one line keyed by their common container. */
+  function mergeCollapsedRuns(nodes: (AriaNode | string)[], bctx: BudgetCtx): (AriaNode | string)[] {
+    // Recurse first, then inline transparent groups that ended up fully folded so
+    // runs spanning chunk boundaries merge into one line.
+    const flat: (AriaNode | string)[] = [];
+    for (const c of nodes) {
+      if (typeof c === "string" || c.collapsed) {
+        flat.push(c);
+        continue;
+      }
+      c.children = mergeCollapsedRuns(c.children, bctx);
+      if (!c.group) {
+        flat.push(c);
+        continue;
+      }
+      // Transparent group: hoist folded children at its edges so they can join
+      // folded neighbours outside it (rendering is unchanged — groups are invisible).
+      const kids = c.children;
+      const isFolded = (k: AriaNode | string) => typeof k !== "string" && !!k.collapsed && !!k.el;
+      let i = 0;
+      while (i < kids.length && isFolded(kids[i])) i++;
+      let j = kids.length;
+      while (j > i && isFolded(kids[j - 1])) j--;
+      flat.push(...kids.slice(0, i));
+      if (j > i) {
+        c.children = kids.slice(i, j);
+        flat.push(c);
+      }
+      flat.push(...kids.slice(j));
+    }
+    const out: (AriaNode | string)[] = [];
+    let run: AriaNode[] = [];
+    const flush = () => {
+      if (run.length < 2) {
+        out.push(...run);
+        run = [];
+        return;
+      }
+      const lca = lowestCommonAncestor(run.map((r) => r.el!).filter(Boolean));
+      const g: AriaNode = { role: "group", name: "", props: [], children: [], interactive: false, keep: false, el: lca ?? undefined, group: true };
+      let refs = 0;
+      for (const r of run) refs += refCountOf(r.collapsed);
+      const first = run[0].collapsed!.split(" · ")[1] || run[0].name;
+      const startEl = firstElementOf(run[0]);
+      if (lca && startEl) g.start = startEl; // ref assigned once the final tree is known
+      bctx.collapsed -= run.length - 1;
+      g.collapsed = `${refs} refs in ${run.length} folded blocks${first ? ` · starts at: ${cut(first.replace(/^starts at: /, ""), 60)}` : ""}`;
+      out.push(g);
+      run = [];
+    };
+    for (const c of flat) {
+      if (typeof c !== "string" && c.collapsed && c.el) run.push(c);
+      else {
+        flush();
+        out.push(c);
+      }
+    }
+    flush();
+    return out;
+  }
+
+  const CHUNK = 8;
+
+  /** Split long sibling runs into transparent chunks so far parts of one big list can fold. */
+  function chunkLongRuns(n: AriaNode): void {
+    for (const c of n.children) if (typeof c !== "string") chunkLongRuns(c);
+    let nodes = 0;
+    for (const c of n.children) if (typeof c !== "string" && c.el) nodes++;
+    if (nodes <= CHUNK * 2) return;
+    const out: (AriaNode | string)[] = [];
+    let cur: (AriaNode | string)[] = [];
+    let curNodes = 0;
+    const flush = () => {
+      if (!cur.length) return;
+      const els = cur.filter((c): c is AriaNode => typeof c !== "string" && !!c.el).map((c) => c.el!);
+      if (els.length < 2) out.push(...cur);
+      else out.push({ role: "group", name: "", props: [], children: cur, interactive: false, keep: false, el: lowestCommonAncestor(els) ?? undefined, group: true, span: true });
+      cur = [];
+      curNodes = 0;
+    };
+    for (const c of n.children) {
+      cur.push(c);
+      if (typeof c !== "string" && c.el && ++curNodes >= CHUNK) flush();
+    }
+    flush();
+    n.children = out;
+  }
+
+  function fitBudget(top: AriaNode, budget: number, interactiveOnly: boolean, bctx: BudgetCtx): void {
+    let size = renderedLength(top.children);
+    if (size <= budget) return;
+    top.children = tidyForBudget(top.children, interactiveOnly);
+    size = renderedLength(top.children);
+    if (size > budget) chunkLongRuns(top);
+    const vh = Math.max(1, bctx.bandBottom - bctx.bandTop);
+    for (let round = 0; round < 4 && size > budget; round++) {
+      // Candidates with estimated rendered cost and distance (in screens) from the band.
+      const cands: Cand[] = [];
+      const visitC = (n: AriaNode, parent: Cand | null, depth: number): number => {
+        const c: Cand | null = n.el && !n.collapsed ? { node: n, parent, cost: 0, dist: 0, depth, y: 0 } : null;
+        const childDepth = n.group ? depth : depth + 1;
+        let cost = n.group ? 0 : lineCost(n, depth);
+        for (const k of n.children) {
+          if (typeof k === "string") cost += depth * 2 + 10 + k.length;
+          else cost += visitC(k, c ?? parent, childDepth);
+        }
+        if (c) {
+          c.cost = cost;
+          const r = nodeRect(n);
+          // Above the band (already scrolled past) folds before the same distance below.
+          if (r) c.y = r.top - bctx.bandTop;
+          if (r) c.dist = r.top > bctx.bandBottom ? (r.top - bctx.bandBottom) / vh : r.bottom < bctx.bandTop ? ((bctx.bandTop - r.bottom) / vh) * 2 + (bctx.aboveFirst ? 1e6 : 0) : 0;
+          if (cost >= (round < 2 ? 160 : 60) && !containsFocus(n, bctx.focused)) cands.push(c);
+        }
+        return cost;
+      };
+      for (const k of top.children) if (typeof k !== "string") visitC(k, null, 0);
+      const folded = new Set<Cand>();
+      const underFolded = (c: Cand) => {
+        for (let p: Cand | null = c.parent; p; p = p.parent) if (folded.has(p)) return true;
+        return false;
+      };
+      let excess = size - budget;
+      // 1) Off-screen first: farthest band first, then biggest (outermost wins ties).
+      const far = cands.filter((c) => c.dist > 0).sort((a, b) => Math.floor(b.dist) - Math.floor(a.dist) || b.cost - a.cost);
+      // 2) Only once everything off-screen is folded (and runs merged): on-screen bulk,
+      //    biggest first, never more than half the page in one fold.
+      // On-screen: bottom of the screen folds first; the top (what the agent sees first) stays.
+      const near = round === 0 ? [] : cands.filter((c) => c.dist === 0 && c.cost <= size / 2).sort((a, b) => b.y - a.y || b.cost - a.cost);
+      for (const c of [...far, ...near]) {
+        if (excess <= 0) break;
+        if (folded.has(c) || underFolded(c)) continue;
+        // On screen, fold no more than needed: skip units much bigger than the remaining excess.
+        if (c.dist === 0 && c.cost > excess + 600) continue;
+        // Chunks of one run merge into a single line afterwards: count their full cost.
+        const saving = c.node.span ? c.cost - 4 : c.cost - (lineCost(c.node, c.depth) + 60);
+        if (saving <= 0) continue;
+        // Folding a container whose folded descendants already pay for themselves is wasteful; ok—descendants are skipped below.
+        collapseNode(c.node, bctx);
+        folded.add(c);
+        excess -= saving;
+      }
+      top.children = mergeCollapsedRuns(top.children, bctx);
+      size = renderedLength(top.children);
+    }
+    const assign = (nodes: (AriaNode | string)[]) => {
+      for (const n of nodes) {
+        if (typeof n === "string") continue;
+        if (n.collapsed && n.start && n.el && !n.ref) n.ref = runRef(n.el, n.start, bctx);
+        else assign(n.children);
+      }
+    };
+    assign(top.children);
   }
 
   // ---------------------------------------------------------------------------
@@ -921,7 +1284,15 @@ export function installObu(): void {
         out.push(`${indent}- text: ${yamlText(n)}`);
         continue;
       }
+      if (n.group && !n.collapsed) {
+        render(n.children, indent, out);
+        continue;
+      }
       const h = header(n);
+      if (n.collapsed) {
+        out.push(`${indent}- ${h} [collapsed]: ${yamlText(n.collapsed)}`);
+        continue;
+      }
       const kids = n.children;
       if (!kids.length) {
         out.push(n.value !== undefined ? `${indent}- ${h}: ${yamlText(n.value)}` : `${indent}- ${h}`);
@@ -970,6 +1341,8 @@ export function installObu(): void {
       root = deref(opts.ref);
       if (!root) throw new Error(`stale_ref: ${opts.ref}`);
     }
+    const run = opts.ref ? runOfRef.get(opts.ref) : undefined;
+    const runStart = run?.start.deref();
     const ctx: WalkCtx = {
       interactiveOnly: !!opts.interactive,
       showHidden: !!opts.showHidden,
@@ -991,15 +1364,30 @@ export function installObu(): void {
       if (opts.ref || opts.selector) visit(root, top, 0, ctx);
       else for (const c of childNodesOf(root)) visit(c, top, 0, ctx);
     }
+    const budget = opts.budget && opts.budget > 0 ? opts.budget : 0;
     const compacted: (AriaNode | string)[] = [];
     for (const c of top.children) {
       if (typeof c === "string") {
         if (!ctx.interactiveOnly) compacted.push(c);
-      } else compacted.push(...compact(c, ctx.interactiveOnly));
+      } else compacted.push(...compact(c, ctx.interactiveOnly, budget > 0));
     }
     top.children = compacted;
     normalizeChildren(top);
     if (!ctx.interactiveOnly) cleanChildren(top);
+    let collapsed = 0;
+    if (budget) {
+      let bandTop = 0;
+      let bandBottom = window.innerHeight || document.documentElement.clientHeight || 900;
+      if ((opts.ref || opts.selector) && root) {
+        // Scoped: the "screen" starts at the scope root — or, for a folded run, at the run's first item.
+        const r = (runStart && runStart.isConnected ? runStart : root).getBoundingClientRect();
+        bandBottom = r.top + (bandBottom - bandTop);
+        bandTop = r.top;
+      }
+      const bctx: BudgetCtx = { bandTop, bandBottom, focused: ctx.focused, refNodes: ctx.refNodes, collapsed: 0, aboveFirst: !!(runStart && runStart.isConnected) };
+      fitBudget(top, budget, ctx.interactiveOnly, bctx);
+      collapsed = bctx.collapsed;
+    }
     const lines: string[] = [];
     render(top.children, "", lines);
     nthFingerprints(ctx.refNodes);
@@ -1014,6 +1402,7 @@ export function installObu(): void {
       yaml: lines.join("\n"),
       refs: ctx.refNodes.length,
       iframes: ctx.iframes,
+      collapsed,
       title: document.title,
       url: location.href,
     };
@@ -1026,7 +1415,8 @@ export function installObu(): void {
     while (cur) {
       if (budget.n-- <= 0) return;
       yield cur;
-      if (cur.shadowRoot) yield* allElementsDeep(cur.shadowRoot, budget);
+      const sr = shadowOf(cur);
+      if (sr) yield* allElementsDeep(sr, budget);
       cur = walker.nextNode() as Element | null;
     }
   }
@@ -1233,6 +1623,36 @@ export function installObu(): void {
     return info && elementOfRef.get(info.ref)?.deref() === el ? info.ref : null;
   }
 
+  /** Daemon hands us a closed shadow root (resolved via CDP) so walks can enter it. */
+  function registerClosedRoot(root: ShadowRoot): boolean {
+    if (!root || root.nodeType !== 11 || !(root as ShadowRoot).host) return false;
+    closedRoots.set((root as ShadowRoot).host, root);
+    return true;
+  }
+
+  const REPLACED = new Set(["IMG", "INPUT", "VIDEO", "AUDIO", "CANVAS", "IFRAME", "FRAME", "SVG", "svg", "BR", "HR", "TEXTAREA", "SELECT", "OBJECT", "EMBED", "PICTURE", "SOURCE", "TRACK", "WBR", "SCRIPT", "STYLE", "LINK", "META", "TEMPLATE", "SLOT", "PATH"]);
+  /**
+   * Elements that may host a closed shadow root we cannot see: custom elements
+   * without a reachable root, or empty non-replaced elements that still have a
+   * box (content must come from somewhere). Capped; 0 → daemon skips the CDP pass.
+   */
+  function closedRootCandidates(): number {
+    let n = 0;
+    let scanned = 0;
+    for (const el of Array.from(document.querySelectorAll("*"))) {
+      if (n >= 50 || ++scanned > 20000) break;
+      if (shadowOf(el) || REPLACED.has(el.tagName)) continue;
+      if (el.localName.includes("-")) {
+        n++;
+        continue;
+      }
+      if (el.firstChild) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width > 4 && r.height > 4) n++;
+    }
+    return n;
+  }
+
   const api: ObuInjectedApi = {
     version: VERSION,
     takeSnapshot,
@@ -1244,6 +1664,8 @@ export function installObu(): void {
     settleProbe,
     annotate,
     refOf,
+    registerClosedRoot,
+    closedRootCandidates,
   };
   Object.defineProperty(g, "__obu", { value: api, configurable: true, enumerable: false, writable: true });
 }

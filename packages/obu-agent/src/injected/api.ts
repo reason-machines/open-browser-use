@@ -22,12 +22,20 @@ export interface TakeSnapshotOptions {
   maxDepth?: number;
   /** 0 for the main frame; K for the K-th stitched iframe (refs become `fKeN`). */
   frameOrdinal: number;
+  /**
+   * Target rendered size in chars. When the tree is larger, far-from-viewport
+   * and bulky subtrees fold into `[collapsed]` one-liners that carry a ref
+   * (snapshot({ref}) expands them). 0/undefined = no compaction.
+   */
+  budget?: number;
 }
 
 export interface InjectedSnapshot {
   /** YAML for this frame only; child frames appear as `- iframe [ref=…] [origin=…]` placeholders. */
   yaml: string;
   refs: number;
+  /** Subtrees folded to fit `budget` (0 when it fit). */
+  collapsed?: number;
   /** Child frames to stitch in, in document order. */
   iframes: { ref: string; frameName?: string; src: string }[];
   /** document.title of this frame. */
@@ -79,6 +87,15 @@ export interface ObuInjectedApi {
    * to map child frames onto their `- iframe [ref=…]` placeholders.
    */
   refOf(el: Element): string | null;
+  /**
+   * Register a closed shadow root. The daemon finds closed roots with
+   * DOM.getDocument{depth:-1,pierce:true}, resolves each root node into this
+   * world (DOM.resolveNode{executionContextId}) and calls this with `this` =
+   * the ShadowRoot. Walks, hit tests and deref then enter it.
+   */
+  registerClosedRoot(root: ShadowRoot): boolean;
+  /** Count (capped ~50) of custom-element hosts without a reachable shadow root; 0 → skip the CDP pass. */
+  closedRootCandidates(): number;
 }
 
 declare global {

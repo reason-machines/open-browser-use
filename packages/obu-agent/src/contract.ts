@@ -167,6 +167,12 @@ export interface SnapshotParams extends TabTarget {
   showHidden?: boolean;
   /** Exceeding this returns snapshot_too_large with advice — never a truncated tree. */
   maxChars?: number;
+  /**
+   * Target size in chars (default 8000 for interactive, maxChars−1000 otherwise; 0 = off).
+   * Past it, off-screen then bulky subtrees fold into `[collapsed]` one-liners with a ref;
+   * snapshot({ref}) of that ref expands it. Nothing on screen is folded while off-screen content can be.
+   */
+  budget?: number;
 }
 export interface SnapshotResult {
   /** Playwright-style aria YAML, header `- title: "…" [url=…]`. */
