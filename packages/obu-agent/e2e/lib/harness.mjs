@@ -126,11 +126,29 @@ async function fileAccess(env, set) {
     await sleep(800);
     const page = await attachPage(env.cdp, targetId);
     const id = JSON.stringify(env.extensionId);
-    if (set !== undefined) await page.evaluate(`chrome.developerPrivate.updateExtensionConfiguration({ extensionId: ${id}, fileAccess: ${set} }).then(() => true)`);
+    if (set !== undefined) {
+      // Developer mode first: without it CfT re-disables the reloaded command-line extension
+      // ("unsupportedDeveloperExtension") when the toggle reloads it.
+      await page.evaluate(`chrome.developerPrivate.updateProfileConfiguration({ inDeveloperMode: true }).then(() => true)`);
+      await page.evaluate(`chrome.developerPrivate.updateExtensionConfiguration({ extensionId: ${id}, fileAccess: ${set} }).then(() => true)`);
+      await sleep(500);
+      await page.evaluate(`chrome.management.setEnabled(${id}, true).then(() => true)`);
+    }
     const info = await page.evaluate(`chrome.developerPrivate.getExtensionInfo(${id}).then((i) => i.fileAccess)`);
     await page.detach();
+    // Toggling file access reloads the extension; its MV3 service worker then stays asleep (no
+    // event wakes it) and never reconnects the native host. Wake it by opening its popup page.
+    if (set !== undefined) await wakeExtension(env);
     return info?.isActive ?? info;
   } finally { await env.cdp.send("Target.closeTarget", { targetId }).catch(() => {}); }
+}
+
+async function wakeExtension(env) {
+  await sleep(300);
+  if (await waitForExtension(env, 500)) return;
+  const { targetId } = await env.cdp.send("Target.createTarget", { url: `chrome-extension://${env.extensionId}/popup.html`, background: true });
+  try { if (!(await waitForExtension(env, 5000))) env.notes.push("extension service worker did not wake after file-access toggle"); }
+  finally { await sleep(300); await env.cdp.send("Target.closeTarget", { targetId }).catch(() => {}); }
 }
 
 async function extensionEval(env, expression) {

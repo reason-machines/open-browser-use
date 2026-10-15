@@ -154,7 +154,7 @@ e2e("events: user closing an owned tab is reported (tab_closed reason user)", as
 });
 
 e2e("I4: lease expiry finalizes the session (E2E_SLOW=1, ~65 s)", { timeout: 120_000 }, async (ctx) => {
-  if (process.env.E2E_SLOW !== "1") throw new Pending("set E2E_SLOW=1 to run the 60 s lease-expiry test");
+  if (process.env.E2E_SLOW !== "1") return ctx.t.skip("set E2E_SLOW=1 to run the 60 s lease-expiry test");
   ctx.requireExtension();
   const s = await ctx.session("lease");
   const tab = await ctx.open(s, "table.html");

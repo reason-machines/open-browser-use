@@ -71,3 +71,18 @@ test("detector page is clean on an untouched tab", { timeout: 30_000 }, async (t
     assert.equal(await page.evaluate("__fx.state.runtimeEnabled"), false, "clean");
   } finally { await env.cdp.send("Target.closeTarget", { targetId }).catch(() => {}); }
 });
+
+test("harness: fork extension reaches the dev native host (file-URL access off)", { timeout: 30_000 }, async (t) => {
+  const env = await getEnv();
+  if (!env.cdp) return t.skip("no CfT (real-profile / attached daemon mode)");
+  assert.equal(env.fileUrlAccess, process.env.E2E_FILE_URL_ACCESS === "on");
+  const { OpenBrowserUseClient } = await import("../../open-browser-use-js/dist/index.js").catch(() => ({}));
+  if (!OpenBrowserUseClient) return t.skip("build open-browser-use-sdk to run this check");
+  const c = new OpenBrowserUseClient({ socketPath: env.hostSocket });
+  const t0 = Date.now();
+  while (Date.now() - t0 < 5000) { try { await c.connect(); break; } catch { await sleep(200); } }
+  try {
+    const info = await c.request("getInfo", {});
+    assert.equal(info.metadata.extensionId, env.extensionId, "extension -> native host -> socket round trip");
+  } finally { c.close?.(); }
+});
