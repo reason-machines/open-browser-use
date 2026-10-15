@@ -66,6 +66,8 @@ export class TabRuntime {
   #frames = new Map<string, FrameState>(); // frameId -> state
   #nextOrdinal = 1;
   #mainFrameId: string | undefined;
+  /** Frame tree must be re-read (main-frame document changed / bfcache restore). */
+  #framesDirty = false;
   #unsubscribe: () => void;
   #inCall = 0;
   #disposed = false;
@@ -246,6 +248,12 @@ export class TabRuntime {
         state.contextId = undefined;
         if (!sessionId && !frame.parentId) {
           this.#mainFrameId = frame.id;
+          // New main document: iframe ordinals restart (refs are per document, like the snapshot's).
+          for (const [frameId, other] of this.#frames) {
+            if (frameId !== frame.id) this.#frames.delete(frameId);
+          }
+          this.#nextOrdinal = 1;
+          this.#framesDirty = true;
           if (!this.inCall) this.#opts.emit({ type: "navigation", tabId: this.tabId, url: frame.url, kind: "nav" });
         }
         break;
@@ -297,7 +305,7 @@ export class TabRuntime {
   async frames(): Promise<FrameHandle[]> {
     await this.ensureSetup();
     await Promise.all([...this.#children.values()].map((child) => child.ready));
-    if (!this.#mainFrameId) await this.#refreshFrameTree();
+    if (!this.#mainFrameId || this.#framesDirty) await this.#refreshAllFrames();
     const states = [...this.#frames.values()].sort((a, b) => a.ordinal - b.ordinal);
     const handles: FrameHandle[] = [];
     for (const state of states) {
@@ -309,6 +317,12 @@ export class TabRuntime {
       }
     }
     return handles;
+  }
+
+  async #refreshAllFrames(): Promise<void> {
+    this.#framesDirty = false;
+    await this.#refreshFrameTree();
+    await Promise.all([...this.#children.keys()].map((sessionId) => this.#refreshFrameTree(sessionId).catch(() => undefined)));
   }
 
   async mainFrame(): Promise<FrameHandle> {

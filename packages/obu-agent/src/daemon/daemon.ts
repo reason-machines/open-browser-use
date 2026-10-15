@@ -356,9 +356,20 @@ export class Daemon {
     const eventName = waitUntil === "load" ? "Page.loadEventFired" : "Page.domContentEventFired";
     let resolveEvent!: () => void;
     const fired = new Promise<void>((resolve) => (resolveEvent = resolve));
-    const off = runtime.on(eventName, (_params, sessionId) => {
-      if (!sessionId) resolveEvent();
-    });
+    const offs = [
+      runtime.on(eventName, (_params, sessionId) => {
+        if (!sessionId) resolveEvent();
+      }),
+      // Back/forward served from the bfcache fires no load event.
+      runtime.on("Page.frameNavigated", (params, sessionId) => {
+        if (!sessionId && !params.frame?.parentId && params.type === "BackForwardCacheRestore") resolveEvent();
+      }),
+      // History entries of the same document (pushState) don't load either.
+      runtime.on("Page.navigatedWithinDocument", (_params, sessionId) => {
+        if (!sessionId && params.op) resolveEvent();
+      }),
+    ];
+    const off = () => offs.forEach((unsubscribe) => unsubscribe());
     try {
       await action();
       if (!sameDocument) {

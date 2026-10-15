@@ -93,6 +93,8 @@ export async function runDaemon(argv: string[]): Promise<void> {
     leaseTtlMs: flag(argv, "lease-ttl-ms") ? Number(flag(argv, "lease-ttl-ms")) : undefined,
     sweepMs: flag(argv, "sweep-ms") ? Number(flag(argv, "sweep-ms")) : undefined,
     log,
+    // Dev/test only: inject a bundle file instead of the built WS-D bundle.
+    ...(flag(argv, "bundle-file") ? { bundle: { source: readFileSync(flag(argv, "bundle-file")!, "utf8"), version: "file" } } : {}),
   });
   await daemon.start();
   rmSync(socketPath, { force: true });
