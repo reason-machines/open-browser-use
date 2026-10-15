@@ -184,3 +184,21 @@ test("wire v2: debuggerDetached re-runs the attach sequence; child sessionId rou
     await cleanup();
   }
 });
+
+test("wait{for:'download'} returns a download that finished just before the call, once", async () => {
+  const { relay, call, cleanup } = await setup();
+  try {
+    await call("session.open", { sessionId: "s4" });
+    const tab = await call("tabs.open", { sessionId: "s4", url: "https://a.test/" });
+    relay.notify("onDownloadChange", { id: "9", filename: "", url: "https://a.test/x.bin", status: "started", tabId: tab.tabId });
+    relay.notify("onDownloadChange", { id: "9", filename: "/dl/x.bin", url: "https://a.test/x.bin", status: "complete", tabId: tab.tabId });
+    await sleep(30);
+    const first = await call("wait", { sessionId: "s4", for: "download", timeoutMs: 200 });
+    assert.equal(first.ok, true);
+    assert.equal(first.download.path, "/dl/x.bin");
+    const second = await call("wait", { sessionId: "s4", for: "download", timeoutMs: 200 });
+    assert.equal(second.ok, false, "the same download must not satisfy two waits");
+  } finally {
+    await cleanup();
+  }
+});

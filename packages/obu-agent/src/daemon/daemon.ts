@@ -57,6 +57,9 @@ import { INJECTED_BUNDLE_SOURCE, INJECTED_VERSION } from "../injected/index.js";
 
 export const DAEMON_VERSION = "0.1.0";
 
+/** `wait{for: download|popup|dialog}` also matches unclaimed events this recent. */
+export const WAIT_LOOKBACK_MS = 10_000;
+
 /** Page-operation modules (WS-D / WS-E). Injectable so tests can mock them. */
 export interface PageModules {
   takeSnapshot(page: PageContext, params: SnapshotParams): Promise<Omit<SnapshotResult, "events">>;
@@ -96,6 +99,8 @@ export class Daemon {
   /** Browser-level downloads (chrome.downloads via the extension), by backend id. */
   #downloads = new Map<string, { downloadId: number; tabId?: TabId; url: string; path: string; finishedAt?: number; state: "in_progress" | "complete" | "interrupted" }>();
   #downloadWaiters = new Set<() => void>();
+  /** Per session: seq of the last event each `wait{for}` returned (so one event satisfies one wait). */
+  #claimedSeq = new Map<string, Partial<Record<WaitParams["for"], number>>>();
   #nextDownloadId = 1;
   #artifactRoot: string;
   #bundle: { source: string; version: string };
@@ -221,6 +226,7 @@ export class Daemon {
   }
 
   #onDownload(event: Extract<BackendEvent, { type: "download" }>): void {
+    this.#log(`download ${event.id} ${event.status} tab=${event.tabId ?? "?"} ${event.url} -> ${event.path}`);
     let entry = this.#downloads.get(event.id);
     const firstSight = !entry;
     if (!entry) {
@@ -498,13 +504,23 @@ export class Daemon {
   async #wait(params: WaitParams): Promise<WaitResult> {
     const sessionId = params.sessionId;
     const timeoutMs = Math.max(0, Math.min(params.timeoutMs ?? 30_000, 120_000));
-    const afterSeq = this.sessions.lastSeq(sessionId);
+    // Event waits also match events from the last few seconds that no earlier
+    // wait claimed: a fast download/popup often lands before the agent's
+    // `wait` call (e.g. right after the click that started it). A dialog with
+    // a dialogAction is about the NEXT dialog, so it only looks forward.
+    const claimed = this.#claimedSeq.get(sessionId) ?? {};
+    const lookBack = params.for === "dialog" && params.dialogAction ? this.sessions.lastSeq(sessionId) : await this.#recentFloor(sessionId);
+    const afterSeq = Math.max(claimed[params.for] ?? 0, lookBack);
+    const claim = (event: SystemEvent | undefined) => {
+      if (event) this.#claimedSeq.set(sessionId, { ...(this.#claimedSeq.get(sessionId) ?? {}), [params.for]: event.seq });
+      return event;
+    };
     const forEvent = async (predicate: (event: SystemEvent) => boolean): Promise<SystemEvent | undefined> => {
       // Keep the lease alive during long waits.
       const keepAlive = setInterval(() => this.sessions.touch(sessionId), 10_000);
       keepAlive.unref();
       try {
-        return await this.sessions.waitForEvent(sessionId, predicate, timeoutMs, afterSeq);
+        return claim(await this.sessions.waitForEvent(sessionId, predicate, timeoutMs, afterSeq));
       } finally {
         clearInterval(keepAlive);
       }
@@ -560,6 +576,15 @@ export class Daemon {
     }
   }
 
+  /** Seq of the newest event older than the wait look-back window. */
+  async #recentFloor(sessionId: string): Promise<number> {
+    const { events } = await this.sessions.events(sessionId, 0, 0);
+    const cutoff = Date.now() - WAIT_LOOKBACK_MS;
+    let floor = 0;
+    for (const event of events) if (event.at < cutoff) floor = event.seq;
+    return floor;
+  }
+
   // -------------------------------------------------------------------------
   // Handler table
 
@@ -590,6 +615,7 @@ export class Daemon {
     table["session.close"] = async (params) => {
       const p = params as SessionCloseParams;
       s.require(p.sessionId);
+      this.#claimedSeq.delete(p.sessionId);
       return s.close(p.sessionId, p.keep ?? [], "agent");
     };
 
