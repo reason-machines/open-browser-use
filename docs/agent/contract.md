@@ -15,6 +15,43 @@ behaviour spec. Change both in the same commit.
 - JSON-RPC 2.0, newline-delimited JSON. MCP stdio: `obu-agent mcp --attach`
   proxies onto the socket with static tool schemas.
 
+### Native host (relay) — WS-B
+
+- **Spawn:** the native host supervises one `obu-agent` per profile:
+  `obu-agent --profile <key> --socket <agentSocket>` with env `OBU_PROFILE`,
+  `OBU_AGENT_SOCKET`, `OBU_RELAY_SOCKET`, `OBU_RELAY_TOKEN_PATH`,
+  `OBU_AGENT_SUPERVISED=1`. stdout/stderr go to `<agentDir>/agent.log`.
+  Restart backoff 0/250/750/1500/3000 ms (reset after 30 s up). An agent
+  already listening on the socket is adopted, not duplicated (it outlives a
+  host crash, so the daemon must re-read `active.json` when its relay
+  connection drops). Binary: `OBU_AGENT_BIN` (a `.js`/`.mjs` runs under
+  `OBU_NODE`/node), else `obu-agent` next to the host or in common bin dirs;
+  `OBU_AGENT=off` disables. Profile key: `OBU_PROFILE`, else the Chrome
+  profile dir resolved from the extension's `extensionInstanceId`
+  (`<browserId>-<dir>` for non-stable browsers), else `instance-<uuid>`.
+- **Records:** `<socketDir>/active.json` gains `tokenPath`, `profile`,
+  `agentSocket`; `<socketDir>/agents/<profile>.json` =
+  `{profile, agentSocket, agentPid, adopted, relaySocket, relayPid, tokenPath, updatedAt}`.
+  `OBU_SOCKET_DIR` overrides the socket dir (tests, side-by-side installs).
+- **Relay auth:** peer uid must equal the host uid (LOCAL_PEERCRED /
+  SO_PEERCRED). Unless `OBU_RELAY_AUTH=uid`, the first frame must be
+  `{"auth":"<token>"}` with the token from `<socketDir>/relay.token` (0600);
+  failures get `{"id":null,"error":{"code":-32001,"data":{"type":"unauthorized"}}}`
+  and the socket closes. Relays that don't require a token drop an auth frame.
+- **Decode-free relay:** only the top-level `id` is rewritten (to
+  `"obu:<n>"` and back, raw JSON bytes preserved); nothing else is re-encoded.
+- **Timeouts:** a request with `params.timeoutMs` that the extension has not
+  answered after `timeoutMs + 2000` gets
+  `{"error":{"code":-32001,"data":{"type":"timeout"}}}`; a late answer is
+  dropped. The CLI fills `params.timeoutMs` from `--timeout` (minus 250 ms).
+- **Chunking (host↔extension, pairs with WS-A):** a native message over
+  900 KB is sent as frames
+  `{"chunk":{"id":"<string>","i":<0..n-1>,"n":<n>,"data":"<base64>"}}`, each
+  ≤ 900 KB. `data` is standard base64 of a byte slice (640 KiB) of the
+  original UTF-8 JSON message; concatenating decoded slices in `i` order
+  restores it exactly. Chunks of one message are written back to back. The
+  host accepts the same envelope from the extension (sets expire after 60 s).
+
 ## Methods
 
 All page methods take `{sessionId, tabId?}`; `tabId` omitted = the session's
@@ -113,7 +150,7 @@ Installed as `globalThis.__obu` in isolated world `__obu_utility` of every frame
 
 ```ts
 version
-takeSnapshot({interactive?, ref?, selector?, showHidden?, maxDepth?=50, frameOrdinal}) -> {yaml, refs, iframes:[{ref, frameName?, src}]}
+takeSnapshot({interactive?, ref?, selector?, showHidden?, maxDepth?=50, frameOrdinal}) -> {yaml, refs, iframes:[{ref, frameName?, src}], title, url}
 deref(ref) -> Element|null                // cache first, then role+name+nth over ≤5000 nodes
 waitForReady(ref, {timeoutMs, enabled?, editable?}) -> {ok:true, rect} | {ok:false, reason}
 checkHitTarget(ref, x, y) -> {ok, hit?}   // elementFromPoint through shadow roots
@@ -121,6 +158,7 @@ resolvePointerTarget(x, y) -> {ref?, tag}
 checkEditable(ref) -> boolean
 settleProbe() -> {readyState, interactiveCount, textLen, mutationRatio, landmarks}
 annotate(on)                              // red numbered boxes per ref, z-index 2147483647
+refOf(el) -> ref|null                     // daemon maps DOM.getFrameOwner nodes to iframe placeholders
 ```
 
 WS-C injects with `Page.addScriptToEvaluateOnNewDocument{worldName}` +
@@ -151,6 +189,31 @@ context destroy (10 tries × 200 ms).
   `- iframe [ref=…] [origin=…]`; main frame retried 3×; snapshots of one
   page serialised.
 - `{tree, diff}`: unified diff vs previous snapshot of (session, tab).
+  `diff` is only computed for unscoped, non-interactive snapshots (otherwise
+  `''`); hunks carry 1 line of context. WS-C stores `tree` as
+  `PageContext.previousTree` after every full snapshot.
+- Bundle: `INJECTED_BUNDLE_SOURCE` (`src/injected/index.ts`) is
+  `installObu.toString()` wrapped in an IIFE — no bundler; `installObu`
+  (`src/injected/runtime.ts`) must stay self-contained. Idempotent per
+  `version`; `INJECTED_HEALTH_EXPRESSION` returns the installed version.
+- Child frames → placeholders: after snapshotting, the daemon calls
+  `DOM.getFrameOwner{frameId}` on the parent's session, `DOM.resolveNode` in
+  each candidate parent utility world and `__obu.refOf(this)`; cached per
+  (tab, frameId). Unresolvable frames are appended as
+  `- iframe [frame=fK] [origin=…]` (never dropped); unreadable frames add a
+  warning.
+- Output details: links carry `[url=…]` (path for same-origin, ≤120 chars);
+  values render inline (`- textbox "Email" [ref=e1]: a@b.c`) or as a
+  `- /value: …` child when the node also has children; native `<select>`
+  options are listed without refs (≤50); clickable generics carry
+  `[cursor=pointer]`; scroll containers `[scrollable]`; layout tables
+  (no caption/th/thead/summary/label) render as generic and unwrap;
+  separator-only text (`|`, `·`, `(`…) and label text duplicated by the
+  adjacent control's name are dropped; names computed from content are
+  dropped when the children already render that content. Closed shadow
+  roots are not walked yet (BACKLOG).
+- Dev tools: `node scripts/snap-dump.mjs <page|url> [--interactive]`,
+  `node scripts/snap-bench.mjs [N] <page|url>…` (CfT, throwaway profile).
 
 ### Input (WS-E)
 

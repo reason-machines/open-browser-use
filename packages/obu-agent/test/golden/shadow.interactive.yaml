@@ -1,0 +1,4 @@
+- title: "Shadow fixture" [url=http://localhost:PORT/shadow.html]
+- heading "Slotted title" [level=2]
+- button "Shadow button" [ref=e1]
+- textbox "Shadow input" [ref=e2]

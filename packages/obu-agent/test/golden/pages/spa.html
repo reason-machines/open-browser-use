@@ -1,0 +1,4 @@
+<!doctype html><title>SPA fixture</title>
+<nav><a href="/spa.html#home" id="home">Home</a> <button id="go">Go to settings</button></nav>
+<main id="view"><h1>Home</h1></main>
+<script>document.getElementById('go').onclick=()=>{history.pushState({}, '', '/settings');document.getElementById('view').innerHTML='<h1>Settings</h1><label>Name <input></label>';};</script>

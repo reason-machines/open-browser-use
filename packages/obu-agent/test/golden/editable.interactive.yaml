@@ -1,0 +1,4 @@
+- title: "Editable fixture" [url=http://localhost:PORT/editable.html]
+- textbox "Editor" [ref=e1]
+- textbox "Notes" [ref=e2]
+- textbox [ref=e3]

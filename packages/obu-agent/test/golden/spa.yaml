@@ -1,0 +1,6 @@
+- title: "SPA fixture" [url=http://localhost:PORT/spa.html]
+- navigation:
+  - link "Home" [ref=e1] [url=/spa.html#home]
+  - button "Go to settings" [ref=e2]
+- main:
+  - heading "Home" [level=1]

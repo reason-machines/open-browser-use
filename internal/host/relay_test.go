@@ -215,6 +215,11 @@ func TestDefaultRelayBindsShortUnixSocket(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("Unix socket bind test")
 	}
+	if os.Getenv("OBU_TEST_DEFAULT_SOCKET") != "1" {
+		// Binding in the real default dir rewrites (then deletes) the live
+		// host's active.json; only run when explicitly requested.
+		t.Skip("set OBU_TEST_DEFAULT_SOCKET=1 to bind in the real default socket dir")
+	}
 	relay := NewRelay(Config{}, strings.NewReader(""), nil)
 	socketPath := relay.SocketPath()
 	if len(socketPath) > 100 {

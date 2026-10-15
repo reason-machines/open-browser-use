@@ -1,0 +1,19 @@
+<!doctype html><title>Form fixture</title>
+<main><h1>Sign up</h1>
+<form aria-label="Signup">
+<label for="email">Email</label><input id="email" type="email" required placeholder="you@example.com">
+<label>Password <input type="password" value="hunter2"></label>
+<label>Birthday <input type="date" value="2020-01-02"></label>
+<label>Color <input type="color" value="#ff0000"></label>
+<label>Volume <input type="range" min="0" max="10" value="3"></label>
+<label>Age <input type="number" value="42"></label>
+<fieldset><legend>Plan</legend>
+<label><input type="radio" name="plan" value="free" checked> Free</label>
+<label><input type="radio" name="plan" value="pro"> Pro</label></fieldset>
+<label><input type="checkbox" id="tos"> I accept the terms</label>
+<input type="checkbox" id="news" aria-label="Newsletter" checked>
+<textarea aria-label="Bio">Hello there</textarea>
+<button type="submit">Create account</button>
+<button type="button" disabled>Disabled</button>
+<input type="submit" value="Go">
+</form></main>

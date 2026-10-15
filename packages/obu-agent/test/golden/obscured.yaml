@@ -1,0 +1,3 @@
+- title: "Obscured fixture" [url=http://localhost:PORT/obscured.html]
+- button "Covered" [ref=e1]
+- button "Toggle panel" [ref=e2] [expanded=false]

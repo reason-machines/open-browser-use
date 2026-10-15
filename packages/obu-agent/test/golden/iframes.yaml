@@ -1,0 +1,14 @@
+- title: "Iframes fixture" [url=http://localhost:PORT/iframes.html]
+- heading "Frames" [level=1]
+- button "Top button" [ref=e1]
+- iframe [ref=e2] [origin=http://localhost:PORT]:
+  - textbox "Card" [ref=f1e1]
+  - button "Pay" [ref=f1e2]
+  - iframe [ref=f1e3] [origin=http://localhost:PORT]:
+    - link "Deep link" [ref=f2e1] [url=/x]
+- iframe [ref=e3] [origin=http://127.0.0.1:PORT]:
+  - textbox "Card" [ref=f3e1]
+  - button "Pay" [ref=f3e2]
+  - iframe [ref=f3e3] [origin=http://127.0.0.1:PORT]:
+    - link "Deep link" [ref=f4e1] [url=/x]
+- paragraph: After frames
