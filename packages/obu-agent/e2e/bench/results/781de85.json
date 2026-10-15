@@ -1,0 +1,113 @@
+{
+  "info": {
+    "measuredAt": "2026-10-15T12:57:53.037Z",
+    "sha": "781de85",
+    "mode": "cft",
+    "daemon": {
+      "contractVersion": "1.0.0",
+      "daemonVersion": "0.1.0",
+      "profile": "e2e",
+      "pid": 44845,
+      "startedAt": 1792069042308,
+      "extension": {
+        "connected": true,
+        "version": "1.1.0"
+      },
+      "sessions": 0
+    },
+    "runs": 30,
+    "notes": []
+  },
+  "results": {
+    "open_tab": {
+      "n": 20,
+      "p50": 195.14,
+      "p95": 201.99,
+      "p99": 201.99,
+      "max": 201.99,
+      "failures": 0
+    },
+    "snapshot_interactive": {
+      "n": 30,
+      "p50": 4.73,
+      "p95": 9.83,
+      "p99": 9.88,
+      "max": 9.88,
+      "failures": 0
+    },
+    "snapshot_full": {
+      "n": 30,
+      "p50": 4.4,
+      "p95": 6.6,
+      "p99": 7.57,
+      "max": 7.57,
+      "failures": 0
+    },
+    "click": {
+      "n": 30,
+      "p50": 203.49,
+      "p95": 207.96,
+      "p99": 208.59,
+      "max": 208.59,
+      "failures": 0
+    },
+    "click_no_snapshot": {
+      "n": 30,
+      "p50": 200.11,
+      "p95": 204.03,
+      "p99": 204.53,
+      "max": 204.53,
+      "failures": 0
+    },
+    "fill": {
+      "n": 30,
+      "p50": 199.81,
+      "p95": 210.44,
+      "p99": 211.38,
+      "max": 211.38,
+      "failures": 0
+    },
+    "type_50_chars": {
+      "n": 10,
+      "p50": 244.56,
+      "p95": 266.96,
+      "p99": 266.96,
+      "max": 266.96,
+      "failures": 0
+    },
+    "screenshot": {
+      "n": 20,
+      "p50": 33.26,
+      "p95": 41.84,
+      "p99": 41.84,
+      "max": 41.84,
+      "failures": 0
+    },
+    "screenshot_background": {
+      "n": 20,
+      "p50": 33.49,
+      "p95": 43.13,
+      "p99": 43.13,
+      "max": 43.13,
+      "failures": 0
+    },
+    "evaluate": {
+      "n": 30,
+      "p50": 0.41,
+      "p95": 0.79,
+      "p99": 20.68,
+      "max": 20.68,
+      "failures": 0
+    },
+    "parallel_4_agents": {
+      "n": 3,
+      "p50": 1265.5,
+      "opsPerSec": 22
+    },
+    "focus_theft": {
+      "thefts": 0,
+      "samples": 121
+    },
+    "leftover_bench_tabs": 0
+  }
+}

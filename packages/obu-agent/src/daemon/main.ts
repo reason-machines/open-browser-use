@@ -10,7 +10,7 @@
 //   obu-agent call <method> [json-params] [--profile P] [--socket PATH]
 //       One JSON-RPC call; prints the result as JSON (scripts, bench, debugging).
 import { randomBytes } from "node:crypto";
-import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DirectCdpBackend } from "../cdp/direct.js";
@@ -163,7 +163,19 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<void
   return runDaemon(argv);
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("/obu-agent")) {
+/** Run as a program (not imported)? Compare canonical paths: argv[1] may be a symlink or contain spaces. */
+function isEntry(): boolean {
+  const script = process.argv[1];
+  if (!script) return false;
+  if (script.endsWith("/obu-agent")) return true;
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(script);
+  } catch {
+    return false;
+  }
+}
+
+if (isEntry()) {
   main().catch((error) => {
     process.stderr.write(`obu-agent failed: ${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
     process.exit(1);
