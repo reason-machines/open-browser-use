@@ -30,7 +30,7 @@ const RUNTIME_FILES = [
   "popup.html",
   "popup.js"
 ];
-const BRAND_KEYS = ["id", "displayName", "nativeHostName", "groupSuffix", "groupColor", "deliverableGroupTitle"];
+const BRAND_KEYS = ["id", "displayName", "nativeHostName", "groupTitle", "groupColor", "deliverableGroupTitle", "deliverableGroupColor"];
 const GROUP_COLORS = new Set(["grey", "blue", "red", "yellow", "green", "pink", "purple", "cyan", "orange"]);
 const BLOCK = /\/\/ @obu-brand-begin[^\n]*\n(?:\/\/[^\n]*\n)*const BRAND = Object\.freeze\(\{[\s\S]*?\}\);\n\/\/ @obu-brand-end/;
 
@@ -50,8 +50,14 @@ export function validateBrand(brand) {
   if (brand && !/^[a-z0-9_]+(\.[a-z0-9_]+)*$/.test(brand.nativeHostName ?? "")) {
     errors.push("nativeHostName must be a valid native messaging host name");
   }
-  if (brand && !GROUP_COLORS.has(brand.groupColor)) {
-    errors.push(`groupColor must be one of ${[...GROUP_COLORS].join(", ")}`);
+  for (const key of ["groupColor", "deliverableGroupColor"]) {
+    if (brand && !GROUP_COLORS.has(brand[key])) errors.push(`${key} must be one of ${[...GROUP_COLORS].join(", ")}`);
+  }
+  // Group titles are the brand mark only: short, no status emoji.
+  for (const key of ["groupTitle", "deliverableGroupTitle"]) {
+    if (typeof brand?.[key] === "string" && (brand[key].length > 24 || /[\u2705\u2714\u2611]/u.test(brand[key]))) {
+      errors.push(`${key} must be a short brand mark without status glyphs`);
+    }
   }
   if (brand?.manifestKey !== undefined && typeof brand.manifestKey !== "string") {
     errors.push("manifestKey must be a base64 public key string");

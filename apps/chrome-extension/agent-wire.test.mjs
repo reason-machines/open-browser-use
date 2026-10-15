@@ -89,7 +89,7 @@ test("CDP events carry sessionId; subscriptions filter domains; critical events 
   assert.equal(notifications(fake, "onCDPEvent").at(-1).method, "Network.loadingFinished");
 });
 
-test("one group per root session, titled '<label> · OBU', muted colour; children share it but own their tabs", async () => {
+test("one group per root session, titled with the brand mark only, one colour; children share it but own their tabs", async () => {
   const { fake, bg } = await setup();
   const user = fake.userTab({ active: true });
   const rootTab = await ok(fake, "createTab", S("root", { label: "Research" }));
@@ -102,9 +102,10 @@ test("one group per root session, titled '<label> · OBU', muted colour; childre
   assert.equal(groupOf(rootTab.id), groupOf(grandTab.id));
   assert.notEqual(groupOf(rootTab.id), groupOf(otherTab.id));
   const group = fake.state.groups.get(groupOf(rootTab.id));
-  assert.equal(group.title, "Research · OBU");
+  assert.equal(group.title, bg.BRAND.groupTitle);
+  assert.equal(group.title, "OBU", "no task label, no checkmark, no status");
   assert.equal(group.color, bg.BRAND.groupColor);
-  assert.equal(fake.state.groups.get(groupOf(otherTab.id)).title, "Other · OBU");
+  assert.equal(fake.state.groups.get(groupOf(otherTab.id)).title, bg.BRAND.groupTitle);
 
   const ids = async (sid) => (await ok(fake, "getTabs", S(sid))).map((t) => t.id).sort();
   assert.deepEqual(await ids("root"), [rootTab.id]);
@@ -342,9 +343,54 @@ test("claiming another session's tab fails with tab_not_owned", async () => {
   assert.equal(claimed.id, user.id);
 });
 
-test("nameSession renames the root group with the brand suffix", async () => {
-  const { fake } = await setup();
+test("nameSession keeps the label internal; the group shows only the brand mark", async () => {
+  const { fake, bg } = await setup();
   const tab = await ok(fake, "createTab", S("s1"));
   await ok(fake, "nameSession", { ...S("s1"), name: "Flights" });
-  assert.equal(fake.state.groups.get(fake.state.tabs.get(tab.id).groupId).title, "Flights · OBU");
+  assert.equal(fake.state.groups.get(fake.state.tabs.get(tab.id).groupId).title, bg.BRAND.groupTitle);
+  assert.equal(bg.backend.store.state.sessions.s1.label, "Flights");
+});
+
+test("legacy 'Task - OBU' titles migrate to the brand mark", async () => {
+  const fake = createChromeFake();
+  fake.state.storage.OPEN_BROWSER_USE_SESSION_STATE = {
+    sessions: { old: { chromeGroupId: 5, title: "Task - OBU", activeTabId: null, tabOrigins: {} } },
+    deliverableGroupId: null
+  };
+  fake.state.groups.set(5, { id: 5, windowId: 1, title: "Task - OBU", color: "blue" });
+  fake.userTab({ groupId: 5 });
+  const bg = await loadBackground(fake);
+  assert.equal(bg.backend.store.state.sessions.old.title, bg.BRAND.groupTitle);
+  assert.equal(fake.state.groups.get(5).title, bg.BRAND.groupTitle);
+});
+
+test("idle tabs are detached (debugger infobar clears) and re-attach implicitly", async () => {
+  const { fake } = await setup();
+  await ok(fake, "configure", { idleDetachMs: 40 });
+  const tab = await ok(fake, "createTab", S("s1"));
+  assert.equal(fake.state.attached.size, 0, "createTab does not attach");
+  await ok(fake, "executeCdp", { ...S("s1"), target: { tabId: tab.id }, method: "Page.enable" });
+  assert.ok(fake.state.attached.has(tab.id));
+  assert.deepEqual(notifications(fake, "debuggerAttached"), [{ tabId: tab.id }]);
+  await settle(80);
+  assert.ok(!fake.state.attached.has(tab.id), "detached after idle");
+  assert.deepEqual(notifications(fake, "debuggerDetached"), [{ tabId: tab.id, reason: "idle" }]);
+  await ok(fake, "executeCdp", { ...S("s1"), target: { tabId: tab.id }, method: "Page.enable" });
+  assert.ok(fake.state.attached.has(tab.id), "re-attached on next call");
+  assert.equal(notifications(fake, "debuggerAttached").length, 2);
+  await ok(fake, "configure", { idleDetachMs: 0 });
+  await settle(80);
+  assert.ok(fake.state.attached.has(tab.id), "idle detach disabled");
+});
+
+test("deliverables never merge into a live agent group that shares the brand title", async () => {
+  const { fake, bg } = await setup();
+  const live = await ok(fake, "createTab", S("live"));
+  const done = await ok(fake, "createTab", S("done"));
+  await ok(fake, "finalizeTabs", { ...S("done"), keep: [{ tabId: done.id, status: "deliverable" }] });
+  const liveGroup = fake.state.tabs.get(live.id).groupId;
+  const doneGroup = fake.state.tabs.get(done.id).groupId;
+  assert.notEqual(doneGroup, liveGroup);
+  assert.equal(fake.state.groups.get(doneGroup).title, bg.BRAND.deliverableGroupTitle);
+  assert.equal(fake.state.groups.get(doneGroup).color, bg.BRAND.deliverableGroupColor);
 });

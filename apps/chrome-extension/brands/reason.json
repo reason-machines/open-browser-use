@@ -3,7 +3,8 @@
   "displayName": "Reason",
   "description": "Lets Reason agents work in your Chrome, in their own tab groups.",
   "nativeHostName": "com.reasonmachines.browser_use.extension",
-  "groupSuffix": "Reason",
+  "groupTitle": "Reason",
   "groupColor": "grey",
-  "deliverableGroupTitle": "✅ Reason"
+  "deliverableGroupTitle": "Reason",
+  "deliverableGroupColor": "grey"
 }

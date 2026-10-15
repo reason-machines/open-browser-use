@@ -36,7 +36,8 @@ test("staging a brand rewrites background, manifest and popup only", () => {
     const background = fs.readFileSync(path.join(out, "background.js"), "utf8");
     const staged = evalBrand(background);
     assert.equal(staged.nativeHostName, "com.reasonmachines.browser_use.extension");
-    assert.equal(staged.groupSuffix, "Reason");
+    assert.equal(staged.groupTitle, "Reason");
+    assert.equal(staged.deliverableGroupTitle, "Reason");
     assert.ok(!background.includes("com.ifuryst.open_browser_use.extension"));
     new vm.Script(background);
     const manifest = JSON.parse(fs.readFileSync(path.join(out, "manifest.json"), "utf8"));
@@ -62,5 +63,6 @@ test("invalid brands are rejected", () => {
     /nativeHostName/
   );
   assert.throws(() => validateBrand({ ...loadBrand({ brand: "default" }), groupColor: "teal" }), /groupColor/);
+  assert.throws(() => validateBrand({ ...loadBrand({ brand: "default" }), deliverableGroupTitle: "✅ Done" }), /status glyphs/);
   assert.throws(() => brandBackground("const x = 1;", loadBrand({ brand: "default" })), /obu-brand-begin/);
 });

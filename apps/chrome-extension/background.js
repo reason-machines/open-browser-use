@@ -4,9 +4,10 @@ const BRAND = Object.freeze({
   "id": "default",
   "displayName": "Open Browser Use",
   "nativeHostName": "com.ifuryst.open_browser_use.extension",
-  "groupSuffix": "OBU",
+  "groupTitle": "OBU",
   "groupColor": "grey",
-  "deliverableGroupTitle": "✅ Open Browser Use"
+  "deliverableGroupTitle": "OBU",
+  "deliverableGroupColor": "grey"
 });
 // @obu-brand-end
 const NATIVE_HOST_NAME = BRAND.nativeHostName;
@@ -21,10 +22,16 @@ const DEFAULT_WEBMCP_LIST_TIMEOUT_MS = 5_000;
 const WEBMCP_TIMEOUT_GRACE_MS = 1_500;
 const CURSOR_ARRIVAL_TIMEOUT_MS = 1_000;
 const MAX_USER_TABS = 1000;
-const DEFAULT_SESSION_LABEL = "Task";
-const DEFAULT_SESSION_GROUP_TITLE = sessionGroupTitle(DEFAULT_SESSION_LABEL);
+const DEFAULT_SESSION_GROUP_TITLE = sessionGroupTitle();
 const DELIVERABLE_GROUP_TITLE = BRAND.deliverableGroupTitle;
-const LEGACY_SESSION_GROUP_TITLE_PATTERN = /^(Open Browser Use [0-9a-f]{8}|Task - OBU)$/i;
+// Titles written by older builds ("Task - OBU", "Open Browser Use 1a2b3c4d",
+// "<label> · OBU"); migrated to the brand title on load.
+const LEGACY_SESSION_GROUP_TITLE_PATTERN = /^(Open Browser Use [0-9a-f]{8}|Task - OBU|.+ · [^·]+)$/i;
+const LEGACY_DELIVERABLE_GROUP_TITLES = new Set(["✅ Open Browser Use"]);
+// Idle chrome.debugger attachments are dropped so Chrome's
+// '"<extension>" started debugging this browser' infobar goes away between
+// bursts of agent work; the next CDP call re-attaches implicitly.
+const DEFAULT_IDLE_DETACH_MS = 30_000;
 // Host→extension native-messaging frames are capped at 1 MB by Chrome; the host
 // splits larger JSON payloads into {chunk:{id,i,n,data}} slices (WS-B pairs).
 const CHUNK_TTL_MS = 30_000;
@@ -60,9 +67,10 @@ class ExtensionError extends Error {
   }
 }
 
-function sessionGroupTitle(label) {
-  const trimmed = typeof label === "string" ? label.trim() : "";
-  return `${trimmed || DEFAULT_SESSION_LABEL} · ${BRAND.groupSuffix}`;
+// Agent groups carry only the brand mark (no task label, status or emoji);
+// session labels are kept in storage for diagnostics but never shown.
+function sessionGroupTitle() {
+  return BRAND.groupTitle;
 }
 const WEBMCP_CAPABILITY = {
   id: "webmcp",
@@ -315,6 +323,7 @@ class SessionStore {
           session &&
           typeof session === "object" &&
           typeof session.title === "string" &&
+          session.title !== DEFAULT_SESSION_GROUP_TITLE &&
           LEGACY_SESSION_GROUP_TITLE_PATTERN.test(session.title)
         ) {
           session.title = DEFAULT_SESSION_GROUP_TITLE;
@@ -323,10 +332,15 @@ class SessionStore {
       }
       if (migrated) {
         await this.save();
+        for (const session of Object.values(this.state.sessions)) {
+          if (typeof session?.chromeGroupId === "number") {
+            await chrome.tabGroups?.update?.(session.chromeGroupId, { title: session.title }).catch(() => {});
+          }
+        }
       }
       if (typeof this.state.deliverableGroupId === "number") {
         await chrome.tabGroups
-          .update(this.state.deliverableGroupId, { title: DELIVERABLE_GROUP_TITLE })
+          .update(this.state.deliverableGroupId, { title: DELIVERABLE_GROUP_TITLE, color: BRAND.deliverableGroupColor })
           .catch(() => {});
       }
     }
@@ -353,7 +367,8 @@ class SessionStore {
     const created = {
       chromeGroupId: null,
       windowId: null,
-      title: label ? sessionGroupTitle(label) : DEFAULT_SESSION_GROUP_TITLE,
+      title: DEFAULT_SESSION_GROUP_TITLE,
+      ...(label ? { label } : {}),
       activeTabId: null,
       tabOrigins: {},
       ...(rootSessionId ? { rootSessionId, parentSessionId } : {})
@@ -481,9 +496,15 @@ class BrowserBackend {
     this.recentDownloadBegins = [];
     this.notify = null;
     this.profileId = null;
-    chrome.debugger.onDetach.addListener((source) => {
+    this.idleDetachMs = DEFAULT_IDLE_DETACH_MS;
+    this.idleTimers = new Map();
+    this.inflightByTab = new Map();
+    chrome.debugger.onDetach.addListener((source, reason) => {
       if (typeof source.tabId === "number") {
         this.attachedTabs.delete(source.tabId);
+        this.clearIdleTimer(source.tabId);
+        // e.g. the user pressed Cancel on Chrome's debugging infobar.
+        this.emit("debuggerDetached", { tabId: source.tabId, reason: reason ?? "detached" });
       }
     });
   }
@@ -509,6 +530,53 @@ class BrowserBackend {
     try {
       this.notify?.(method, params);
     } catch {}
+  }
+
+  // configure{idleDetachMs}: 0 disables idle detach (keep attached until the
+  // turn ends); default DEFAULT_IDLE_DETACH_MS.
+  async configure(params) {
+    if (params.idleDetachMs !== undefined) {
+      if (!Number.isInteger(params.idleDetachMs) || params.idleDetachMs < 0) {
+        throw new Error("configure idleDetachMs must be a non-negative integer");
+      }
+      this.idleDetachMs = params.idleDetachMs;
+      for (const tabId of this.attachedTabs) this.touchTab(tabId);
+    }
+    return { idleDetachMs: this.idleDetachMs };
+  }
+
+  clearIdleTimer(tabId) {
+    const timer = this.idleTimers.get(tabId);
+    if (timer !== undefined) {
+      clearTimeout(timer);
+      this.idleTimers.delete(tabId);
+    }
+  }
+
+  // Restart the idle-detach clock for an attached tab.
+  touchTab(tabId) {
+    this.clearIdleTimer(tabId);
+    if (!this.attachedTabs.has(tabId) || this.idleDetachMs <= 0) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      this.idleTimers.delete(tabId);
+      void this.detachIfIdle(tabId);
+    }, this.idleDetachMs);
+    timer?.unref?.();
+    this.idleTimers.set(tabId, timer);
+  }
+
+  async detachIfIdle(tabId) {
+    if (!this.attachedTabs.has(tabId)) {
+      return;
+    }
+    if ((this.inflightByTab.get(tabId) ?? 0) > 0 || this.fileChooserWaitersByTabId.has(tabId)) {
+      this.touchTab(tabId);
+      return;
+    }
+    await this.detachTab(tabId).catch(() => {});
+    this.emit("debuggerDetached", { tabId, reason: "idle" });
   }
 
   queueGroupOp(fn) {
@@ -908,16 +976,19 @@ class BrowserBackend {
 
   async nameSession(params) {
     const session = await this.requireSession(params);
-    const name = sessionGroupTitle(typeof params.name === "string" ? params.name : "");
-    // The group belongs to the root session; naming a subagent renames nothing.
+    // The group shows only the brand mark; the name is kept as the session's
+    // label (diagnostics) and the group title is re-asserted in case it drifted.
     const { rootSessionId, root } = await this.store.getRoot(session.sessionId);
-    if (rootSessionId !== session.sessionId) {
-      return;
+    const sessionState = await this.store.getSession(session.sessionId);
+    if (typeof params.name === "string" && params.name.trim()) {
+      sessionState.label = params.name.trim();
     }
-    root.title = name;
+    if (rootSessionId === session.sessionId) {
+      root.title = sessionGroupTitle();
+    }
     await this.store.save();
-    if (typeof root.chromeGroupId === "number") {
-      await this.queueGroupOp(() => chrome.tabGroups.update(root.chromeGroupId, { title: name })).catch(() => {});
+    if (rootSessionId === session.sessionId && typeof root.chromeGroupId === "number") {
+      await this.queueGroupOp(() => chrome.tabGroups.update(root.chromeGroupId, { title: root.title })).catch(() => {});
     }
   }
 
@@ -945,10 +1016,14 @@ class BrowserBackend {
           }
         }
         this.attachedTabs.add(tabId);
+        // Fresh attachment: CDP state (domains, auto-attach, isolated worlds)
+        // starts empty; the daemon re-runs its attach sequence on this event.
+        this.emit("debuggerAttached", { tabId });
       })().finally(() => this.attachingTabs.delete(tabId));
       this.attachingTabs.set(tabId, pending);
     }
     await pending;
+    this.touchTab(tabId);
   }
 
   async detach(params) {
@@ -980,6 +1055,22 @@ class BrowserBackend {
       typeof params.timeoutMs === "number" && params.timeoutMs > 0
         ? params.timeoutMs
         : DEFAULT_CDP_TIMEOUT_MS;
+    if (typeof tabId === "number") {
+      this.inflightByTab.set(tabId, (this.inflightByTab.get(tabId) ?? 0) + 1);
+    }
+    try {
+      return await this.sendCdp(target, params, timeoutMs);
+    } finally {
+      if (typeof tabId === "number") {
+        const left = (this.inflightByTab.get(tabId) ?? 1) - 1;
+        if (left > 0) this.inflightByTab.set(tabId, left);
+        else this.inflightByTab.delete(tabId);
+        this.touchTab(tabId);
+      }
+    }
+  }
+
+  async sendCdp(target, params, timeoutMs) {
     return await withTimeout(timeoutMs, async () => {
       if (params.method === "Target.getTargets") {
         return { targetInfos: await chrome.debugger.getTargets() };
@@ -1792,9 +1883,21 @@ class BrowserBackend {
     let lastGroupId = null;
 
     for (const [windowId, windowTabIds] of tabsByWindow) {
-      const existingGroups = await chrome.tabGroups
-        .query({ windowId, title: DELIVERABLE_GROUP_TITLE })
-        .catch(() => []);
+      // Agent groups may share the deliverable title (brand mark only), so
+      // never merge into a group a live session owns.
+      const sessionGroupIds = new Set(
+        Object.values(this.store.state.sessions)
+          .map((session) => session?.chromeGroupId)
+          .filter((groupId) => typeof groupId === "number")
+      );
+      const titled = await Promise.all(
+        [DELIVERABLE_GROUP_TITLE, ...LEGACY_DELIVERABLE_GROUP_TITLES].map((title) =>
+          chrome.tabGroups.query({ windowId, title }).catch(() => [])
+        )
+      );
+      const existingGroups = titled
+        .flat()
+        .filter((group, index, all) => !sessionGroupIds.has(group.id) && all.findIndex((other) => other.id === group.id) === index);
 
       let primaryGroupId = null;
       if (existingGroups.length > 0) {
@@ -1832,7 +1935,7 @@ class BrowserBackend {
       await chrome.tabGroups
         .update(primaryGroupId, {
           title: DELIVERABLE_GROUP_TITLE,
-          color: "green",
+          color: BRAND.deliverableGroupColor,
           collapsed: false
         })
         .catch(() => {});
@@ -1851,6 +1954,7 @@ class BrowserBackend {
   }
 
   async detachTab(tabId) {
+    this.clearIdleTimer(tabId);
     try {
       await chrome.debugger.detach({ tabId });
     } finally {
