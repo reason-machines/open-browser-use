@@ -1,0 +1,6 @@
+<!doctype html><meta charset="utf-8"><title>Mega Menu</title><script src="common.js"></script>
+<style>nav ul{list-style:none;margin:0;padding:0}nav>ul>li{display:inline-block;position:relative;padding:8px 16px;background:#eee}nav ul ul{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #999;min-width:160px}nav ul ul ul{top:0;left:100%}nav li:hover>ul{display:block}nav ul ul li{position:relative;padding:6px 10px}</style>
+<h1>Mega Menu</h1><p>Using the menu, open <b>Products → Hardware → Quantum Router</b> and report the SKU shown.</p>
+<nav><ul><li>Home</li><li>Products<ul><li>Software<ul><li><a href="#" data-p="photon-suite">Photon Suite</a></li></ul></li><li>Hardware<ul><li><a href="#" data-p="mesh-node">Mesh Node</a></li><li><a href="#" data-p="quantum-router">Quantum Router</a></li></ul></li></ul></li><li>About</li></ul></nav>
+<div id="out" role="status" style="margin-top:120px"></div>
+<script>document.querySelectorAll("a[data-p]").forEach(a => a.onclick = e => { e.preventDefault(); reveal(document.getElementById("out"), a.textContent + " SKU: " + benchCode("hover:" + a.dataset.p)); });</script>

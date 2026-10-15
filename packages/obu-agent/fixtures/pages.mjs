@@ -1,0 +1,20 @@
+// Fixture page list (WS-G owns). `file` lives in fixtures/pages/. Golden snapshots (WS-D) key off `file`.
+export const PAGES = [
+  { file: "form.html", covers: "inputs, select, date/time/color/range, checkbox/radio with labels, submit" },
+  { file: "table.html", covers: "data table, sortable headers" },
+  { file: "iframes.html", covers: "nested same-origin + cross-origin (OOPIF) iframes with forms" },
+  { file: "shadow.html", covers: "open + closed shadow DOM, slotted content, buttons inside shadow" },
+  { file: "pointer-divs.html", covers: "cursor:pointer div buttons, onclick, tabindex, inherited pointer" },
+  { file: "aria-owns.html", covers: "aria-owns reparenting, listbox/combobox" },
+  { file: "hidden.html", covers: "display:none / visibility / aria-hidden subtrees, off-screen-below content" },
+  { file: "dialogs.html", covers: "alert / confirm / prompt / beforeunload" },
+  { file: "long-list.html", covers: "2,000-node page" },
+  { file: "spa.html", covers: "pushState route change, slow XHR (2 s), infinite spinner" },
+  { file: "editable.html", covers: "contenteditable, textarea (Cmd+A/C/V), emoji + CJK, rich editor" },
+  { file: "select.html", covers: "native select, multi-select, custom listbox" },
+  { file: "upload.html", covers: "file input, file input inside iframe, drop zone" },
+  { file: "download.html", covers: "download link, Content-Disposition download (/download/file.txt)" },
+  { file: "popup.html", covers: "window.open popup, target=_blank" },
+  { file: "canvas.html", covers: "canvas-only UI (screenshot / coordinate fallback)" },
+  { file: "obscured.html", covers: "button covered by overlay (obscured -> DOM click fallback), disclosure" },
+];

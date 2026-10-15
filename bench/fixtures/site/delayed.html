@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Slow Dashboard</title><script src="common.js"></script>
+<style>#consent{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:10}#consent div{background:#fff;padding:24px}#banner{background:#fe9;padding:30px;display:none}</style>
+<div id="consent"><div><p>We use cookies.</p><button id="accept-all">Accept all</button> <button id="reject-all">Reject all</button></div></div>
+<h1>Slow Dashboard</h1>
+<p>Dismiss the cookie dialog by choosing <b>Reject all</b>, wait for the dashboard to load, then press <b>Generate key</b>.</p>
+<div id="banner">Maintenance notice: scheduled downtime Sunday.</div>
+<div id="app">Loading dashboard…</div><p id="out" role="status"></p>
+<script>
+let consent = null;
+document.getElementById("accept-all").onclick = () => { consent = "accept"; document.getElementById("consent").remove(); };
+document.getElementById("reject-all").onclick = () => { consent = "reject"; document.getElementById("consent").remove(); };
+setTimeout(() => {
+  document.getElementById("app").innerHTML = `<p>Dashboard ready.</p><button id="gen" disabled>Generate key</button>`;
+  setTimeout(() => document.getElementById("gen").disabled = false, 2000);
+  document.getElementById("gen").onclick = () => reveal(document.getElementById("out"), consent === "reject" ? "Key: " + benchCode("delayed:" + consent) : "Consent choice invalid");
+}, 3000);
+setTimeout(() => document.getElementById("banner").style.display = "block", 4500);
+</script>

@@ -1,0 +1,83 @@
+{
+  "info": {
+    "measuredAt": "2026-10-15T11:35:47.459Z",
+    "host": "darwin-arm64",
+    "obuInstalled": "0.1.42",
+    "socketPath": "/tmp/reason-browser-use/65f152b0-d93b-4895-a1f1-043089c284d3.sock",
+    "url": "http://127.0.0.1:54131/",
+    "runs": 50,
+    "openRuns": 20
+  },
+  "results": {
+    "ping_persistent_socket": {
+      "n": 50,
+      "p50": 0.35,
+      "p95": 36.13,
+      "max": 559.54,
+      "failures": 0
+    },
+    "getInfo": {
+      "n": 50,
+      "p50": 0.55,
+      "p95": 6.08,
+      "max": 91.3,
+      "failures": 0
+    },
+    "open_tab_to_loaded": {
+      "n": 20,
+      "p50": 1354.36,
+      "p95": 4100.75,
+      "max": 4100.75,
+      "failures": 0
+    },
+    "getTabs": {
+      "n": 50,
+      "p50": 6.11,
+      "p95": 102.58,
+      "max": 183.51,
+      "failures": 0
+    },
+    "attach_then_evaluate": {
+      "n": 50,
+      "p50": 33.32,
+      "p95": 1231.16,
+      "max": 1931.49,
+      "failures": 0
+    },
+    "cdp_evaluate": {
+      "n": 50,
+      "p50": 6.84,
+      "p95": 77.52,
+      "max": 247.55,
+      "failures": 0
+    },
+    "cdp_click_dispatch": {
+      "n": 50,
+      "p50": 19.46,
+      "p95": 366.31,
+      "max": 756.04,
+      "failures": 0
+    },
+    "screenshot_background_png": {
+      "n": 20,
+      "p50": 340.59,
+      "p95": 837.1,
+      "max": 837.1,
+      "failures": 0
+    },
+    "screenshot_background_jpeg70": {
+      "n": 20,
+      "p50": 187.44,
+      "p95": 358.75,
+      "max": 358.75,
+      "failures": 0
+    },
+    "cli_spawn_ping": {
+      "n": 20,
+      "p50": 133.25,
+      "p95": 191.3,
+      "max": 191.3,
+      "failures": 0
+    }
+  }
+}

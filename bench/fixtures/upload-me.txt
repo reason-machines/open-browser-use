@@ -1,0 +1,3 @@
+Reason Machines bench upload fixture.
+Do not edit: the expected checksum depends on these exact bytes.
+nonce=8b1f2c

@@ -1,0 +1,227 @@
+[
+  {
+    "id": "fx-shadow",
+    "suite": "hard",
+    "category": "shadow-dom",
+    "prompt": "Open {FIXTURE}/shadow.html and follow the instructions on the page. Report the vault code.",
+    "answer_key": "Vault code 09MLBWN",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-iframe",
+    "suite": "hard",
+    "category": "iframe-oopif",
+    "prompt": "Open {FIXTURE}/iframe.html and follow the instructions on the page. Report the confirmation code.",
+    "answer_key": "Confirmation 1PXLPZB",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-infinite",
+    "suite": "hard",
+    "category": "infinite-scroll",
+    "prompt": "Open {FIXTURE}/infinite.html. Report (a) the price of catalog item #437 and (b) how many of the 500 items carry the tag 'rare'.",
+    "answer_key": "(a) $315.37 (item Vase-437) (b) 108 items tagged rare. Both parts must be correct.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "fx-datepicker",
+    "suite": "hard",
+    "category": "complex-widget",
+    "prompt": "Open {FIXTURE}/datepicker.html and follow the instructions on the page. Report the booking reference.",
+    "answer_key": "Booking ref 1MY9A0K",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-download",
+    "suite": "hard",
+    "category": "download-read",
+    "prompt": "Open {FIXTURE}/download.html, download the report it offers and read the downloaded CSV file. Report the total of the 'amount' column for region EMEA and how many EMEA rows there are.",
+    "answer_key": "EMEA total 56966 across 9 rows (the total is what matters; row count must also be 9).",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-popup",
+    "suite": "hard",
+    "category": "popup-multi-window",
+    "prompt": "Open {FIXTURE}/popup.html and follow the instructions on the page. Report the token and the Session value.",
+    "answer_key": "Token TK-7731-QV and Session 0HDNMNF (both required).",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-dragdrop",
+    "suite": "hard",
+    "category": "drag-drop",
+    "prompt": "Open {FIXTURE}/dragdrop.html and follow the instructions on the page. Report the code.",
+    "answer_key": "Code 03LGSL9",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-widgets",
+    "suite": "hard",
+    "category": "complex-widget",
+    "prompt": "Open {FIXTURE}/widgets.html and follow the instructions on the page. Report the saved profile code.",
+    "answer_key": "Saved profile 0G8VB0T",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-delayed",
+    "suite": "hard",
+    "category": "waiting-overlays",
+    "prompt": "Open {FIXTURE}/delayed.html and follow the instructions on the page. Report the key.",
+    "answer_key": "Key 04F17GY",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-dialogs",
+    "suite": "hard",
+    "category": "js-dialogs",
+    "prompt": "Open {FIXTURE}/dialogs.html and follow the instructions on the page. Report the result code.",
+    "answer_key": "Result 033II4Y",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-hover",
+    "suite": "hard",
+    "category": "hover-menus",
+    "prompt": "Open {FIXTURE}/hover.html and follow the instructions on the page. Report the SKU.",
+    "answer_key": "SKU 0SAJR18",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "fx-upload",
+    "suite": "hard",
+    "category": "file-upload",
+    "prompt": "Open {FIXTURE}/upload.html and upload the local file {UPLOAD_FILE} using the page's file input. Report the checksum the page displays.",
+    "answer_key": "Checksum 2f272eb0ca36 (filename upload-me.txt)",
+    "judge": "answer-key",
+    "timeout_s": 420
+  },
+  {
+    "id": "live-hn-dropbox",
+    "suite": "hard",
+    "category": "multi-hop-nav",
+    "prompt": "On Hacker News (news.ycombinator.com), find the item with id 8863. Report its exact title, its author, and how many points it has.",
+    "answer_key": "Title starts 'My YC app: Dropbox - Throw away your USB drive'; author dhouston; 104 points (accept 100-110).",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-pypi-requests",
+    "suite": "hard",
+    "category": "multi-hop-nav",
+    "prompt": "Using pypi.org in the browser, find the earliest version of the Python package 'requests' ever released and its release date.",
+    "answer_key": "Version 0.2.0, released 14 Feb 2011 (2011-02-14).",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-arxiv-transformer",
+    "suite": "hard",
+    "category": "download-read",
+    "prompt": "Find the arXiv paper 'Attention Is All You Need'. Report its arXiv id, the number of authors, and the v1 submission date. Then open the paper's PDF and report the EN-DE BLEU score of 'Transformer (big)' from Table 2.",
+    "answer_key": "arXiv 1706.03762; 8 authors; submitted 12 Jun 2017; Transformer (big) EN-DE BLEU 28.4. All four required.",
+    "judge": "answer-key",
+    "timeout_s": 900
+  },
+  {
+    "id": "live-books-mystery",
+    "suite": "hard",
+    "category": "ecommerce-filter-sort",
+    "prompt": "On books.toscrape.com, go to the Mystery category and look through all its pages. Report how many books the category has, the cheapest book with its price, and the most expensive book with its price.",
+    "answer_key": "32 books; cheapest 'Tastes Like Fear (DI Marnie Rome #3)' \u00a310.69; most expensive 'Boar Island (Anna Pigeon #19)' \u00a359.48.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-quotes-scroll",
+    "suite": "hard",
+    "category": "infinite-scroll",
+    "prompt": "Using https://quotes.toscrape.com/scroll (an infinite-scroll page), count how many quotes in total are tagged 'love', and how many quotes in total are by Albert Einstein.",
+    "answer_key": "14 quotes tagged love; 10 quotes by Albert Einstein (both required).",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-vscode-issue1",
+    "suite": "hard",
+    "category": "multi-hop-nav",
+    "prompt": "On github.com, open issue #1 of the repository microsoft/vscode. Report its title and the username of the person who opened it.",
+    "answer_key": "Title 'Open Source VS Code'; opened by chrisdias.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-jqueryui-datepicker",
+    "suite": "hard",
+    "category": "complex-widget",
+    "prompt": "Go to https://jqueryui.com/datepicker/ and, using the demo date picker widget on that page (it is inside an iframe), select the third Friday of November 2026 by clicking through the calendar. Report the exact text that ends up in the date input.",
+    "answer_key": "11/20/2026",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-herokuapp-gauntlet",
+    "suite": "hard",
+    "category": "waiting-overlays",
+    "prompt": "On https://the-internet.herokuapp.com do all of the following and report each result: (1) on /dynamic_loading/2 press Start and report the text that appears; (2) on /hovers hover the third user avatar and report the name shown; (3) on /nested_frames report the text of the bottom frame; (4) on /javascript_alerts click 'Click for JS Prompt', type 'bench' and accept, then report the Result line.",
+    "answer_key": "(1) Hello World! (2) name: user3 (3) BOTTOM (4) You entered: bench. All four required.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-rfc9110",
+    "suite": "hard",
+    "category": "multi-hop-research",
+    "prompt": "Find RFC 9110 (HTTP Semantics). List its editors and, for each, the organization the RFC lists them with.",
+    "answer_key": "Editors R. Fielding (Adobe), M. Nottingham (Fastly), J. Reschke (greenbytes). All three names with organizations required.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-nobel-physics",
+    "suite": "hard",
+    "category": "multi-hop-research",
+    "prompt": "Using Wikipedia, list every laureate of the Nobel Prize in Physics for 1903 and for 1921, and report the birthplace city of the 1921 laureate.",
+    "answer_key": "1903: Henri Becquerel, Pierre Curie, Marie Curie; 1921: Albert Einstein; Einstein born in Ulm.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-oscar-zemeckis",
+    "suite": "hard",
+    "category": "multi-hop-research",
+    "prompt": "Find the film that won the Academy Award for Best Picture at the 67th Academy Awards, then its director, then that director's birthplace city, and report the name of the university that director graduated from (per English Wikipedia).",
+    "answer_key": "Forrest Gump; Robert Zemeckis; born in Chicago; graduated from University of Southern California (USC). Accept USC School of Cinematic Arts.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-multitab-stars",
+    "suite": "hard",
+    "category": "multi-tab-compare",
+    "prompt": "Open the GitHub pages for facebook/react, vuejs/core and sveltejs/svelte in separate tabs. Report each repository's star count as displayed and rank them from most to fewest stars.",
+    "answer_key": "Ranking: facebook/react (most, roughly 240k+), sveltejs/svelte (~88k), vuejs/core (~55k). Ranking must be exactly this order; star counts should be roughly these values (allow \u00b110%).",
+    "judge": "answer-key",
+    "timeout_s": 600
+  },
+  {
+    "id": "live-wiki-table",
+    "suite": "hard",
+    "category": "table-extraction",
+    "prompt": "On English Wikipedia's article 'List of countries and dependencies by area', report the 3rd and 4th largest countries by total area as ranked in the main table, and the total area (km\u00b2) given for the 4th.",
+    "answer_key": "3rd: China (9,596,960 km\u00b2); 4th: United States, 9,525,067 km\u00b2. Accept if the answer names China 3rd and United States 4th with ~9,525,067 km\u00b2 for the United States; the table may show them with a shared/annotated rank.",
+    "judge": "answer-key",
+    "timeout_s": 600
+  }
+]

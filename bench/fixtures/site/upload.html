@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Checksum Upload</title>
+<h1>Checksum Upload</h1><p>Upload the requested file. The page shows the first 12 hex characters of its SHA-256.</p>
+<input type="file" id="file"><p id="out" role="status"></p>
+<script>
+document.getElementById("file").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  const h = await crypto.subtle.digest("SHA-256", await f.arrayBuffer());
+  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+  const o = document.getElementById("out"); o.textContent = f.name + " checksum: " + hex.slice(0, 12); o.setAttribute("data-revealed", "1");
+};
+</script>

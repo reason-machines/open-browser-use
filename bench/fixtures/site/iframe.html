@@ -1,0 +1,5 @@
+<!doctype html><meta charset="utf-8"><title>Embedded Registration</title><script src="common.js"></script>
+<h1>Embedded Registration</h1>
+<p>Complete the form inside the embedded frame: name <b>Ada Lovelace</b>, country <b>Norway</b>, tick the agreement box, then press Confirm. Report the confirmation code shown inside the frame.</p>
+<iframe id="f" style="width:640px;height:320px;border:2px solid #444"></iframe>
+<script>document.getElementById("f").src = "http://localhost:" + location.port + "/iframe-inner.html";</script>

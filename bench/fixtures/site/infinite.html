@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><title>Infinite Catalog</title><script src="common.js"></script>
+<style>.item{padding:14px;border-bottom:1px solid #ddd;font-family:monospace}#sentinel{height:40px}</style>
+<h1>Infinite Catalog</h1><p>500 items. More load as you scroll.</p>
+<div id="list"></div><div id="sentinel">Loading…</div>
+<script>
+let seed = 1337; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const names = ["Lamp", "Chair", "Kettle", "Drone", "Vase", "Clock", "Radio", "Prism", "Lens", "Gear"];
+const tagset = ["common", "uncommon", "rare", "vintage", "new"];
+const items = Array.from({ length: 500 }, (_, i) => ({
+  n: i + 1, name: names[Math.floor(rnd() * names.length)] + "-" + (i + 1),
+  price: (5 + rnd() * 495).toFixed(2), tags: tagset.filter(() => rnd() < 0.22)
+}));
+let shown = 0; const list = document.getElementById("list"), s = document.getElementById("sentinel");
+function more() {
+  const end = Math.min(shown + 20, items.length);
+  for (; shown < end; shown++) {
+    const it = items[shown], d = document.createElement("div"); d.className = "item";
+    d.textContent = `#${it.n}  ${it.name}  $${it.price}  [${it.tags.join(", ") || "none"}]`;
+    list.appendChild(d);
+  }
+  if (shown >= items.length) s.textContent = "End of catalog";
+}
+let busy = false;
+function recheck() { if (shown < items.length && s.getBoundingClientRect().top < innerHeight && !busy) { busy = true; setTimeout(() => { more(); busy = false; recheck(); }, 400); } }
+new IntersectionObserver(es => { if (es[0].isIntersecting && !busy && shown < items.length) { busy = true; setTimeout(() => { more(); busy = false; recheck(); }, 400); } }).observe(s);
+more();
+</script>

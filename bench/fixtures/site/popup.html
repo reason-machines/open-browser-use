@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Token Exchange</title><script src="common.js"></script>
+<h1>Token Exchange</h1>
+<p>Press <b>Get token</b>. A new window opens showing a token, then closes itself after a few seconds. Report the token and the Session value that appears on this page afterwards.</p>
+<button id="go">Get token</button><p>Session: <span id="session" role="status">(none)</span></p>
+<script>
+document.getElementById("go").onclick = () => window.open("popup-child.html", "tok", "width=420,height=300");
+addEventListener("message", e => { if (e.data && e.data.token) reveal(document.getElementById("session"), benchCode("popup:" + e.data.token)); });
+</script>

@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>Trip Date</title><script src="common.js"></script>
+<style>.cal{display:inline-block;border:1px solid #999;padding:8px}.grid{display:grid;grid-template-columns:repeat(7,36px);gap:2px}.grid div{height:30px;text-align:center;line-height:30px;cursor:pointer}.grid div.d:hover{background:#def}.grid div.sel{background:#36c;color:#fff}.yearlist{position:absolute;background:#fff;border:1px solid #888;max-height:120px;overflow:auto;display:none}.yearlist div{padding:2px 10px;cursor:pointer}</style>
+<h1>Pick your trip date</h1>
+<p>Select <b>14 March 2027</b> in the calendar, then press Confirm date. Typing into the field is disabled.</p>
+<input id="field" readonly placeholder="No date selected">
+<div class="cal"><button id="prev" aria-label="Previous month">‹</button> <span id="title"></span>
+<span style="position:relative"><button id="yearbtn" aria-haspopup="listbox">Year ▾</button><div class="yearlist" id="years" role="listbox"></div></span>
+<button id="next" aria-label="Next month">›</button><div class="grid" id="grid"></div></div>
+<p><button id="confirm">Confirm date</button></p><p id="out" role="status"></p>
+<script>
+const M = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+let y = 2026, m = 0, sel = null;
+function render() {
+  document.getElementById("title").textContent = M[m] + " " + y;
+  const g = document.getElementById("grid"); g.innerHTML = "";
+  "Su Mo Tu We Th Fr Sa".split(" ").forEach(w => { const d = document.createElement("div"); d.textContent = w; g.appendChild(d); });
+  const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+  for (let i = 0; i < first; i++) g.appendChild(document.createElement("div"));
+  for (let d = 1; d <= days; d++) {
+    const c = document.createElement("div"); c.className = "d"; c.textContent = d;
+    const iso = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    if (sel === iso) c.classList.add("sel");
+    c.addEventListener("click", () => { sel = iso; document.getElementById("field").value = iso; render(); });
+    g.appendChild(c);
+  }
+}
+document.getElementById("prev").onclick = () => { if (--m < 0) { m = 11; y--; } render(); };
+document.getElementById("next").onclick = () => { if (++m > 11) { m = 0; y++; } render(); };
+const yl = document.getElementById("years");
+for (let yy = 2020; yy <= 2035; yy++) { const o = document.createElement("div"); o.setAttribute("role", "option"); o.textContent = yy; o.onclick = () => { y = yy; yl.style.display = "none"; render(); }; yl.appendChild(o); }
+document.getElementById("yearbtn").onclick = () => { yl.style.display = yl.style.display === "block" ? "none" : "block"; };
+document.getElementById("confirm").onclick = () => reveal(document.getElementById("out"), sel ? "Booking ref: " + benchCode("date:" + sel) : "Pick a date first");
+render();
+</script>

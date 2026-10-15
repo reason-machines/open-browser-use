@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Inner form</title><script src="common.js"></script>
+<form id="f" onsubmit="return false">
+<p><label>Full name <input name="name" id="name"></label></p>
+<p><label>Country <select id="country"><option value="">--</option><option value="SE">Sweden</option><option value="NO">Norway</option><option value="DK">Denmark</option></select></label></p>
+<p><label><input type="checkbox" id="agree"> I agree to the terms</label></p>
+<button id="confirm">Confirm</button>
+<p id="out" role="status"></p></form>
+<script>
+document.getElementById("confirm").addEventListener("click", () => {
+  const n = document.getElementById("name").value.trim(), c = document.getElementById("country").value, a = document.getElementById("agree").checked;
+  const out = document.getElementById("out");
+  if (!a) return reveal(out, "Please accept the terms");
+  if (!n || !c) return reveal(out, "Missing fields");
+  reveal(out, "Confirmation: " + benchCode("iframe:" + n + ":" + c));
+});
+</script>

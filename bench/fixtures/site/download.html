@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>Quarterly Export</title>
+<h1>Quarterly Export</h1>
+<p>Press <b>Export report</b> to download <code>report-q3.csv</code>. The data is not shown on this page.</p>
+<button id="exp">Export report</button>
+<script>
+document.getElementById("exp").onclick = () => {
+  let seed = 4242; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const regions = ["EMEA", "APAC", "AMER", "LATAM"];
+  let csv = "row,region,amount\n";
+  for (let i = 1; i <= 50; i++) csv += `${i},${regions[Math.floor(rnd() * 4)]},${Math.floor(100 + rnd() * 9900)}\n`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = "report-q3.csv"; document.body.appendChild(a); a.click(); a.remove();
+};
+</script>

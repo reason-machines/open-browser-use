@@ -1,0 +1,39 @@
+<!doctype html><meta charset="utf-8"><title>Shadow Vault</title><script src="common.js"></script>
+<h1>Shadow Vault</h1>
+<p>The passphrase is printed inside the <b>third</b> panel. Enter it in the vault and press Unlock.</p>
+<bench-panels></bench-panels>
+<bench-vault></bench-vault>
+<script>
+customElements.define("bench-panel", class extends HTMLElement {
+  connectedCallback() {
+    const r = this.attachShadow({ mode: "open" });
+    r.innerHTML = `<style>div{border:1px solid #888;margin:4px;padding:6px}</style><div><slot name="title"></slot><p class="body"></p></div>`;
+    r.querySelector(".body").textContent = this.getAttribute("body");
+  }
+});
+customElements.define("bench-panels", class extends HTMLElement {
+  connectedCallback() {
+    const r = this.attachShadow({ mode: "open" });
+    const words = ["decoy: marble-17", "decoy: copper-08", "passphrase: orchid-42", "decoy: willow-99"];
+    words.forEach((w, i) => {
+      const p = document.createElement("bench-panel");
+      p.setAttribute("body", w);
+      const t = document.createElement("b"); t.slot = "title"; t.textContent = "Panel " + (i + 1);
+      p.appendChild(t); r.appendChild(p);
+    });
+  }
+});
+customElements.define("bench-vault", class extends HTMLElement {
+  connectedCallback() {
+    const r = this.attachShadow({ mode: "open" });
+    r.innerHTML = `<div class="inner"></div>`;
+    const inner = r.querySelector(".inner").attachShadow({ mode: "open" });
+    inner.innerHTML = `<label>Passphrase <input id="pp" autocomplete="off"></label>
+      <button id="unlock">Unlock</button><p id="out" role="status"></p>`;
+    inner.getElementById("unlock").addEventListener("click", () => {
+      const v = inner.getElementById("pp").value.trim();
+      reveal(inner.getElementById("out"), v === "orchid-42" ? "Vault code: " + benchCode("shadow:" + v) : "Access denied");
+    });
+  }
+});
+</script>

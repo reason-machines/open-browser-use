@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Dialog Gauntlet</title><script src="common.js"></script>
+<h1>Dialog Gauntlet</h1>
+<p>Press <b>Start</b>. Accept the confirmation, then when prompted type the magic word <b>zephyr</b>, then dismiss the final alert. Report the result code.</p>
+<button id="start">Start</button><p id="out" role="status"></p>
+<script>
+document.getElementById("start").onclick = () => {
+  const ok = confirm("Proceed with the gauntlet?");
+  if (!ok) return reveal(document.getElementById("out"), "Cancelled");
+  const w = prompt("Type the magic word");
+  alert("Thanks!");
+  reveal(document.getElementById("out"), (w || "").trim().toLowerCase() === "zephyr" ? "Result: " + benchCode("dialogs:zephyr") : "Wrong word");
+};
+</script>

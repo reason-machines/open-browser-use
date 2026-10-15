@@ -1,0 +1,20 @@
+<!doctype html><meta charset="utf-8"><title>Preferences Panel</title><script src="common.js"></script>
+<style>.switch{display:inline-block;width:44px;height:24px;border-radius:12px;background:#bbb;position:relative;cursor:pointer;vertical-align:middle}.switch[aria-checked=true]{background:#3a3}.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:10px;background:#fff;transition:left .2s}.switch[aria-checked=true]::after{left:22px}.chip{display:inline-block;padding:4px 10px;margin:2px;border:1px solid #888;border-radius:12px;cursor:pointer}.chip.on{background:#36c;color:#fff}</style>
+<h1>Preferences Panel</h1>
+<p>Set Volume to exactly <b>73</b>, turn <b>Night mode</b> on, select exactly the colour chips <b>red</b> and <b>blue</b>, then press Apply.</p>
+<p>Volume <input type="range" id="vol" min="0" max="100" value="20"> <output id="vo">20</output></p>
+<p>Night mode <span class="switch" id="night" role="switch" aria-checked="false" tabindex="0"></span></p>
+<p>Colours: <span id="chips"></span></p>
+<button id="apply">Apply</button><p id="out" role="status"></p>
+<script>
+const vol = document.getElementById("vol");
+vol.addEventListener("input", () => document.getElementById("vo").textContent = vol.value);
+const sw = document.getElementById("night");
+sw.addEventListener("click", () => sw.setAttribute("aria-checked", sw.getAttribute("aria-checked") === "true" ? "false" : "true"));
+["red", "green", "blue", "yellow"].forEach(c => { const s = document.createElement("span"); s.className = "chip"; s.textContent = c; s.setAttribute("role", "checkbox"); s.setAttribute("aria-checked", "false"); s.onclick = () => { s.classList.toggle("on"); s.setAttribute("aria-checked", s.classList.contains("on")); }; document.getElementById("chips").appendChild(s); });
+document.getElementById("apply").onclick = () => {
+  const chips = [...document.querySelectorAll(".chip.on")].map(c => c.textContent).sort().join("+");
+  const night = sw.getAttribute("aria-checked") === "true" ? "on" : "off";
+  reveal(document.getElementById("out"), "Saved profile: " + benchCode(`widgets:${vol.value}:${night}:${chips}`));
+};
+</script>
