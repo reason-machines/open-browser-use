@@ -1,0 +1,41 @@
+{
+ "requires_login": [
+  "x"
+ ],
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-x-old-post-thread",
+ "category": "real-social-read",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 32.2,
+  "steps": 8,
+  "tokens": 663181,
+  "final": "No matching posts were shown. Oldest post text/date: unavailable. Reply count: unavailable. First three reply handles: unavailable.",
+  "raw_final": "I couldn’t find any results for `from:paulg until:2009-06-01` or the broader `from:paulg before:2009-06-01` in X’s Latest search, so I can’t reliably report an oldest post or inspect its replies. I closed the tab I opened and made no account changes.\n\nFINAL ANSWER: No matching posts were shown. Oldest post text/date: unavailable. Reply count: unavailable. First three reply handles: unavailable.",
+  "session_id": "gWcuC8z1BTZkS1QD",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The trajectory shows only empty search results. The agent never found or opened a 2009-or-earlier @paulg post and reported none of the required text, date, reply count, or reply handles.",
+  "failure_category": "gave_up"
+ }
+}

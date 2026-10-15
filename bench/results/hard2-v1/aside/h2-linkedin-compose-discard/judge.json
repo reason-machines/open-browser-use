@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Post was enabled and Discard was clicked, with the composer closing and no Post click. However, the image upload failed, the text contained a duplicate fragment, and the selected Microsoft mention was overwritten, so the required ready state was never reached.","failure_category":"download_or_upload"}

@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-multitab-stars",
+ "category": "multi-tab-compare",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.6,
+  "steps": 11,
+  "tokens": 155101,
+  "final": "facebook/react — 251.0k stars; sveltejs/svelte — 88.4k stars; vuejs/core — 54.6k stars. Ranked most to fewest: **facebook/react (251.0k) > sveltejs/svelte (88.4k) > vuejs/core (54.6k)**.",
+  "raw_final": "FINAL ANSWER: facebook/react — 251.0k stars; sveltejs/svelte — 88.4k stars; vuejs/core — 54.6k stars. Ranked most to fewest: **facebook/react (251.0k) > sveltejs/svelte (88.4k) > vuejs/core (54.6k)**.",
+  "session_id": "bench-baseline-v3-live-multitab-stars",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open the GitHub pages for facebook/react, vuejs/core and sveltejs/svelte in separate tabs. Report each repository's star count as displayed and rank them from most to fewest stars."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three displayed star counts are supported by the trajectory and within the allowed range. The ranking is exactly facebook/react > sveltejs/svelte > vuejs/core, and each repository was opened in a separate tab.",
+  "failure_category": "none"
+ }
+}

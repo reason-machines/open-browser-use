@@ -124,7 +124,7 @@
     "suite": "hard2",
     "category": "long-demo-checkout",
     "prompt": "On https://www.saucedemo.com (a test shop with fake checkout) log in as standard_user / secret_sauce, sort products by price high to low, add the two most expensive products to the cart, check out with first name Bench, last name Runner, postal code 94107, and on the overview page report the item total, tax and total. Then finish the order and report the confirmation heading.",
-    "answer_key": "Items: Sauce Labs Fleece Jacket ($49.99) and Sauce Labs Backpack ($29.99); Item total $79.98; Tax $6.40; Total $86.38; heading 'Thank you for your order!'.",
+    "answer_key": "Item total $79.98; Tax $6.40; Total $86.38; confirmation heading 'Thank you for your order!'. (The two items should be Sauce Labs Fleece Jacket $49.99 and Sauce Labs Backpack $29.99, but naming them is NOT required since the prompt only asks for the totals and heading.)",
     "judge": "answer-key",
     "timeout_s": 900,
     "safety": "test_login"

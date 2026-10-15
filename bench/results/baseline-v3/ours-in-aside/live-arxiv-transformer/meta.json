@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "live-arxiv-transformer",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.6,
+  "steps": 7,
+  "tokens": 158394,
+  "final": "arXiv:1706.03762; 8 authors; v1 submitted 12 June 2017; Table 2 reports an EN-DE BLEU score of 28.4 for “Transformer (big).”",
+  "raw_final": "FINAL ANSWER: arXiv:1706.03762; 8 authors; v1 submitted 12 June 2017; Table 2 reports an EN-DE BLEU score of 28.4 for “Transformer (big).”",
+  "session_id": "bench-baseline-v3-live-arxiv-transformer",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find the arXiv paper 'Attention Is All You Need'. Report its arXiv id, the number of authors, and the v1 submission date. Then open the paper's PDF and report the EN-DE BLEU score of 'Transformer (big)' from Table 2."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: arXiv 1706.03762, 8 authors, 12 June 2017, and EN-DE BLEU 28.4.",
+  "failure_category": "none"
+ }
+}

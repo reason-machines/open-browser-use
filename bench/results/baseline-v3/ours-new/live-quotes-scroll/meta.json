@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-quotes-scroll",
+ "category": "infinite-scroll",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 25.0,
+  "steps": 7,
+  "tokens": 206651,
+  "final": "14 quotes are tagged “love,” and 10 quotes are by Albert Einstein.",
+  "raw_final": "FINAL ANSWER: 14 quotes are tagged “love,” and 10 quotes are by Albert Einstein.",
+  "session_id": "bench-baseline-v3-live-quotes-scroll",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Using https://quotes.toscrape.com/scroll (an infinite-scroll page), count how many quotes in total are tagged 'love', and how many quotes in total are by Albert Einstein."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly includes both required totals: 14 quotes tagged love and 10 quotes by Albert Einstein.",
+  "failure_category": "none"
+ }
+}

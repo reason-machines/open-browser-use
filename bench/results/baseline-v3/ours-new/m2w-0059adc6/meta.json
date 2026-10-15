@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 45.2,
+  "steps": 12,
+  "tokens": 510120,
+  "final": "13 open “support services” search results near Bentonville, Arkansas; the 10 first-page listings and listed pay ranges are above.**",
+  "raw_final": "Walmart Careers shows **13 open roles** matching “support services” within 5 miles of Bentonville, Arkansas. The first page includes:\n\n- Senior Manager, Account Receivable – Wireless — $80,000–$155,000/year\n- (USA) Senior Manager, Supplier To Serve — $80,000–$155,000/year\n- Specialist, Enterprise Business Services — $19.00–$35.00/hour\n- Specialist, Building Controls — $19.00–$35.00/hour\n- (USA) Manager, Business Support — $60,000–$110,000/year (two listings)\n- Senior Manager, Transitions and Transformation — $80,000–$155,000/year\n- (USA) Senior Manager, Contact Center–Business Performance & Analytics — $80,000–$155,000/year\n- (USA) Senior Manager, Account Receivable — $80,000–$155,000/year\n- (USA) Director, Supplier To Serve — $110,000–$220,000/year\n\nThe site indicated two result pages; I couldn’t verify the remaining three listings. **FINAL ANSWER: 13 open “support services” search results near Bentonville, Arkansas; the 10 first-page listings and listed pay ranges are above.**",
+  "session_id": "bench-baseline-v3-m2w-0059adc6",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 3,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://careers.walmart.com/us/en/results?searchQuery=support+services"
+   ],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 1,
+   "tabs_after_cleanup": 3,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": false
+  },
+  "prompt_given": "Find support services jobs in Bentonville, in the state of Arkansas.\nStart from https://careers.walmart.com/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent searched Walmart Careers for “support services,” selected “BENTONVILLE, Arkansas,” and saved the location. A subsequent observation showed 13 open roles and Bentonville, AR listings, satisfying all three requirements. Listing every result was not required.",
+  "failure_category": "none"
+ }
+}

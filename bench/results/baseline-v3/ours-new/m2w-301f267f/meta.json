@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-301f267f",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 115.2,
+  "steps": 12,
+  "tokens": 726238,
+  "final": "Healthline’s **High Protein Recipes** collection defines a high-protein snack as **10 g or more per serving**. Its vegan options didn’t show a savory snack that also cooks in five minutes or less. The closest matches are:\n\n- **Edamame with sea salt** — savory and vegan. Healthline says 1 cup provides nearly **17 g protein**. Boil or steam the pods, or thaw them in the microwave; the article doesn’t give an exact prep time. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n- **Popcorn with nutritional yeast** — savory and vegan. Healthline describes nutritional yeast as a high-quality plant protein, but doesn’t state protein per serving or a specific prep time for this combination. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n- **Hummus and raw vegetables** — savory, vegan, and quick to assemble. The article doesn’t provide a protein amount or an exact time. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n\nFor a verified **≤5-minute** recipe, Healthline lists a **Green Smoothie with Spinach, Cucumber and Pineapple** at **4 minutes and 17 g protein**, but it isn’t savory. [Healthline High Protein Recipes](https://www.healthline.com/recipes/high-protein?filters=recipe-vegan)\n\nSo, based on the Healthline pages checked, I couldn’t confirm a recipe that meets all four criteria at once.",
+  "raw_final": "Healthline’s **High Protein Recipes** collection defines a high-protein snack as **10 g or more per serving**. Its vegan options didn’t show a savory snack that also cooks in five minutes or less. The closest matches are:\n\n- **Edamame with sea salt** — savory and vegan. Healthline says 1 cup provides nearly **17 g protein**. Boil or steam the pods, or thaw them in the microwave; the article doesn’t give an exact prep time. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n- **Popcorn with nutritional yeast** — savory and vegan. Healthline describes nutritional yeast as a high-quality plant protein, but doesn’t state protein per serving or a specific prep time for this combination. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n- **Hummus and raw vegetables** — savory, vegan, and quick to assemble. The article doesn’t provide a protein amount or an exact time. [Healthline vegan snack ideas](https://www.healthline.com/nutrition/vegan-snacks)\n\nFor a verified **≤5-minute** recipe, Healthline lists a **Green Smoothie with Spinach, Cucumber and Pineapple** at **4 minutes and 17 g protein**, but it isn’t savory. [Healthline High Protein Recipes](https://www.healthline.com/recipes/high-protein?filters=recipe-vegan)\n\nSo, based on the Healthline pages checked, I couldn’t confirm a recipe that meets all four criteria at once.",
+  "session_id": "bench-baseline-v3-m2w-301f267f",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 3,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://www.healthline.com/recipes/high-protein?filters=recipe-vegan"
+   ],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 1,
+   "tabs_after_cleanup": 3,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": false
+  },
+  "prompt_given": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.\nStart from https://www.healthline.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent found healthy savory vegan snack ideas on Healthline, but did not verify any recipe satisfying all requirements together. The savory options lack confirmed ≤5-minute times, and two lack confirmed high protein amounts; the timed high-protein smoothie is not savory.",
+  "failure_category": "incomplete"
+ }
+}

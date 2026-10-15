@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent searched Healthgrades for pediatric dentistry, but observed results remained centered on San Jose with a 10-mile radius. No later observation confirms a corrected 90210 search or an applied 5-mile constraint. The reported match therefore does not establish completion of all requirements.","failure_category":"incomplete"}

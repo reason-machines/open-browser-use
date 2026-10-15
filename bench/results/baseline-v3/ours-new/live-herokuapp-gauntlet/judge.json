@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Three results were correct, but the prompt never submitted bench and returned an empty value instead of 'You entered: bench'.","failure_category":"dialog_or_popup"}

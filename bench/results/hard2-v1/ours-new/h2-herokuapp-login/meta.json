@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-herokuapp-login",
+ "category": "login-test-site",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 28.4,
+  "steps": 11,
+  "tokens": 333823,
+  "final": "Successful sign-in: “You logged into a secure area!” Logout: “You logged out of the secure area!” The incorrect-password attempt did not produce a verifiable flash message before the tab was closed; the page still showed the logout flash.",
+  "raw_final": "FINAL ANSWER: Successful sign-in: “You logged into a secure area!” Logout: “You logged out of the secure area!” The incorrect-password attempt did not produce a verifiable flash message before the tab was closed; the page still showed the logout flash.",
+  "session_id": "bench-hard2-v1-h2-herokuapp-login",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On https://the-internet.herokuapp.com/login sign in with username tomsmith and password SuperSecretPassword! and report the flash message. Then press Logout and report the flash message. Then try to sign in with username tomsmith and password nope and report the flash message."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The final answer correctly reports login and logout messages but omits the required 'Your password is invalid!' message. The incorrect-password submission did not complete successfully.",
+  "failure_category": "interaction_failed"
+ }
+}

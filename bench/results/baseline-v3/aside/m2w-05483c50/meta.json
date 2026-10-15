@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 40.1,
+  "steps": 17,
+  "tokens": 1257185,
+  "final": "BBB shows no verified charitable organization among the accredited results near 12023; the top-rated results are tied at A+, and the closest listed is Charity Fundraising, a professional fundraiser in Fort Lee, NJ, not a charity.",
+  "raw_final": "BBB’s accredited search for **“Charitable Organizations” near 12023** returned three results, all rated **A+**. The closest *by listed address* is **Charity Fundraising**, 96 Linwood Plaza Ste. 226, Fort Lee, NJ 07024. But BBB categorizes it as a **professional fundraiser**, not a charitable organization. The other two are also fundraising businesses, so I couldn’t verify a local charity itself as the “best rated” from these results.\n\nIf you meant a charity’s trustworthiness rather than BBB Business Profile accreditation, BBB’s **Give.org** charity evaluations are a better fit. ([BBB search results](https://www.bbb.org/search?find_text=Charitable+Organizations&find_loc=12023&find_country=USA))\n\nFINAL ANSWER: BBB shows no verified charitable organization among the accredited results near 12023; the top-rated results are tied at A+, and the closest listed is Charity Fundraising, a professional fundraiser in Fort Lee, NJ, not a charity.",
+  "session_id": "TyfYu47EPLhKyUZa",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Look for the best rated BBB accredited charity near 12023.\nStart from https://www.bbb.org/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "BBB accreditation was applied and ZIP 12023 was reflected in the results. However, the highest-rated filter or sort was never applied; Sort By remained Best Match. The agent also did not reach a verified charity result, instead reporting a professional fundraiser.",
+  "failure_category": "incomplete"
+ }
+}

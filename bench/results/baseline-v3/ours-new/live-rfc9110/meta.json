@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-rfc9110",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.5,
+  "steps": 5,
+  "tokens": 222810,
+  "final": "RFC 9110 lists three editors: Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes.",
+  "raw_final": "FINAL ANSWER: RFC 9110 lists three editors: Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes.",
+  "session_id": "bench-baseline-v3-live-rfc9110",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find RFC 9110 (HTTP Semantics). List its editors and, for each, the organization the RFC lists them with."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three editors with the correct organizations: Fielding—Adobe, Nottingham—Fastly, and Reschke—greenbytes.",
+  "failure_category": "none"
+ }
+}

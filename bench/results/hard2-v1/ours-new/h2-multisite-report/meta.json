@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-multisite-report",
+ "category": "long-multi-site",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 32.5,
+  "steps": 11,
+  "tokens": 344385,
+  "final": "Python 3.15.0; Node.js LTS 24.22.0; Go 1.27.2. The receipt lists reviewer Grace and checksum `1CXQ6MQ`.",
+  "raw_final": "FINAL ANSWER: Python 3.15.0; Node.js LTS 24.22.0; Go 1.27.2. The receipt lists reviewer Grace and checksum `1CXQ6MQ`.",
+  "session_id": "bench-hard2-v1-h2-multisite-report",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Research three facts: (1) the latest stable Python version on python.org/downloads, (2) the latest Node.js LTS version on nodejs.org, (3) the latest stable Go version on go.dev/dl. Then open http://127.0.0.1:18731/h2/report.html, fill the form with those three versions, choose reviewer Grace, press Generate receipt, open the downloaded toolchain-receipt.json file and report the three versions you entered and the checksum from the file."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three versions match the answer key. The trajectory confirms Grace was selected and the downloaded receipt was read, with checksum 1CXQ6MQ matching the final answer.",
+  "failure_category": "none"
+ }
+}

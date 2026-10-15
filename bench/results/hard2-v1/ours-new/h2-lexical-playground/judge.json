@@ -1,0 +1,1 @@
+{"success":true,"score":1.0,"reason":"The final DOM read shows exactly an H1 'Bench Report' followed by a UL with three items: alpha and gamma in plain spans, and beta in strong. No leftover editor content appears, and the final answer matches the evidence.","failure_category":"none"}

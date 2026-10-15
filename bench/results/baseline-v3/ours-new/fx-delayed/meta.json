@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-delayed",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 23.3,
+  "steps": 7,
+  "tokens": 201231,
+  "final": "04F17GY",
+  "raw_final": "FINAL ANSWER: 04F17GY",
+  "session_id": "bench-baseline-v3-fx-delayed",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/delayed.html and follow the instructions on the page. Report the key."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required key, 04F17GY, which was verified in the page text.",
+  "failure_category": "none"
+ }
+}

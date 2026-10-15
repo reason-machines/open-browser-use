@@ -1,0 +1,42 @@
+{
+ "requires_login": [
+  "x",
+  "linkedin"
+ ],
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-notif-counts",
+ "category": "real-social-read",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 22.4,
+  "steps": 5,
+  "tokens": 371298,
+  "final": "X: 3 unread notifications; LinkedIn: 1 unread notification.",
+  "raw_final": "FINAL ANSWER: X: 3 unread notifications; LinkedIn: 1 unread notification.",
+  "session_id": "x3sLJNvNkckKqxQj",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "Page reads show X’s Notifications badge as 3 and LinkedIn’s as 1, matching the final answer. Only home/feed pages were opened; neither notifications page was visited.",
+  "failure_category": "none"
+ }
+}

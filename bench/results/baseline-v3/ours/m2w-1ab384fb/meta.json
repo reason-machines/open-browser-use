@@ -1,0 +1,46 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-1ab384fb",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 43.0,
+  "steps": 22,
+  "tokens": 538307,
+  "final": "Simulation: Build a Nucleus. Requested starting nucleus: beryllium-10 (6 protons, 4 neutrons). Decay result: not shown.",
+  "raw_final": "The PhET “Build a Nucleus” simulation is open in the new tab, ready at its screen chooser. I couldn’t complete the decay setup, so the requested proton emission result isn’t displayed yet.\n\nFINAL ANSWER: Simulation: Build a Nucleus. Requested starting nucleus: beryllium-10 (6 protons, 4 neutrons). Decay result: not shown.",
+  "session_id": "bench-baseline-v3-m2w-1ab384fb",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 11,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://phet.colorado.edu/sims/html/build-a-nucleus/latest/build-a-nucleus_en.html"
+   ],
+   "closed_by_harness": 1,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Show me the result of a proton emission decay for a Beryllium nucleus with 6 protons and 4 neutrons in the simulation.\nStart from https://phet.colorado.edu/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.0,
+  "reason": "The agent only opened Build a Nucleus at its screen chooser. It never configured 6 protons and 4 neutrons, performed proton emission, or displayed a decay result, and explicitly stopped unfinished.",
+  "failure_category": "gave_up"
+ }
+}

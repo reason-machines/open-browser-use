@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-upload",
+ "category": "file-upload",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 80.0,
+  "steps": 4,
+  "tokens": 153584,
+  "final": "The page displayed checksum `2f272eb0ca36`.",
+  "raw_final": "FINAL ANSWER: The page displayed checksum `2f272eb0ca36`.",
+  "session_id": "bench-baseline-v3-fx-upload",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/upload.html and upload the local file /Users/adi/Downloads/obu-bench/upload-me.txt using the page's file input. Report the checksum the page displays."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The reported checksum 2f272eb0ca36 matches the answer key, and the trajectory confirms upload-me.txt was uploaded through the file input.",
+  "failure_category": "none"
+ }
+}

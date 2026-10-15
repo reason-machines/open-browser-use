@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Rank #250 and Orion-7974 values match, but the top-100 ERROR count is 19 instead of 20. The reconstructed data used ascending ID tie-breaking, unlike the page’s descending sort.","failure_category":"wrong_answer"}

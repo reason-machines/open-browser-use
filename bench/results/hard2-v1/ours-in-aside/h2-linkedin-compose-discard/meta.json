@@ -1,0 +1,45 @@
+{
+ "requires_login": [
+  "linkedin"
+ ],
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-linkedin-compose-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 170.1,
+  "steps": 33,
+  "tokens": 1159460,
+  "final": "The composer text showed “Testing a browser agent benchmark, this draft will be discarded #obubench @Microsoft,” but I could not verify that Microsoft was selected from suggestions. The image was not attached, and I could not verify that Post was enabled. I closed my tab, but could not confirm that the composer draft was discarded.",
+  "raw_final": "FINAL ANSWER: The composer text showed “Testing a browser agent benchmark, this draft will be discarded #obubench @Microsoft,” but I could not verify that Microsoft was selected from suggestions. The image was not attached, and I could not verify that Post was enabled. I closed my tab, but could not confirm that the composer draft was discarded.",
+  "session_id": "bench-hard2-v1-h2-linkedin-compose-discard",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Entered the required text and hashtag, but Microsoft remained plain text, no image was attached, Post enabled was not verified, and Discard was never selected. No Post click occurred. The final answer accurately acknowledged the incomplete result.",
+  "failure_category": "gave_up"
+ }
+}

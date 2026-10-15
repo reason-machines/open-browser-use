@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-hn-dropbox",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 13.3,
+  "steps": 2,
+  "tokens": 115189,
+  "final": "“My YC app: Dropbox - Throw away your USB drive” — author: dhouston — 104 points.",
+  "raw_final": "FINAL ANSWER: “My YC app: Dropbox - Throw away your USB drive” — author: dhouston — 104 points.",
+  "session_id": "bench-baseline-v3-live-hn-dropbox",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On Hacker News (news.ycombinator.com), find the item with id 8863. Report its exact title, its author, and how many points it has."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes the exact title, author dhouston, and 104 points, all supported by the trajectory.",
+  "failure_category": "none"
+ }
+}

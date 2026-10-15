@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-354b4ddf",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 23.6,
+  "steps": 13,
+  "tokens": 1119923,
+  "final": "I searched OhioMeansJobs for “marketing” and applied the Career/Education Level filter “Bachelor’s degree.” The filtered view shows 20,372 jobs in that education category.",
+  "raw_final": "FINAL ANSWER: I searched OhioMeansJobs for “marketing” and applied the Career/Education Level filter “Bachelor’s degree.” The filtered view shows 20,372 jobs in that education category.",
+  "session_id": "v8eVuHc4KvlfIg9p",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Browse marketing jobs and filter by Bachelor's Degree education level.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent searched marketing on OhioMeansJobs and selected Bachelor's degree. A later snapshot confirms the active Career/Education Level filter alongside the marketing search, and shows the reported 20,372 education-category count.",
+  "failure_category": "none"
+ }
+}

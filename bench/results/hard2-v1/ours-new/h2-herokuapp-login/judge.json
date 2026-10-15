@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The final answer correctly reports login and logout messages but omits the required 'Your password is invalid!' message. The incorrect-password submission did not complete successfully.","failure_category":"interaction_failed"}

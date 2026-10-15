@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "live-herokuapp-gauntlet",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 59.8,
+  "steps": 25,
+  "tokens": 682913,
+  "final": "(1) “Hello World!” appeared after Start. (2) The third avatar showed “name: user3”. (3) The bottom frame text was “BOTTOM”. (4) After entering and accepting “bench” in the JS Prompt, the Result line was “You entered: bench”.",
+  "raw_final": "FINAL ANSWER: (1) “Hello World!” appeared after Start. (2) The third avatar showed “name: user3”. (3) The bottom frame text was “BOTTOM”. (4) After entering and accepting “bench” in the JS Prompt, the Result line was “You entered: bench”.",
+  "session_id": "bench-baseline-v3-live-herokuapp-gauntlet",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On https://the-internet.herokuapp.com do all of the following and report each result: (1) on /dynamic_loading/2 press Start and report the text that appears; (2) on /hovers hover the third user avatar and report the name shown; (3) on /nested_frames report the text of the bottom frame; (4) on /javascript_alerts click 'Click for JS Prompt', type 'bench' and accept, then report the Result line."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: Hello World!, name: user3, BOTTOM, and You entered: bench.",
+  "failure_category": "none"
+ }
+}

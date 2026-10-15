@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0170ca95",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 44.2,
+  "steps": 15,
+  "tokens": 490710,
+  "final": "Yes. To work in UK healthcare for longer than 6 months, an American citizen needs appropriate work permission, usually the Health and Care Worker visa if the role and applicant meet its requirements. A visitor stay of up to 6 months does not authorize ordinary paid or unpaid work.",
+  "raw_final": "Yes. An American citizen planning to work in UK healthcare for longer than 6 months will need the appropriate work permission. For an eligible healthcare or adult social care role, the **Health and Care Worker visa** may apply. GOV.UK says you need an eligible job with a Home Office approved UK employer, a confirmed job offer and certificate of sponsorship, and to meet the role’s salary requirements. The visa can last up to 5 years and can be extended if you remain eligible.\n\nThe six-month visitor allowance does not permit ordinary employment: Standard Visitors cannot do paid or unpaid work for a UK company. Whether an American needs a separate visa or ETA just to visit is a different question from permission to work.\n\nSources: [Health and Care Worker visa](https://www.gov.uk/health-care-worker-visa) · [Standard Visitor rules](https://www.gov.uk/standard-visitor)\n\nFINAL ANSWER: Yes. To work in UK healthcare for longer than 6 months, an American citizen needs appropriate work permission, usually the Health and Care Worker visa if the role and applicant meet its requirements. A visitor stay of up to 6 months does not authorize ordinary paid or unpaid work.",
+  "session_id": "bench-baseline-v3-m2w-0170ca95",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Check if a visa is required to work in the UK for longer than 6 months in Healthcare as an American citizen.\nStart from https://www.gov.uk/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent started at GOV.UK and verified healthcare work visa guidance and visitor work restrictions, but never applied and observed the American nationality and longer-than-six-month selections in the visa checker. The general guidance supports the answer but does not complete the required nationality-specific check.",
+  "failure_category": "incomplete"
+ }
+}

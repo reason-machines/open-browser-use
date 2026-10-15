@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-070c907d",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 30.7,
+  "steps": 6,
+  "tokens": 259143,
+  "final": "Dr. Lynn Lempert, DDS — Pediatric Dentistry; 8920 Wilshire Blvd Ste 427, Beverly Hills, CA 90211 (1.6 miles from 90210); 4.9 stars from 43 reviews; accepting new patients; (310) 657-6434.",
+  "raw_final": "Dr. Lynn Lempert, DDS is a pediatric dentistry practitioner at 8920 Wilshire Blvd Ste 427, Beverly Hills, CA 90211—1.6 miles from 90210. Healthgrades lists a 4.9-star rating from 43 reviews and says she is accepting new patients. Phone: (310) 657-6434. [View her Healthgrades profile](https://www.healthgrades.com/dentist/dr-lynn-lempert-2cqn7)\n\nFINAL ANSWER: Dr. Lynn Lempert, DDS — Pediatric Dentistry; 8920 Wilshire Blvd Ste 427, Beverly Hills, CA 90211 (1.6 miles from 90210); 4.9 stars from 43 reviews; accepting new patients; (310) 657-6434.",
+  "session_id": "bench-baseline-v3-m2w-070c907d",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 3,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://www.healthgrades.com/dentist/dr-lynn-lempert-2cqn7"
+   ],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 1,
+   "tabs_after_cleanup": 3,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": false
+  },
+  "prompt_given": "Find a dentist who specializes in pediatric dentistry and is located near zip code 90210 (within 5-mile distance).\nStart from https://www.healthgrades.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent verified a pediatric dentist near 90210, but left the search radius at 10 miles and never applied the required 5-mile constraint. The reported 1.6-mile distance is not visible in the supplied observations.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-iframe",
+ "category": "iframe-oopif",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 23.6,
+  "steps": 5,
+  "tokens": 160471,
+  "final": "Confirmation code: 1PXLPZB",
+  "raw_final": "FINAL ANSWER: Confirmation code: 1PXLPZB",
+  "session_id": "bench-baseline-v3-fx-iframe",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/iframe.html and follow the instructions on the page. Report the confirmation code."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports 1PXLPZB, matching the answer key and the confirmation shown inside the iframe.",
+  "failure_category": "none"
+ }
+}

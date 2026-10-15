@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-0b2623e9",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.3,
+  "steps": 7,
+  "tokens": 155888,
+  "final": "No listings could be verified because Petfinder’s site was blocked by its browser challenge.",
+  "raw_final": "I couldn’t retrieve adoption listings: Petfinder returned an Akamai browser challenge, and the page stayed blank after loading again. I couldn’t verify any dogs against your criteria.\n\nFINAL ANSWER: No listings could be verified because Petfinder’s site was blocked by its browser challenge.",
+  "session_id": "bench-baseline-v3-m2w-0b2623e9",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.\nStart from https://www.petfinder.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "Petfinder returned an Akamai browser challenge. No requested filters were applied, and no matching adoption listings were reached or verified.",
+  "failure_category": "blocked_or_captcha"
+ }
+}

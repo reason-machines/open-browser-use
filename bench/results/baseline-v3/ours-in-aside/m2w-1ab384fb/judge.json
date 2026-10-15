@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent reached PhET's Build a Nucleus simulation and attempted configuration, but did not verify the requested composition or obtain and show its proton emission decay result. It ended with an unrelated Nitrogen-11 nucleus and explicitly acknowledged the incomplete result.","failure_category":"incomplete"}

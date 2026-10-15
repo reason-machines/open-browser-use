@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-301f267f",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 31.8,
+  "steps": 18,
+  "tokens": 439514,
+  "final": "Healthline’s high-protein recipe collection defines snacks as having at least 10 g of protein per serving. Its vegan + snack filter didn’t show a recipe that also met the 5-minute and savory requirements.\n\nClosest options from the results:\n\n- [Apricot and cashew snack bites](https://www.healthline.com/recipes/high-protein?filters=recipe-snack%2Crecipe-vegan) — vegan, 2 minutes, 5.5 g protein per serving; sweet, and below Healthline’s high-protein snack threshold.\n- [Cocoa-roasted pumpkin seeds](https://www.healthline.com/recipes/high-protein?filters=recipe-snack%2Crecipe-vegan) — savory, 13 g protein per serving; the collection lists 60 hours, so it doesn’t meet the time limit.\n\nSo I couldn’t verify a Healthline recipe matching all the requested criteria.",
+  "raw_final": "FINAL ANSWER: Healthline’s high-protein recipe collection defines snacks as having at least 10 g of protein per serving. Its vegan + snack filter didn’t show a recipe that also met the 5-minute and savory requirements.\n\nClosest options from the results:\n\n- [Apricot and cashew snack bites](https://www.healthline.com/recipes/high-protein?filters=recipe-snack%2Crecipe-vegan) — vegan, 2 minutes, 5.5 g protein per serving; sweet, and below Healthline’s high-protein snack threshold.\n- [Cocoa-roasted pumpkin seeds](https://www.healthline.com/recipes/high-protein?filters=recipe-snack%2Crecipe-vegan) — savory, 13 g protein per serving; the collection lists 60 hours, so it doesn’t meet the time limit.\n\nSo I couldn’t verify a Healthline recipe matching all the requested criteria.",
+  "session_id": "bench-baseline-v3-m2w-301f267f",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.\nStart from https://www.healthline.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached Healthline’s vegan snack results, but found and reported no recipe satisfying all five requirements. The 2-minute option has only 5.5 g protein and is sweet; the 13 g protein option lists 60 hours. Its savory classification is also unsupported by the observations. No qualifying result was reached or verified.",
+  "failure_category": "incomplete"
+ }
+}

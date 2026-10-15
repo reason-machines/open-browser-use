@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 49.4,
+  "steps": 19,
+  "tokens": 719357,
+  "final": "I couldn’t verify a best-rated BBB-accredited charity near 12023. BBB’s search for “Charities” showed 46 mixed results, including Grafton Lions Charities, Inc. (A+) in Grafton, MA, but didn’t establish that it is BBB accredited. Searching the charity category with an accreditation filter returned no results.",
+  "raw_final": "FINAL ANSWER: I couldn’t verify a best-rated BBB-accredited charity near 12023. BBB’s search for “Charities” showed 46 mixed results, including Grafton Lions Charities, Inc. (A+) in Grafton, MA, but didn’t establish that it is BBB accredited. Searching the charity category with an accreditation filter returned no results.",
+  "session_id": "bench-baseline-v3-m2w-05483c50",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Look for the best rated BBB accredited charity near 12023.\nStart from https://www.bbb.org/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The search results confirmed proximity to ZIP 12023, but BBB accreditation was never verified as applied, and highest-rated filtering or sorting was never applied. The agent ended on a no-results page for a substituted search term without reaching a qualifying charity.",
+  "failure_category": "incomplete"
+ }
+}

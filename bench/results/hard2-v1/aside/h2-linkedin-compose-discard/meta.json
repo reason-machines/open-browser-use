@@ -1,0 +1,41 @@
+{
+ "requires_login": [
+  "linkedin"
+ ],
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-linkedin-compose-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 74.6,
+  "steps": 18,
+  "tokens": 1752339,
+  "final": "The composer showed `Testing a browser agent benchmark, this draft will be discarded #obubench @Microsoft Testing a brows…` (the text had an unintended duplicate fragment, so I could not verify the exact requested text or a selected Microsoft mention). The Post button was enabled. I could not attach the image: LinkedIn’s upload control remained in a loading state. I chose **Discard**, verified the composer closed, and closed the tab I opened. Nothing was posted and no draft was saved.",
+  "raw_final": "FINAL ANSWER: The composer showed `Testing a browser agent benchmark, this draft will be discarded #obubench @Microsoft Testing a brows…` (the text had an unintended duplicate fragment, so I could not verify the exact requested text or a selected Microsoft mention). The Post button was enabled. I could not attach the image: LinkedIn’s upload control remained in a loading state. I chose **Discard**, verified the composer closed, and closed the tab I opened. Nothing was posted and no draft was saved.",
+  "session_id": "oRa1H5BUHg9SI57Z",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Post was enabled and Discard was clicked, with the composer closing and no Post click. However, the image upload failed, the text contained a duplicate fragment, and the selected Microsoft mention was overwritten, so the required ready state was never reached.",
+  "failure_category": "download_or_upload"
+ }
+}

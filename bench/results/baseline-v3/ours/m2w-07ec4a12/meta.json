@@ -1,0 +1,46 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-07ec4a12",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 68.5,
+  "steps": 13,
+  "tokens": 313423,
+  "final": "I opened Drugs.com’s Interaction Checker, but the browser connection failed before I could check melatonin with Folate Forte. I can’t confirm the interaction result from this lookup.",
+  "raw_final": "FINAL ANSWER: I opened Drugs.com’s Interaction Checker, but the browser connection failed before I could check melatonin with Folate Forte. I can’t confirm the interaction result from this lookup.",
+  "session_id": "bench-baseline-v3-m2w-07ec4a12",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 11,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://www.drugs.com/drug_interactions.html"
+   ],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 1,
+   "tabs_after_cleanup": 11,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": false
+  },
+  "prompt_given": "Check drug interaction for melatonin and Folate Forte.\nStart from https://www.drugs.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent reached the Interaction Checker but never successfully selected melatonin or Folate Forte or obtained an interaction result. Browser host/profile connection failures blocked completion.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

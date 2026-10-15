@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-linkedin-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 34.1,
+  "steps": 14,
+  "tokens": 374574,
+  "final": "Posted to the local LinkedIn clone with audience set to Connections only. The post includes the Reason Machines company mention, `#agents #obubench`, and the attached image. Post ID: `1GRPQQT`",
+  "raw_final": "FINAL ANSWER: Posted to the local LinkedIn clone with audience set to Connections only. The post includes the Reason Machines company mention, `#agents #obubench`, and the attached image. Post ID: `1GRPQQT`",
+  "session_id": "bench-hard2-v1-h2-linkedin-clone-post",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/linkedin-compose.html (a local clone of LinkedIn's post composer; posting here is a local test). Click Start a post, change the audience to \"Connections only\", write: \"Excited to share our new browser agent benchmark with @Reason Machines #agents #obubench\" where Reason Machines must be inserted by choosing the company Reason Machines from the mention suggestions (type @Re and wait for suggestions), attach the image file /Users/adi/Downloads/obu-bench/post-image.png via Add media → Upload from computer → Next, verify the composer, then click Post and report the Post ID."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports Post ID 1GRPQQT, matching the answer key. The trajectory confirms the requested audience, company mention, image attachment, verification, and posting.",
+  "failure_category": "none"
+ }
+}

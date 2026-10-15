@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Reached Cboe’s BEPTEC dashboard and observed Ericsson leading the intraday top movers, but never applied or verified the latest-market-close constraint. The reported ERIC B code also lacks confirmation in the supplied observations.","failure_category":"incomplete"}

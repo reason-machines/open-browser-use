@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-07bdc595",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 50.4,
+  "steps": 20,
+  "tokens": 792603,
+  "final": "No ticket selected; the Trip.com date picker prevented me from viewing available high speed departures from Shanghai to Beijing.",
+  "raw_final": "I couldn’t complete the search. Trip.com showed Shanghai and Beijing selected, but its departure date picker opened on **October 2026** while the displayed travel date was **October 15, 2026**, and I couldn’t select a date or reach the train results. No ticket was selected or purchased.\n\nFINAL ANSWER: No ticket selected; the Trip.com date picker prevented me from viewing available high speed departures from Shanghai to Beijing.",
+  "session_id": "bench-baseline-v3-m2w-07bdc595",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Select a high speed train ticket with a departure time before 23:00  from Shanghai to Beijing.\nStart from https://us.trip.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Shanghai and Beijing were selected in the search form, but no train results were reached or ticket selected. High-speed only remained unchecked, and no departure before 23:00 was verified. The agent stopped after unsuccessful date-picker interactions.",
+  "failure_category": "interaction_failed"
+ }
+}

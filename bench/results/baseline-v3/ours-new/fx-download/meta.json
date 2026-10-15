@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-download",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.6,
+  "steps": 4,
+  "tokens": 133059,
+  "final": "EMEA amount total: 56,966; EMEA rows: 9.",
+  "raw_final": "The downloaded CSV contains **9 EMEA rows**, with a total `amount` of **56,966**.\n\nFINAL ANSWER: EMEA amount total: 56,966; EMEA rows: 9.",
+  "session_id": "bench-baseline-v3-fx-download",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/download.html, download the report it offers and read the downloaded CSV file. Report the total of the 'amount' column for region EMEA and how many EMEA rows there are."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports an EMEA amount total of 56,966 across 9 rows, matching the answer key.",
+  "failure_category": "none"
+ }
+}

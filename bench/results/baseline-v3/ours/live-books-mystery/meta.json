@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-books-mystery",
+ "category": "ecommerce-filter-sort",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 17.9,
+  "steps": 12,
+  "tokens": 216654,
+  "final": "32 books; cheapest: *Tastes Like Fear (DI …)* — £10.69; most expensive: *Boar Island (Anna Pigeon …)* — £59.48.",
+  "raw_final": "Mystery has 32 books. The cheapest is *Tastes Like Fear (DI …)* at £10.69; the most expensive is *Boar Island (Anna Pigeon …)* at £59.48.\n\nFINAL ANSWER: 32 books; cheapest: *Tastes Like Fear (DI …)* — £10.69; most expensive: *Boar Island (Anna Pigeon …)* — £59.48.",
+  "session_id": "bench-baseline-v3-live-books-mystery",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On books.toscrape.com, go to the Mystery category and look through all its pages. Report how many books the category has, the cheapest book with its price, and the most expensive book with its price."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The count and both prices match, and both pages were checked, but the final answer truncates both book titles, omitting required title details from the answer key.",
+  "failure_category": "incomplete"
+ }
+}

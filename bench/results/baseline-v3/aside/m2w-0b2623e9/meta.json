@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0b2623e9",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 63.8,
+  "steps": 23,
+  "tokens": 2023074,
+  "final": "I couldn’t verify any listings as over 30 days on Petfinder; the site’s available age filter stopped at 10 days. The 100-mile, short-coat, good-with-kids-and-cats results are available at the link above.",
+  "raw_final": "I set Petfinder to dogs within 100 miles of ZIP 94587 and applied **Short coat**, **Good with cats**, and **Good with kids**. That left 527 listings.\n\nI couldn’t reliably narrow that list to pets listed for over 30 days: Petfinder’s “Days on Petfinder” filter only showed 1, 3, 5, and 10 days, and the listing profiles I checked didn’t show a listing age. So I can’t verify a list that meets *all* your criteria without guessing.\n\n[View the filtered Petfinder results](https://www.petfinder.com/search/dogs-for-adoption/us/ca/94587/?goodWith=cats&goodWith=kids&coatLength=short&includeOutOfTown=true)\n\nFINAL ANSWER: I couldn’t verify any listings as over 30 days on Petfinder; the site’s available age filter stopped at 10 days. The 100-mile, short-coat, good-with-kids-and-cats results are available at the link above.",
+  "session_id": "UkogKP9TBcJdhy6d",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.\nStart from https://www.petfinder.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent applied dogs, ZIP 94587, 100-mile distance, short coat, and good-with-kids/cats filters, but never verified or applied the required over-30-days constraint. It reported only partially filtered results.",
+  "failure_category": "incomplete"
+ }
+}

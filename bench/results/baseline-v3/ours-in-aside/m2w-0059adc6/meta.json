@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 39.3,
+  "steps": 14,
+  "tokens": 515932,
+  "final": "Senior Manager, Account Receivable – Wireless — Bentonville, Arkansas — $80,000–$155,000/year.",
+  "raw_final": "The Walmart Careers results for “support services” showed **64 open roles**, including **Senior Manager, Account Receivable – Wireless** in **Bentonville, AR**, listed at **$80,000–$155,000/year**. The displayed results also included roles in other locations, so the page did not show that all 64 jobs were in Bentonville.\n\nFINAL ANSWER: Senior Manager, Account Receivable – Wireless — Bentonville, Arkansas — $80,000–$155,000/year.",
+  "session_id": "bench-baseline-v3-m2w-0059adc6",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find support services jobs in Bentonville, in the state of Arkansas.\nStart from https://careers.walmart.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The reported job and salary were observed in Bentonville, AR, but the agent never verified that it belonged to Support Services. The location parameter did not apply a filter: the page still showed 'Add your location' and nationwide results, and typing Bentonville was never followed by saving or a confirmed filtered result.",
+  "failure_category": "incomplete"
+ }
+}

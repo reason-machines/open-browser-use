@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 84.3,
+  "steps": 33,
+  "tokens": 2236970,
+  "final": "I couldn’t retrieve matching jobs. OhioMeansJobs offers the needed Idaho, 5-mile, part-time, and corporate-only filters, but its search form did not apply the entered criteria and kept showing the default Ohio listings. No job matches were verified.",
+  "raw_final": "FINAL ANSWER: I couldn’t retrieve matching jobs. OhioMeansJobs offers the needed Idaho, 5-mile, part-time, and corporate-only filters, but its search form did not apply the entered criteria and kept showing the default Ohio listings. No job matches were verified.",
+  "session_id": "bench-baseline-v3-m2w-28e7574e",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "No requested filter was verified as applied. After direct field edits and form submission, observations still showed the default Ohio search with a 20-mile radius and unrelated nursing jobs. Part-time and corporate-only controls were identified but never activated, and no correctly filtered results page was reached.",
+  "failure_category": "interaction_failed"
+ }
+}

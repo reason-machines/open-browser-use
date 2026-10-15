@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent applied the used-car search, New York location, <5-mile filter, and Rating sort, then selected the second distinct dealer. However, its profile was blocked by a security challenge, so the agent never reached or verified all locations and reported only the search-result address.","failure_category":"blocked_or_captcha"}

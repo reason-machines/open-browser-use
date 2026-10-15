@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Reached Healthgrades pediatric dentist results, but they remained centered on San Jose with a 10-mile radius. The agent failed to apply ZIP code 90210 or verify a dentist within 5 miles because its location-field edits did not succeed.","failure_category":"interaction_failed"}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-popup",
+ "category": "popup-multi-window",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.7,
+  "steps": 5,
+  "tokens": 157005,
+  "final": "Token: `TK-7731-QV`; Session: `0HDNMNF`",
+  "raw_final": "FINAL ANSWER: Token: `TK-7731-QV`; Session: `0HDNMNF`",
+  "session_id": "bench-baseline-v3-fx-popup",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/popup.html and follow the instructions on the page. Report the token and the Session value."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains both required values: Token TK-7731-QV and Session 0HDNMNF.",
+  "failure_category": "none"
+ }
+}

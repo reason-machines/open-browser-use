@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-dragdrop",
+ "category": "drag-drop",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 21.0,
+  "steps": 5,
+  "tokens": 412929,
+  "final": "03LGSL9",
+  "raw_final": "FINAL ANSWER: 03LGSL9",
+  "session_id": "Mg3PsvOYI4IwRJyc",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required code 03LGSL9, verified in the page status after sorting.",
+  "failure_category": "none"
+ }
+}

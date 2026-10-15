@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-01abae96",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 36.6,
+  "steps": 8,
+  "tokens": 386539,
+  "final": "Telefonaktiebolaget L M Ericsson Shs B — code **ERICBs** (top mover, +5.50%).",
+  "raw_final": "FINAL ANSWER: Telefonaktiebolaget L M Ericsson Shs B — code **ERICBs** (top mover, +5.50%).",
+  "session_id": "bench-baseline-v3-m2w-01abae96",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Show me the code for the company that is the top mover in the Cboe Europe Technology Sector Index (BEPTEC) as of the latest market close.\nStart from https://www.cboe.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached BEPTEC, identified its highest listed mover, and verified Ericsson’s code ERICBs and +5.50% change. However, the observations show live data with 14:52 timestamps; no action or observation establishes the result as of the latest market close.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-practicetest-login",
+ "category": "login-test-site",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 19.3,
+  "steps": 8,
+  "tokens": 174475,
+  "final": "Incorrect login error: “Your username is invalid!” Successful login page heading: “Logged In Successfully”. Button/link text: “Log out”.",
+  "raw_final": "FINAL ANSWER: Incorrect login error: “Your username is invalid!” Successful login page heading: “Logged In Successfully”. Button/link text: “Log out”.",
+  "session_id": "bench-hard2-v1-h2-practicetest-login",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On https://practicetestautomation.com/practice-test-login/ first try username incorrectUser with password Password123 and report the error message. Then log in with username student and password Password123 and report the page heading and the text of the button on the success page."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three required values exactly, and the trajectory verifies both login attempts in the required order.",
+  "failure_category": "none"
+ }
+}

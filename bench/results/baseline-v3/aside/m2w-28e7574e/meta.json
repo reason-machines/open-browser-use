@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 75.4,
+  "steps": 17,
+  "tokens": 1502708,
+  "final": "No verified part-time chef job was found. OhioMeansJobs showed 5 corporate-site chef listings for its Moscow, Idaho, 5-mile search, all in Pullman, WA: Associate Director of Culinary Services, Executive Chef (Washington State University); Sous Chef (Upper Crust Food Service); Sous Chef/Manager (Washington State University); Head Chef (Upper Crust Food Service); and Field Sous Chef (Upper Crust Food Service). Part-time status and exact distance were not verified.",
+  "raw_final": "OhioMeansJobs returned **5 chef listings** for Moscow, Idaho, with a **5-mile radius** and **Show Corporate Sites Only** enabled. All five are listed in Pullman, WA:\n\n- Associate Director of Culinary Services, Executive Chef — Washington State University\n- Sous Chef — Upper Crust Food Service\n- Sous Chef/Manager — Washington State University\n- Head Chef — Upper Crust Food Service\n- Field Sous Chef — Upper Crust Food Service\n\n**I couldn’t verify any as part-time.** The site’s Job Type filters did not offer a part-time option for these results, so I can’t confirm that any meet your part-time requirement. The search also returned Pullman listings, so check the actual distance before relying on the site’s radius.\n\nFINAL ANSWER: No verified part-time chef job was found. OhioMeansJobs showed 5 corporate-site chef listings for its Moscow, Idaho, 5-mile search, all in Pullman, WA: Associate Director of Culinary Services, Executive Chef (Washington State University); Sous Chef (Upper Crust Food Service); Sous Chef/Manager (Washington State University); Head Chef (Upper Crust Food Service); and Field Sous Chef (Upper Crust Food Service). Part-time status and exact distance were not verified.",
+  "session_id": "OpHH0zrtdfbETDWX",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Chef, Moscow ID with a 5-mile radius, and corporate-only were applied and observed. Part-time was never applied, and Accommodation and Food Services never appeared in Current Filters after its click. The final page therefore did not satisfy all required filters.",
+  "failure_category": "incomplete"
+ }
+}

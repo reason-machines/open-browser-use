@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 33.8,
+  "steps": 10,
+  "tokens": 891505,
+  "final": "Walmart Careers listed Bentonville, Arkansas openings including Online Order Filling Team Associate at $14.00–$27.00/hour, Checkout Team Associate at $14.00–$27.00/hour, and Certified Pharmacy Technician at $19.50–$32.50/hour. The search showed 690 open roles; none was clearly identified by the site as “Support Services.”",
+  "raw_final": "I found Walmart Careers’ Bentonville, Arkansas job results, but the site did not return a clearly labeled “Support Services” category. The Bentonville listings shown included:\n\n- **Online Order Filling Team Associate**, Neighborhood Market #2686, Bentonville, AR 72712-5523, **$14.00–$27.00/hour**\n- **Checkout Team Associate**, Neighborhood Market #2686, Bentonville, AR 72712-5523, **$14.00–$27.00/hour**\n- **Certified Pharmacy Technician**, Neighborhood Market #2741, Bentonville, AR 72712-4931, **$19.50–$32.50/hour**\n\nThe results page showed **690 open roles** for the Bentonville-area search. [View Walmart Careers results](https://careers.walmart.com/us/en/results?searchQuery=Bentonville%2C+AR)\n\nFINAL ANSWER: Walmart Careers listed Bentonville, Arkansas openings including Online Order Filling Team Associate at $14.00–$27.00/hour, Checkout Team Associate at $14.00–$27.00/hour, and Certified Pharmacy Technician at $19.50–$32.50/hour. The search showed 690 open roles; none was clearly identified by the site as “Support Services.”",
+  "session_id": "zCMy0jVcHqLOaxxB",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find support services jobs in Bentonville, in the state of Arkansas.\nStart from https://careers.walmart.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached Walmart results for Bentonville, Arkansas, but never verified results combining that location with Support Services. The final support-services search showed only a loading state and no location constraint; the reported jobs were not established as Support Services roles.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "fx-infinite",
+ "category": "infinite-scroll",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 83.4,
+  "steps": 14,
+  "tokens": 415081,
+  "final": "Item #437 price: unavailable; items tagged “rare”: unavailable.",
+  "raw_final": "I couldn’t retrieve either requested value: the catalog stopped loading after item #40 despite scrolling, so I can’t reliably report item #437’s price or the rare-tag count.\n\nFINAL ANSWER: Item #437 price: unavailable; items tagged “rare”: unavailable.",
+  "session_id": "bench-baseline-v3-fx-infinite",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/infinite.html. Report (a) the price of catalog item #437 and (b) how many of the 500 items carry the tag 'rare'."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "Neither required value was provided. The agent stopped after failing to load beyond item #40 through infinite scrolling.",
+  "failure_category": "scroll_or_pagination"
+ }
+}

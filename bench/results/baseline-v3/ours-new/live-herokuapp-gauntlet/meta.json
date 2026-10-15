@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-herokuapp-gauntlet",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 90.3,
+  "steps": 15,
+  "tokens": 413353,
+  "final": "Dynamic loading: Hello World!; third avatar: user3; bottom frame: BOTTOM; prompt result: You entered: (empty; `bench` was not submitted).",
+  "raw_final": "1. **Dynamic loading:** `Hello World!`\n2. **Third avatar hover:** `user3`\n3. **Bottom frame:** `BOTTOM`\n4. **JavaScript prompt:** I couldn’t submit `bench`: the browser dismissed the prompt before I could enter it. The page’s Result line showed `You entered:` (empty).\n\nFINAL ANSWER: Dynamic loading: Hello World!; third avatar: user3; bottom frame: BOTTOM; prompt result: You entered: (empty; `bench` was not submitted).",
+  "session_id": "bench-baseline-v3-live-herokuapp-gauntlet",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On https://the-internet.herokuapp.com do all of the following and report each result: (1) on /dynamic_loading/2 press Start and report the text that appears; (2) on /hovers hover the third user avatar and report the name shown; (3) on /nested_frames report the text of the bottom frame; (4) on /javascript_alerts click 'Click for JS Prompt', type 'bench' and accept, then report the Result line."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Three results were correct, but the prompt never submitted bench and returned an empty value instead of 'You entered: bench'.",
+  "failure_category": "dialog_or_popup"
+ }
+}

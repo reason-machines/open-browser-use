@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Bluesky was correctly reported as logged out, and no posting control was clicked. Reddit was logged in, but only the body was verified; the requested title was not present, clearing failed, and discarding without retaining a draft was never confirmed.","failure_category":"incomplete"}

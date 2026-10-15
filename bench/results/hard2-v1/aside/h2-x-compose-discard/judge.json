@@ -1,0 +1,1 @@
+{"success":true,"score":1.0,"reason":"Trajectory verifies the requested text, hashtag, selected @OpenAI suggestion, attached media, and enabled Post button. The agent chose Discard and checked unsent posts, where the benchmark draft was absent. No publishing control was activated; the Post links clicked only opened the composer.","failure_category":"none"}

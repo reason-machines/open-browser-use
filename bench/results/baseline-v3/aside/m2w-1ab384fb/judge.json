@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Reached PhET’s Build a Nucleus simulation, but did not verify the requested initial composition or execute proton emission and show its result. The final state was reported as 7 protons and 4 neutrons with emission unavailable.","failure_category":"interaction_failed"}

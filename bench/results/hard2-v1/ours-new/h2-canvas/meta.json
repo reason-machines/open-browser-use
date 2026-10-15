@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-canvas",
+ "category": "canvas-hover",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.2,
+  "steps": 27,
+  "tokens": 160858,
+  "final": "October has the highest revenue at **$99.363k**. July’s tooltip value is **$98.632k**.",
+  "raw_final": "FINAL ANSWER: October has the highest revenue at **$99.363k**. July’s tooltip value is **$98.632k**.",
+  "session_id": "bench-hard2-v1-h2-canvas",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/canvas.html. Using the hover tooltips, report which month has the highest revenue and its exact tooltip value, and the exact tooltip value for July."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly identifies October as highest at $99.363k and July at $98.632k, both verified by hover tooltips.",
+  "failure_category": "none"
+ }
+}

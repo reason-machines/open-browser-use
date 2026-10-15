@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-widgets",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 9.4,
+  "steps": 2,
+  "tokens": 204623,
+  "final": "0G8VB0T",
+  "raw_final": "Applied volume 73, turned Night mode on, and selected red and blue. The page confirmed the saved profile code.\n\nFINAL ANSWER: 0G8VB0T",
+  "session_id": "lBDvCAus7TsJQUEU",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required saved profile code 0G8VB0T, confirmed by the page status in the trajectory.",
+  "failure_category": "none"
+ }
+}

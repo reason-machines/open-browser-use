@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Correctly reported Reddit as logged in and Bluesky as logged out, and nothing was posted. However, the agent stopped without filling, verifying, and discarding the required Reddit composer or checking that no draft remained.","failure_category":"gave_up"}

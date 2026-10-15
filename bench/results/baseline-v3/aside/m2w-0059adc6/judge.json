@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent reached Walmart results for Bentonville, Arkansas, but never verified results combining that location with Support Services. The final support-services search showed only a loading state and no location constraint; the reported jobs were not established as Support Services roles.","failure_category":"incomplete"}

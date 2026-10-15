@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent verified a pediatric dentist near 90210, but left the search radius at 10 miles and never applied the required 5-mile constraint. The reported 1.6-mile distance is not visible in the supplied observations.","failure_category":"incomplete"}

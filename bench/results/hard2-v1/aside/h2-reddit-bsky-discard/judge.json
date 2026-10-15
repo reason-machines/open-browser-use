@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Bluesky was correctly reported as logged out, and nothing was posted. Reddit login and title were verified, but the body still showed 'draft draft' after correction. Closing the tab did not verify that no draft was kept, so the claimed successful discard is unsupported.","failure_category":"incomplete"}

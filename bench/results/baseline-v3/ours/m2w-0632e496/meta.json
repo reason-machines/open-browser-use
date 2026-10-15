@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0632e496",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 29.8,
+  "steps": 15,
+  "tokens": 415470,
+  "final": "** Two options: Whitney | Sprinkle&Spice’s [Gluten Free & Vegan Chocolate Chip Cookies](https://cookpad.com/eng/recipes/25497039), explicitly free from peanuts and tree nuts; and Shikha Yashu Jethi’s [Vegan Gluten free Chocolate Chip Cookie](https://cookpad.com/eng/recipes/13653960), whose listed ingredients contain no nuts. Recipe details and baking times are above.",
+  "raw_final": "I found two Cookpad recipes that fit your request:\n\n- [Gluten Free & Vegan Chocolate Chip Cookies](https://cookpad.com/eng/recipes/25497039) by Whitney | Sprinkle&Spice — The author explicitly says it’s free from peanuts and tree nuts. It makes about 12 regular cookies, 6 large cookies, or a 9-inch cookie cake. Ingredients include oat flour, brown rice flour, tapioca starch, sugars, chocolate chips, flaxseed, leaveners, avocado oil, water, and vanilla. Bake at **350°F**: 12–15 minutes for regular cookies, 20–25 minutes for large ones, or 25–30 minutes for the cookie cake.\n\n- [Vegan Gluten free Chocolate Chip Cookie](https://cookpad.com/eng/recipes/13653960) by Shikha Yashu Jethi — The listed ingredients contain no nuts: vegetable margarine, banana compote, brown sugar, gluten-free yeast, rice flour, and chocolate chips. It makes 15–18 cookies. Bake at **180°C (356°F) for 14 minutes**, then let them cool until firm.\n\nFor a nut allergy, check the packaging of the flour, chocolate chips, and other ingredients for allergen and cross-contact information. **FINAL ANSWER:** Two options: Whitney | Sprinkle&Spice’s [Gluten Free & Vegan Chocolate Chip Cookies](https://cookpad.com/eng/recipes/25497039), explicitly free from peanuts and tree nuts; and Shikha Yashu Jethi’s [Vegan Gluten free Chocolate Chip Cookie](https://cookpad.com/eng/recipes/13653960), whose listed ingredients contain no nuts. Recipe details and baking times are above.",
+  "session_id": "bench-baseline-v3-m2w-0632e496",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.\nStart from https://cookpad.com/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent started at Cookpad, searched for gluten-free chocolate chip cookies, and opened two matching recipes. Page observations confirm one explicitly excludes peanuts and tree nuts and the other lists no nuts. Both recipes and their supported details were reported.",
+  "failure_category": "none"
+ }
+}

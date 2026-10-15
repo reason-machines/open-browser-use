@@ -1,0 +1,43 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-lexical-playground",
+ "category": "rich-text-editor",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 34.4,
+  "steps": 33,
+  "tokens": 349280,
+  "final": "I couldn’t complete the requested editor content. The playground remained in a single H1 containing `Bench Report- Bench Report`; I could not get the editor to create a new block or replace that content. I did not verify the requested bulleted list or bold formatting, and I closed my tab.",
+  "raw_final": "FINAL ANSWER: I couldn’t complete the requested editor content. The playground remained in a single H1 containing `Bench Report- Bench Report`; I could not get the editor to create a new block or replace that content. I did not verify the requested bulleted list or bold formatting, and I closed my tab.",
+  "session_id": "bench-hard2-v1-h2-lexical-playground",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final DOM showed only an H1 containing 'Bench Report- Bench Report', with no bulleted list or bold beta. The agent stopped without completing the required structure.",
+  "failure_category": "interaction_failed"
+ }
+}

@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent started on Healthline and found gluten-free diet and pregnancy guidance, but did not find a diet satisfying the weight-loss requirement for a pregnant woman. It substituted a balanced pregnancy meal plan and cautions against weight loss, so all three constraints were not met together.","failure_category":"incomplete"}

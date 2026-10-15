@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 142.1,
+  "steps": 19,
+  "tokens": 802913,
+  "final": "Helping Hands of America Foundation, Inc. — BBB A+, accredited since November 8, 2007; 600 Washington St, Wrentham, MA 02093-1639. BBB says proceeds support local New England charities.",
+  "raw_final": "**Helping Hands of America Foundation, Inc.** is one of the best-rated BBB-accredited charity-related listings I found near ZIP code 12023: **A+ BBB rating**, **BBB accredited since November 8, 2007**, at **600 Washington St, Wrentham, MA 02093-1639**. BBB describes it as a donation service that directs proceeds to local charities in New England.\n\nThe accredited search showed four A+ results, so this is a top-rated match, not a unique highest-rated one. It is a fundraising and donation service rather than necessarily the charity receiving a donation.\n\nFINAL ANSWER: Helping Hands of America Foundation, Inc. — BBB A+, accredited since November 8, 2007; 600 Washington St, Wrentham, MA 02093-1639. BBB says proceeds support local New England charities.",
+  "session_id": "bench-baseline-v3-m2w-05483c50",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Look for the best rated BBB accredited charity near 12023.\nStart from https://www.bbb.org/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "BBB accreditation and ZIP 12023 were applied, and the reported profile details were verified. However, the results remained sorted by Best Match; no highest-rated filter or sort was applied. The agent also did not establish that the selected Massachusetts listing met the requested proximity constraint.",
+  "failure_category": "incomplete"
+ }
+}

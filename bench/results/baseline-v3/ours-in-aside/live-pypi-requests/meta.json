@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "live-pypi-requests",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.5,
+  "steps": 4,
+  "tokens": 131986,
+  "final": "The earliest `requests` release on PyPI was version **0.0.1**, released **February 13, 2011**.",
+  "raw_final": "FINAL ANSWER: The earliest `requests` release on PyPI was version **0.0.1**, released **February 13, 2011**.",
+  "session_id": "bench-baseline-v3-live-pypi-requests",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Using pypi.org in the browser, find the earliest version of the Python package 'requests' ever released and its release date."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The answer correctly identifies version 0.0.1 and February 13, 2011, an accepted release date, supported by the PyPI release history in the trajectory.",
+  "failure_category": "none"
+ }
+}

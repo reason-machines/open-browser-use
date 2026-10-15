@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-delayed",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 15.2,
+  "steps": 4,
+  "tokens": 341319,
+  "final": "04F17GY",
+  "raw_final": "FINAL ANSWER: 04F17GY",
+  "session_id": "xFkQZeEQgcLR5rwK",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required key, 04F17GY, confirmed in the trajectory.",
+  "failure_category": "none"
+ }
+}

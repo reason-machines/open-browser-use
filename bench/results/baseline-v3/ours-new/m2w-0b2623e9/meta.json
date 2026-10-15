@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-0b2623e9",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 22.8,
+  "steps": 5,
+  "tokens": 168101,
+  "final": "No verified matches; Petfinder listings could not be accessed.",
+  "raw_final": "Petfinder was temporarily unavailable during the search, and Google’s results page required a CAPTCHA. I couldn’t verify any dogs that meet all the criteria, so I can’t provide a reliable list.\n\nFINAL ANSWER: No verified matches; Petfinder listings could not be accessed.",
+  "session_id": "bench-baseline-v3-m2w-0b2623e9",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.\nStart from https://www.petfinder.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "Petfinder returned an unavailable page, so no adoption results or required filters were verified. The fallback Google search encountered a CAPTCHA, and no matching dogs were reached or reported.",
+  "failure_category": "blocked_or_captcha"
+ }
+}

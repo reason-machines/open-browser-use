@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-354b4ddf",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 24.4,
+  "steps": 6,
+  "tokens": 202875,
+  "final": "I couldn’t browse or filter marketing jobs because OhioMeansJobs returned a 404 at the requested homepage and at the “Return Home” destination. The site provided no job-search controls, so I couldn’t apply the Bachelor’s Degree education filter.",
+  "raw_final": "FINAL ANSWER: I couldn’t browse or filter marketing jobs because OhioMeansJobs returned a 404 at the requested homepage and at the “Return Home” destination. The site provided no job-search controls, so I couldn’t apply the Bachelor’s Degree education filter.",
+  "session_id": "bench-baseline-v3-m2w-354b4ddf",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Browse marketing jobs and filter by Bachelor's Degree education level.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "Neither marketing job listings nor the Bachelor's Degree filter was reached or applied. The homepage, Return Home link, and attempted job-seeker route all displayed a 404 page.",
+  "failure_category": "navigation"
+ }
+}

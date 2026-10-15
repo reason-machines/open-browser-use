@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent reached Cboe’s European indices pages but never selected BEPTEC’s constituents, applied a highest-mover sort/filter, verified the latest market close, or reported a company code. It ended by stating it could not identify the result.","failure_category":"gave_up"}

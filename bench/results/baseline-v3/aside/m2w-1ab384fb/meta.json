@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-1ab384fb",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 68.4,
+  "steps": 23,
+  "tokens": 1872058,
+  "final": "PhET Build a Nucleus; 6 protons + 4 neutrons is carbon-10, not beryllium. The displayed nucleus ended at 7 protons and 4 neutrons, and proton emission was unavailable.",
+  "raw_final": "The requested counts are **6 protons and 4 neutrons**, which the simulation identifies as **carbon-10**, not beryllium. Beryllium has 4 protons. I wasn’t able to show the proton-emission result for the requested 6-proton nucleus: the simulation’s current display shows **7 protons, 4 neutrons**, with proton emission unavailable.\n\nFINAL ANSWER: PhET Build a Nucleus; 6 protons + 4 neutrons is carbon-10, not beryllium. The displayed nucleus ended at 7 protons and 4 neutrons, and proton emission was unavailable.",
+  "session_id": "xN1QVidx9oWz02q1",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Show me the result of a proton emission decay for a Beryllium nucleus with 6 protons and 4 neutrons in the simulation.\nStart from https://phet.colorado.edu/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Reached PhET’s Build a Nucleus simulation, but did not verify the requested initial composition or execute proton emission and show its result. The final state was reported as 7 protons and 4 neutrons with emission unavailable.",
+  "failure_category": "interaction_failed"
+ }
+}

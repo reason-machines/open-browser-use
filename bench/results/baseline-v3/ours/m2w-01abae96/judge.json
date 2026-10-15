@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent found Ericsson atop Sharecast’s BEPTEC risers, but this was intraday October 15 data, not the latest market close. It never reached the required filtered result on Cboe, and neither reported stock code appeared in the observations.","failure_category":"incomplete"}

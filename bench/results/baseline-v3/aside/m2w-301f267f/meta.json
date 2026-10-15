@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-301f267f",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 26.9,
+  "steps": 9,
+  "tokens": 767723,
+  "final": "** Healthline’s recipes I found don’t satisfy all the requested criteria at once. The closest is Chopped Rainbow Salad With Multi-Greens (vegan, savory, 6 minutes, 9 g protein); for higher protein, Kale, Mushroom, and Walnut Hash has 17 g but takes 15 minutes.",
+  "raw_final": "I couldn’t find a Healthline recipe that meets all three requirements: **savory, vegan, and ready in 5 minutes or less with high protein**. Healthline defines a high-protein snack as at least **10 g protein per serving**. citeFr9s3lHcnug2utTqp7PmF\n\nClosest matches on Healthline:\n\n- [Chopped Rainbow Salad With Multi-Greens](https://www.healthline.com/recipes/chopped-rainbow-salad/) — vegan and savory; **6 minutes**, **9 g protein**. Just over the time limit and below Healthline’s high-protein snack threshold. citeshWT-gGp9T-KNHymOsl9J\n- [Kale, Mushroom, and Walnut Hash](https://www.healthline.com/recipes/kale-mushroom-and-walnut-hash/) — vegan, savory, **17 g protein**, but takes **15 minutes**. citeFr9s3lHcnug2utTqp7PmF\n- [Kale Waldorf Salad](https://www.healthline.com/recipes/kale-waldorf-salad/) — vegan, savory, **15 g protein**, but takes **15 minutes**. citeFr9s3lHcnug2utTqp7PmF\n\n**FINAL ANSWER:** Healthline’s recipes I found don’t satisfy all the requested criteria at once. The closest is Chopped Rainbow Salad With Multi-Greens (vegan, savory, 6 minutes, 9 g protein); for higher protein, Kale, Mushroom, and Walnut Hash has 17 g but takes 15 minutes.",
+  "session_id": "Yl6tqi3BsDhnTRTu",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.\nStart from https://www.healthline.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent visited Healthline and identified savory vegan options, but none of its final recommendations meets both the five-minute limit and high-protein requirement. It did not reach or report a result satisfying all five criteria.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Reached PhET’s Build a Nucleus decay screen, but never configured 6 protons and 4 neutrons, triggered proton emission, or showed a decay result. The final answer also incorrectly labels that composition beryllium-10; six protons identify carbon.","failure_category":"interaction_failed"}

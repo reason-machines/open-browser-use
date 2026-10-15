@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0b838cd5",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 34.6,
+  "steps": 19,
+  "tokens": 755475,
+  "final": "I can’t determine the requested dealer and all its locations from the available results.",
+  "raw_final": "I couldn’t reliably identify the second-best-rated dealer or all of its locations. BBB showed 177 used-car-dealer results within five miles, with several A+ listings and a Northstar Mitsubishi listing rated A− on the first page; the results were sorted by Best Match, not rating.\n\nFINAL ANSWER: I can’t determine the requested dealer and all its locations from the available results.",
+  "session_id": "bench-baseline-v3-m2w-0b838cd5",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find all the locations for the second-best-rated used car dealer less than 5 miles from New York.\nStart from https://www.bbb.org/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached Used Car Dealers near New York with the < 5 Miles filter applied, but left sorting at Best Match, never identified the second-best-rated dealer, and never reached its locations. It stopped without completing the task.",
+  "failure_category": "gave_up"
+ }
+}

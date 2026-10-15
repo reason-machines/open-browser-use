@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-0632e496",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 37.2,
+  "steps": 14,
+  "tokens": 309301,
+  "final": "Gluten Free & Vegan Chocolate Chip Cookies — https://cookpad.com/eng/recipes/25497039; explicitly listed as free from peanuts and tree nuts.",
+  "raw_final": "I found a strong match on Cookpad: [Gluten Free & Vegan Chocolate Chip Cookies](https://cookpad.com/eng/recipes/25497039) by Whitney | Sprinkle&Spice. The recipe says it is free from gluten, peanuts, and tree nuts, as well as dairy, eggs, and soy. It makes about a dozen 4-inch cookies and bakes at 350°F for 12–15 minutes.\n\nIt uses oat flour, brown rice flour, tapioca starch, sugars, chocolate chips, flaxseed, avocado oil, water, and vanilla. Check that the chocolate chips and other packaged ingredients meet your allergy needs, and take care to avoid cross-contact.\n\nFINAL ANSWER: Gluten Free & Vegan Chocolate Chip Cookies — https://cookpad.com/eng/recipes/25497039; explicitly listed as free from peanuts and tree nuts.",
+  "session_id": "bench-baseline-v3-m2w-0632e496",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.\nStart from https://cookpad.com/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent searched Cookpad for gluten-free chocolate chip cookies, opened a matching recipe, and verified page text explicitly stating it is free from gluten, peanuts, and tree nuts. The reported recipe and URL match the observations.",
+  "failure_category": "none"
+ }
+}

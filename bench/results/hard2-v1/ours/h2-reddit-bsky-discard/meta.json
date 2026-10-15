@@ -1,0 +1,45 @@
+{
+ "requires_login": [
+  "reddit|bluesky"
+ ],
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "h2-reddit-bsky-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 119.2,
+  "steps": 28,
+  "tokens": 865611,
+  "final": "Reddit — logged in: yes; composed: yes (the body showed “draft,” but I couldn’t verify the requested title); discarded: not confirmed. Bluesky — logged in: no; composed: no; discarded: not applicable. No post was published.",
+  "raw_final": "FINAL ANSWER: Reddit — logged in: yes; composed: yes (the body showed “draft,” but I couldn’t verify the requested title); discarded: not confirmed. Bluesky — logged in: no; composed: no; discarded: not applicable. No post was published.",
+  "session_id": "bench-hard2-v1-h2-reddit-bsky-discard",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Bluesky was correctly reported as logged out, and no posting control was clicked. Reddit was logged in, but only the body was verified; the requested title was not present, clearing failed, and discarding without retaining a draft was never confirmed.",
+  "failure_category": "incomplete"
+ }
+}

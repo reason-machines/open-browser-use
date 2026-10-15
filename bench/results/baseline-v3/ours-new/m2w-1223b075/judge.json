@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent completed a 10-question multiplication quiz covering 11–12 with unlimited time, but the observed result was 7/10. Three incorrect answers prevented the required perfect score.","failure_category":"wrong_answer"}

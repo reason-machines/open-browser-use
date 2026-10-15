@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The Used Car Dealers category, <5 Miles filter, and Rating sort were verified. However, the second sorted listing was Chrysler Dodge Ram Fiat of Manhattan. The agent substituted the second distinct dealer, Easy Way Auto, and therefore did not find all locations for the requested dealer.","failure_category":"wrong_answer"}

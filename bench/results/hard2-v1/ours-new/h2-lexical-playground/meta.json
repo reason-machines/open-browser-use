@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-lexical-playground",
+ "category": "rich-text-editor",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 30.9,
+  "steps": 9,
+  "tokens": 288995,
+  "final": "The editor contains an H1 heading, “Bench Report,” followed by a bulleted list with three items: alpha (plain), beta (bold), and gamma (plain). Verified in the DOM as `<h1>Bench Report</h1>` followed by a `<ul>` containing three `<li>` elements, with beta wrapped in `<strong>`.",
+  "raw_final": "FINAL ANSWER: The editor contains an H1 heading, “Bench Report,” followed by a bulleted list with three items: alpha (plain), beta (bold), and gamma (plain). Verified in the DOM as `<h1>Bench Report</h1>` followed by a `<ul>` containing three `<li>` elements, with beta wrapped in `<strong>`.",
+  "session_id": "bench-hard2-v1-h2-lexical-playground",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On https://playground.lexical.dev/ clear all existing editor content, then create: an H1 heading 'Bench Report', followed by a bulleted list with items alpha, beta, gamma where only 'beta' is bold. Verify the result and report the editor's structure (e.g. from the DOM: heading text and list items with formatting)."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final DOM read shows exactly an H1 'Bench Report' followed by a UL with three items: alpha and gamma in plain spans, and beta in strong. No leftover editor content appears, and the final answer matches the evidence.",
+  "failure_category": "none"
+ }
+}

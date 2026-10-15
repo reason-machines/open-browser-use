@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 24.2,
+  "steps": 5,
+  "tokens": 168755,
+  "final": "No matching listings could be retrieved; the provided OhioMeansJobs site returned a 404 error.",
+  "raw_final": "The requested job search could not be completed: [OhioMeansJobs](https://ohiomeansjobs.ohio.gov/) returned a 404 page, and its “Return Home” button led back to the same page. I couldn’t access listings or apply the requested filters, so I can’t confirm any matching jobs.\n\nFINAL ANSWER: No matching listings could be retrieved; the provided OhioMeansJobs site returned a 404 error.",
+  "session_id": "bench-baseline-v3-m2w-28e7574e",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The task website repeatedly returned a 404 page. No job listings were reached and none of the five required filters were applied or verified.",
+  "failure_category": "navigation"
+ }
+}

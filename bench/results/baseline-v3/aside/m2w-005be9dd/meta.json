@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.4,
+  "steps": 4,
+  "tokens": 443314,
+  "final": "Qatar Airways Economy baggage allowance depends on your fare and route:\n\n- **Checked baggage, most routes:** Economy Lite **20 kg (44 lb)**, Classic **25 kg (55 lb)**, Convenience **30 kg (66 lb)**, Comfort **35 kg (77 lb)**.\n- **Checked baggage, flights to/from Africa or the Americas:** Lite **1 bag up to 23 kg (50 lb)**; Classic, Convenience and Comfort **2 bags up to 23 kg (50 lb) each**.\n- **Carry-on:** **1 piece up to 7 kg (15 lb)**. For flights to or from Brazil, the Economy carry-on limit is **10 kg (22 lb)**.\n\nYour exact checked allowance may vary; Qatar Airways says to check your ticket or booking. [Official baggage allowance](https://www.qatarairways.com/en/baggage/allowance.html). <citation refs=\"pIdjzLfdvNdBiwioD9NXQ\">Economy checked and carry-on allowances</citation>",
+  "raw_final": "Qatar Airways Economy baggage allowance depends on your fare and route:\n\n- **Checked baggage, most routes:** Economy Lite **20 kg (44 lb)**, Classic **25 kg (55 lb)**, Convenience **30 kg (66 lb)**, Comfort **35 kg (77 lb)**.\n- **Checked baggage, flights to/from Africa or the Americas:** Lite **1 bag up to 23 kg (50 lb)**; Classic, Convenience and Comfort **2 bags up to 23 kg (50 lb) each**.\n- **Carry-on:** **1 piece up to 7 kg (15 lb)**. For flights to or from Brazil, the Economy carry-on limit is **10 kg (22 lb)**.\n\nYour exact checked allowance may vary; Qatar Airways says to check your ticket or booking. [Official baggage allowance](https://www.qatarairways.com/en/baggage/allowance.html). <citation refs=\"pIdjzLfdvNdBiwioD9NXQ\">Economy checked and carry-on allowances</citation>",
+  "session_id": "2FEcdSgJnhBFp1Hi",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find the weight of baggage allowance for economy class on Qatar Airways.\nStart from https://www.qatarairways.com/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent visited Qatar Airways’ homepage and reported Economy baggage weights supported by observations from the airline’s official baggage allowance page, including fare and route variations and carry-on limits.",
+  "failure_category": "none"
+ }
+}

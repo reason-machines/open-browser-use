@@ -1,0 +1,41 @@
+{
+ "requires_login": [
+  "reddit|bluesky"
+ ],
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-reddit-bsky-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 47.9,
+  "steps": 9,
+  "tokens": 758149,
+  "final": "Reddit: logged in yes; composed yes; discarded yes (closed the composer tab without saving or posting). Bluesky: logged in no; composed no; discarded no (no draft was created).",
+  "raw_final": "FINAL ANSWER: Reddit: logged in yes; composed yes; discarded yes (closed the composer tab without saving or posting). Bluesky: logged in no; composed no; discarded no (no draft was created).",
+  "session_id": "9728JEUWTNxHehg2",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Bluesky was correctly reported as logged out, and nothing was posted. Reddit login and title were verified, but the body still showed 'draft draft' after correction. Closing the tab did not verify that no draft was kept, so the claimed successful discard is unsupported.",
+  "failure_category": "incomplete"
+ }
+}

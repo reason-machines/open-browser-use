@@ -1,0 +1,47 @@
+{
+ "requires_login": [
+  "x"
+ ],
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "h2-x-compose-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 234.7,
+  "steps": 27,
+  "tokens": 874146,
+  "final": "Composer text verified: “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI”. X showed the @OpenAI suggestion, and I selected it.\n\nThe image was **not attached**: the OBU file chooser timed out, and no image thumbnail appeared. The **Post button was enabled**. I did not click it.\n\nI couldn’t reach a Discard control or check the unsent posts list. OBU also timed out while finalizing the tab, so I **can’t confirm that the draft was discarded or that no draft was saved**.",
+  "raw_final": "Composer text verified: “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI”. X showed the @OpenAI suggestion, and I selected it.\n\nThe image was **not attached**: the OBU file chooser timed out, and no image thumbnail appeared. The **Post button was enabled**. I did not click it.\n\nI couldn’t reach a Discard control or check the unsent posts list. OBU also timed out while finalizing the tab, so I **can’t confirm that the draft was discarded or that no draft was saved**.",
+  "session_id": "bench-hard2-v1-h2-x-compose-discard",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 81,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://x.com/home"
+   ],
+   "closed_by_harness": 1,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Text, hashtag, selected @OpenAI mention, and enabled Post button were verified without posting. However, the image was never attached, Discard was not performed, and no-draft status was not checked. File chooser tool timeouts blocked completion.",
+  "failure_category": "download_or_upload"
+ }
+}

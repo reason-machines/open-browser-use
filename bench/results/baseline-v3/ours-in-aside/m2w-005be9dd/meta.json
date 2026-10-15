@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 46.6,
+  "steps": 14,
+  "tokens": 394733,
+  "final": "Economy checked baggage allowance varies by route and fare: typically 20–35 kg on weight-based routes, or 2 pieces up to 23 kg each on piece-based routes.",
+  "raw_final": "Qatar Airways’ checked baggage allowance for economy class varies by route and fare. On routes using the weight system, economy fares typically include **20–35 kg**; routes using the piece system typically allow **2 pieces of up to 23 kg each**. Check the allowance for your specific trip, since exceptions apply.\n\nSource: [Qatar Airways baggage allowance](https://www.qatarairways.com/en-us/baggage/allowance.html)\n\nFINAL ANSWER: Economy checked baggage allowance varies by route and fare: typically 20–35 kg on weight-based routes, or 2 pieces up to 23 kg each on piece-based routes.",
+  "session_id": "bench-baseline-v3-m2w-005be9dd",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find the weight of baggage allowance for economy class on Qatar Airways.\nStart from https://www.qatarairways.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached Qatar Airways’ baggage allowance page, but no observation showed economy-specific weight limits. The reported 20–35 kg and two 23 kg pieces are absent from all observations and therefore unsupported.",
+  "failure_category": "hallucination"
+ }
+}

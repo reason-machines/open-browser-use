@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The calculator used all requested inputs and displayed $391/month. However, lowest-price sorting was not applied: the attempted sort=price_lowest navigation resolved to sort=best_match_desc. The agent did not reach or report a correctly sorted shopping result or lowest-priced car.","failure_category":"incomplete"}

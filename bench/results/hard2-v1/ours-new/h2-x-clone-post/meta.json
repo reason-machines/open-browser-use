@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-x-clone-post",
+ "category": "social-composer-fixture",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 28.1,
+  "steps": 11,
+  "tokens": 302687,
+  "final": "Post ID: 1F7TJA5",
+  "raw_final": "Posted “Shipping the new browser agent today, thanks @ada_l #obubench” with Ada Lovelace selected from the mention suggestions and the image attached. Post ID: `1F7TJA5`\n\nFINAL ANSWER: Post ID: 1F7TJA5",
+  "session_id": "bench-hard2-v1-h2-x-clone-post",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/x-compose.html (a local clone of the X home composer; posting here is a local test). Write the post: \"Shipping the new browser agent today, thanks @ada_l #obubench\" where @ada_l must be inserted by selecting Ada Lovelace (@ada_l) from the mention suggestions that appear when you type @ada. Attach the image file /Users/adi/Downloads/obu-bench/post-image.png with the media button. Verify the composer shows the text, the mention and the image, then click Post and report the Post ID."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports Post ID 1F7TJA5, matching the answer key and confirmed by the trajectory.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-login-otp",
+ "category": "login-2fa-session",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 33.4,
+  "steps": 11,
+  "tokens": 304886,
+  "final": "API secret: 0ZMHRTM",
+  "raw_final": "FINAL ANSWER: API secret: 0ZMHRTM",
+  "session_id": "bench-hard2-v1-h2-login-otp",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/login.html and sign in as the test user described on the page (password-manager suggestion or typed credentials), pass the \"I'm not a robot\" check, complete two-step verification using the code from the inbox (open the inbox link; it opens in a new tab), then from the dashboard open the Account page (new tab) and report the API secret."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports API secret 0ZMHRTM, exactly matching the answer key and the Account page shown in the trajectory.",
+  "failure_category": "none"
+ }
+}

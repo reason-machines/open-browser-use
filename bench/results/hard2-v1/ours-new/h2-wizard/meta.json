@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-wizard",
+ "category": "multi-step-wizard",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 42.5,
+  "steps": 17,
+  "tokens": 586615,
+  "final": "Workspace code: 16V00I7",
+  "raw_final": "FINAL ANSWER: Workspace code: 16V00I7",
+  "session_id": "bench-hard2-v1-h2-wizard",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/wizard.html and follow the instructions on the page. Report the workspace code."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports workspace code 16V00I7, exactly matching the answer key and the confirmed wizard result.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"Text, hashtag, selected @OpenAI mention, and enabled Post button were verified without posting. However, the image was never attached, Discard was not performed, and no-draft status was not checked. File chooser tool timeouts blocked completion.","failure_category":"download_or_upload"}

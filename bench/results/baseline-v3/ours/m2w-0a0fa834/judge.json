@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent selected Regent Seven Seas Cruises and accurately reported Seven Seas Grandeur’s Costco member rating and onboard activities from observed page content. However, it never applied the required highest-rated sort; it selected the ship by comparing ratings instead.","failure_category":"incomplete"}

@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-0b838cd5",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 59.9,
+  "steps": 9,
+  "tokens": 362614,
+  "final": "Two Manny’s Auto Sales, Inc. — 1316 Kennedy Blvd, Union City, NJ 07087-6259 (BBB Rating: A+).",
+  "raw_final": "BBB’s second distinct dealer in the results sorted by Rating is **Two Manny’s Auto Sales, Inc.** It has a **BBB Rating of A+** and one listed location:\n\n**1316 Kennedy Blvd, Union City, NJ 07087-6259**\n\nBBB showed two Showroom Auto listings ahead of it, both at the same address. The profile page was blocked by a security challenge, so I couldn’t confirm whether Two Manny’s has additional locations beyond the one shown in the results.\n\nFINAL ANSWER: Two Manny’s Auto Sales, Inc. — 1316 Kennedy Blvd, Union City, NJ 07087-6259 (BBB Rating: A+).",
+  "session_id": "bench-baseline-v3-m2w-0b838cd5",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find all the locations for the second-best-rated used car dealer less than 5 miles from New York.\nStart from https://www.bbb.org/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent applied the used-car search, New York location, <5-mile filter, and Rating sort, then selected the second distinct dealer. However, its profile was blocked by a security challenge, so the agent never reached or verified all locations and reported only the search-result address.",
+  "failure_category": "blocked_or_captcha"
+ }
+}

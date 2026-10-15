@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-nested",
+ "category": "nested-iframes-shadow",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 45.0,
+  "steps": 7,
+  "tokens": 204549,
+  "final": "Calibration code not shown.",
+  "raw_final": "I set Gain to 40, checked Lock, and pressed Verify, but the page snapshot showed no calibration code. I can’t report a code that wasn’t displayed.\n\nFINAL ANSWER: Calibration code not shown.",
+  "session_id": "bench-hard2-v1-h2-nested",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/nested.html and follow the instructions on the page. Report the calibration code."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer omitted calibration code 19IL2HG. The agent adjusted the nested controls but failed to read the result inside the iframe.",
+  "failure_category": "iframe_or_shadow"
+ }
+}

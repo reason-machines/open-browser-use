@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-virtual",
+ "category": "virtualized-list",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 111.3,
+  "steps": 16,
+  "tokens": 430663,
+  "final": "Rank #250: ID 105631, Name Atlas-1596. Orion-7974: ID 100894, Score 621.21. There are 19 ERROR units in the top 100 by score.",
+  "raw_final": "FINAL ANSWER: Rank #250: ID 105631, Name Atlas-1596. Orion-7974: ID 100894, Score 621.21. There are 19 ERROR units in the top 100 by score.",
+  "session_id": "bench-hard2-v1-h2-virtual",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/virtual.html. Sort the table by Score descending (highest first) and report the ID and Name of the row ranked #250 in that order. Also report the ID and Score of the unit named Orion-7974, and how many of the top-100 units by score have status ERROR."
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Rank #250 and Orion-7974 values match, but the top-100 ERROR count is 19 instead of 20. The reconstructed data used ascending ID tie-breaking, unlike the page’s descending sort.",
+  "failure_category": "wrong_answer"
+ }
+}

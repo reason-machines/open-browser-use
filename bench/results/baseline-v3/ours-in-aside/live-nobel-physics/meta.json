@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "live-nobel-physics",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 15.9,
+  "steps": 10,
+  "tokens": 193892,
+  "final": "1903 laureates: Henri Becquerel, Pierre Curie, and Marie Curie; 1921 laureate: Albert Einstein; Einstein’s birthplace city: Ulm.",
+  "raw_final": "Wikipedia’s Nobel laureate list names these Physics laureates:\n\n- **1903:** Henri Becquerel, Pierre Curie, and Marie Curie\n- **1921:** Albert Einstein\n- **Albert Einstein’s birthplace city:** Ulm, in the Kingdom of Württemberg (then part of the German Empire)\n\nFINAL ANSWER: 1903 laureates: Henri Becquerel, Pierre Curie, and Marie Curie; 1921 laureate: Albert Einstein; Einstein’s birthplace city: Ulm.",
+  "session_id": "bench-baseline-v3-live-nobel-physics",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Using Wikipedia, list every laureate of the Nobel Prize in Physics for 1903 and for 1921, and report the birthplace city of the 1921 laureate."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three 1903 laureates, Albert Einstein for 1921, and Ulm as Einstein’s birthplace city.",
+  "failure_category": "none"
+ }
+}

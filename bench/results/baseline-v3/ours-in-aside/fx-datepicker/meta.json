@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "fx-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.8,
+  "steps": 7,
+  "tokens": 214812,
+  "final": "Booking reference: 1MY9A0K",
+  "raw_final": "FINAL ANSWER: Booking reference: 1MY9A0K",
+  "session_id": "bench-baseline-v3-fx-datepicker",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 1,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/datepicker.html and follow the instructions on the page. Report the booking reference."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports booking reference 1MY9A0K, exactly matching the answer key and verified page output.",
+  "failure_category": "none"
+ }
+}

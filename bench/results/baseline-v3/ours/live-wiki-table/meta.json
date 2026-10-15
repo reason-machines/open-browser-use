@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-wiki-table",
+ "category": "table-extraction",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.3,
+  "steps": 4,
+  "tokens": 162143,
+  "final": "The 3rd largest country is China; the 4th is the United States, with a total area of 9,525,067 km².",
+  "raw_final": "FINAL ANSWER: The 3rd largest country is China; the 4th is the United States, with a total area of 9,525,067 km².",
+  "session_id": "bench-baseline-v3-live-wiki-table",
+  "errors": [],
+  "target": [
+   "--profile",
+   "Profile 1"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On English Wikipedia's article 'List of countries and dependencies by area', report the 3rd and 4th largest countries by total area as ranked in the main table, and the total area (km²) given for the 4th."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The answer correctly names China as 3rd and the United States as 4th, with the required total area of 9,525,067 km².",
+  "failure_category": "none"
+ }
+}

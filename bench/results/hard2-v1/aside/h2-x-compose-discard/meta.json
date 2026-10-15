@@ -1,0 +1,41 @@
+{
+ "requires_login": [
+  "x"
+ ],
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-x-compose-discard",
+ "category": "real-social-compose-discard",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 111.6,
+  "steps": 24,
+  "tokens": 2003237,
+  "final": "Composer text verified: “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI”; image attached: yes; Post button enabled: yes; draft discarded: yes, and it was absent from the unsent posts list.",
+  "raw_final": "Verified the composer showed: “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI”. I selected **@OpenAI** from the mention suggestions. The image thumbnail was attached, and the **Post** button was enabled. I clicked neither Post nor any send control. I closed the composer and chose **Discard**; the drafts list did not contain this post. The fresh tab is closed.\n\nFINAL ANSWER: Composer text verified: “Testing a browser agent benchmark, this draft will be discarded #obubench @OpenAI”; image attached: yes; Post button enabled: yes; draft discarded: yes, and it was absent from the unsent posts list.",
+  "session_id": "IAIhuvyxa8EgPYZK",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 80,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 80,
+   "unattributed_new_tabs": 1,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "Trajectory verifies the requested text, hashtag, selected @OpenAI suggestion, attached media, and enabled Post button. The agent chose Discard and checked unsent posts, where the benchmark draft was absent. No publishing control was activated; the Post links clicked only opened the composer.",
+  "failure_category": "none"
+ }
+}

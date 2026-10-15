@@ -1,0 +1,40 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-239a29bd",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.1,
+  "steps": 5,
+  "tokens": 374587,
+  "final": "** A pregnancy-appropriate gluten-free approach should support nutrition and clinician-guided weight gain, not intentional weight loss. Try the balanced sample day above, prioritize naturally gluten-free whole foods, and ask the obstetric clinician or a registered dietitian to tailor portions, weight-gain goals, and prenatal nutrients.",
+  "raw_final": "For a pregnant woman, **don’t start a weight-loss diet or restrict calories to lose weight without her obstetric clinician’s guidance**. A safer goal is balanced, gluten-free eating while aiming for an appropriate pregnancy weight gain based on prepregnancy BMI and whether it’s a singleton or multiple pregnancy. CDC recommends discussing that goal with a healthcare provider. citationmrnMVj75p2o_EiisNtTM-\n\nHealthline notes that going gluten-free isn’t itself a weight-loss plan, and packaged gluten-free snacks can still be calorie-dense and low in nutrients. citationA4z8lAzZO9ROcv3rb6EJc If gluten avoidance is needed for celiac disease or another medical reason, focus on naturally gluten-free foods and check labels for gluten and cross-contact.\n\n**A balanced gluten-free day**\n- **Breakfast:** Eggs with spinach, fruit, and certified gluten-free oats or yogurt with berries, nuts, and gluten-free oats.\n- **Lunch:** Quinoa or brown-rice bowl with chicken, beans, tofu, or salmon; vegetables; and avocado or olive-oil dressing.\n- **Snack:** Fruit with nut butter, or yogurt with nuts.\n- **Dinner:** Baked fish, chicken, tofu, or lentils; roasted vegetables; and potatoes, rice, or quinoa.\n- **If hungry:** Add another snack such as hummus with vegetables and gluten-free crackers.\n\nChoose vegetables, fruit, beans, eggs, dairy or fortified alternatives, lean proteins, and gluten-free whole grains. A gluten-free diet can be low in fiber, iron, calcium, folate, and other nutrients, so a clinician or registered dietitian can help check the plan and prenatal supplement. citationjnIxd6rew7eT6pc2vRfum\n\nFor singleton pregnancies, CDC’s general total-gain ranges are **28–40 lb** if underweight before pregnancy, **25–35 lb** at normal weight, **15–25 lb** if overweight, and **11–20 lb** with obesity. These are reference ranges, not a personal prescription. citationmrnMVj75p2o_EiisNtTM-\n\n**FINAL ANSWER:** A pregnancy-appropriate gluten-free approach should support nutrition and clinician-guided weight gain, not intentional weight loss. Try the balanced sample day above, prioritize naturally gluten-free whole foods, and ask the obstetric clinician or a registered dietitian to tailor portions, weight-gain goals, and prenatal nutrients.",
+  "session_id": "UeXeDmLFNtE6nccD",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find me a gluten-free diet to lose weight for a pregnant woman.\nStart from https://www.healthline.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent provided gluten-free pregnancy nutrition advice but substituted clinician-guided weight gain for the requested weight-loss diet. It only opened Healthline’s homepage and did not reach or report a Healthline diet satisfying all three requirements.",
+  "failure_category": "wrong_answer"
+ }
+}

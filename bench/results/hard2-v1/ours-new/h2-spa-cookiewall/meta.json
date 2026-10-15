@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-spa-cookiewall",
+ "category": "spa-cookie-wall",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 35.3,
+  "steps": 17,
+  "tokens": 401096,
+  "final": "With only Functional cookies enabled, the second row on page 3 of the APAC Reports is invoice **INV-5071** for **$5,468.14**. APAC has **4 pages**.",
+  "raw_final": "FINAL ANSWER: With only Functional cookies enabled, the second row on page 3 of the APAC Reports is invoice **INV-5071** for **$5,468.14**. APAC has **4 pages**.",
+  "session_id": "bench-hard2-v1-h2-spa-cookiewall",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/spa.html. Deal with the privacy dialog by managing options so that only Functional cookies are enabled (Analytics and Marketing off) and save. Then open Reports, filter Region to APAC, go to page 3 and report the invoice number and amount of the second row on that page, plus the total number of APAC pages."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports INV-5071, $5468.14, and 4 APAC pages. The trajectory also confirms Functional enabled, Analytics and Marketing disabled, and preferences saved.",
+  "failure_category": "none"
+ }
+}

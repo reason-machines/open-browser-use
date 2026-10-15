@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "h2-kanban",
+ "category": "drag-drop-html5",
+ "suite": "hard2",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 15.9,
+  "steps": 5,
+  "tokens": 163277,
+  "final": "0W3CPYO",
+  "raw_final": "FINAL ANSWER: 0W3CPYO",
+  "session_id": "bench-hard2-v1-h2-kanban",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Open http://127.0.0.1:18731/h2/kanban.html and follow the instructions on the page. Report the sprint code."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required sprint code 0W3CPYO, confirmed in the trajectory.",
+  "failure_category": "none"
+ }
+}

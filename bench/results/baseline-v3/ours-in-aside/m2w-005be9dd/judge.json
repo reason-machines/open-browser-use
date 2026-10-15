@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent reached Qatar Airways’ baggage allowance page, but no observation showed economy-specific weight limits. The reported 20–35 kg and two 23 kg pieces are absent from all observations and therefore unsupported.","failure_category":"hallucination"}

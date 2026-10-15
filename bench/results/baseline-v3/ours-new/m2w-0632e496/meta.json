@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-0632e496",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 30.0,
+  "steps": 9,
+  "tokens": 332378,
+  "final": "Try the three Cookpad recipes above; their listed ingredients are gluten-free and contain no nuts.",
+  "raw_final": "Cookpad search turned up these gluten-free chocolate chip cookie recipes whose **listed ingredients contain no nuts**:\n\n- [Gluten-Free Chocolate Chip Cookies](https://cookpad.com/eng/recipes/398705) — tapioca flour, cornstarch, applesauce, and canola oil; no nuts appear in the ingredient list.\n- [Gluten Free Chocolate Chip Cookies](https://cookpad.com/eng/recipes/5334073) — uses rice flour and oat bran, plus butter, sugars, and chocolate chips; no nuts appear in the ingredient list.\n- [Gluten-Free Chocolate Chip Cookies](https://cookpad.com/eng/recipes/11003939) — includes shortening, butter, and gluten-free flour; no nuts appear in the ingredient list.\n\nI excluded results that explicitly used peanut butter, almond flour, or cashew flour. The ingredient lists don’t guarantee protection from cross-contact, so check ingredient labels and preparation conditions if this is for someone with a nut allergy.\n\nFINAL ANSWER: Try the three Cookpad recipes above; their listed ingredients are gluten-free and contain no nuts.",
+  "session_id": "bench-baseline-v3-m2w-0632e496",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.\nStart from https://cookpad.com/"
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent searched Cookpad, opened multiple gluten-free chocolate chip cookie recipes, and reported candidates whose observed ingredient lists contained no nuts. It excluded almond-flour and peanut-butter options, satisfying all three requirements.",
+  "failure_category": "none"
+ }
+}

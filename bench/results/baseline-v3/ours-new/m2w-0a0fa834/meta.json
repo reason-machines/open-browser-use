@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "m2w-0a0fa834",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 47.6,
+  "steps": 11,
+  "tokens": 513846,
+  "final": "Unable to determine from the accessible pages.",
+  "raw_final": "I couldn’t verify the highest-rated ship or its onboard activities. Costco Travel and Regent’s site both denied access, and search results didn’t provide the member-review ratings or activity list. I don’t want to guess.\n\nFINAL ANSWER: Unable to determine from the accessible pages.",
+  "session_id": "bench-baseline-v3-m2w-0a0fa834",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "What are the onboard activities of the highest-rated Regent Seven Seas Cruise ship based on Costco member reviews?\nStart from https://www.costco.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "Costco Travel returned Access Denied and Google presented a CAPTCHA. The agent never selected Regent ships, applied the highest-rated sort, verified Costco member ratings, or extracted onboard activities.",
+  "failure_category": "blocked_or_captcha"
+ }
+}

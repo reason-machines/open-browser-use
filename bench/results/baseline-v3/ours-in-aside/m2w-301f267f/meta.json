@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-301f267f",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 65.2,
+  "steps": 38,
+  "tokens": 771690,
+  "final": "The closest verified match is Healthline’s [Multigrain Chips with Chipotle Bean Dip](https://www.healthline.com/recipes/multigrain-chips-with-chipotle-bean-dip): savory, vegan, ready in 5 minutes, with 6 g protein and 6.6 g fiber per serving. It falls short of Healthline’s 10 g threshold for a high-protein snack; doubling the serving would bring it to about 12 g protein and 412 calories.",
+  "raw_final": "Healthline defines a high-protein snack as one with at least 10 g of protein per serving. I found one 5-minute savory vegan recipe, but its listed serving has only 6 g, so it doesn’t meet that bar:\n\n- [Multigrain Chips with Chipotle Bean Dip](https://www.healthline.com/recipes/multigrain-chips-with-chipotle-bean-dip) — 5 minutes total, no cooking, vegan; 6 g protein and 6.6 g fiber per serving. The recipe uses black beans, salsa, cilantro, lime, and seasonings, served with multigrain chips.\n\nHealthline’s 5-minute bento has 12 g protein, but it isn’t labeled vegan and is high in sodium. I couldn’t verify a recipe that meets all your criteria, so I wouldn’t recommend it as a vegan match. Doubling the bean dip recipe would provide about 12 g protein, but also doubles the calories to about 412.\n\nFINAL ANSWER: The closest verified match is Healthline’s [Multigrain Chips with Chipotle Bean Dip](https://www.healthline.com/recipes/multigrain-chips-with-chipotle-bean-dip): savory, vegan, ready in 5 minutes, with 6 g protein and 6.6 g fiber per serving. It falls short of Healthline’s 10 g threshold for a high-protein snack; doubling the serving would bring it to about 12 g protein and 412 calories.",
+  "session_id": "bench-baseline-v3-m2w-301f267f",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.\nStart from https://www.healthline.com/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The reported recipe is verified as healthy, savory, vegan, and ready in 5 minutes, but contains only 6 g protein per serving, below the observed 10 g high-protein snack threshold. Doubling the serving substitutes a modification for finding a recipe meeting all requirements.",
+  "failure_category": "incomplete"
+ }
+}

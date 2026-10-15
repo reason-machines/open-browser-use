@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-jqueryui-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.6,
+  "steps": 9,
+  "tokens": 322420,
+  "final": "11/20/2026",
+  "raw_final": "FINAL ANSWER: 11/20/2026",
+  "session_id": "bench-baseline-v3-live-jqueryui-datepicker",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Go to https://jqueryui.com/datepicker/ and, using the demo date picker widget on that page (it is inside an iframe), select the third Friday of November 2026 by clicking through the calendar. Report the exact text that ends up in the date input."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent clicked the calendar’s next-month control and November 20, then verified the input contained 11/20/2026. The final answer exactly matches the answer key.",
+  "failure_category": "none"
+ }
+}

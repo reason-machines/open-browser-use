@@ -1,0 +1,44 @@
+{
+ "requires_login": null,
+ "agent": "ours-in-aside",
+ "stack": "obu",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 57.5,
+  "steps": 28,
+  "tokens": 1256965,
+  "final": "OhioMeansJobs returned **0 jobs** for Chef within 5 miles of Moscow, Idaho, so there are no matching part-time, Accommodation and Food Services, corporate-only jobs to show. I set the search to Chef, Moscow, ID, and a 5-mile radius; the board reported “Sorry, no results found.”",
+  "raw_final": "FINAL ANSWER: OhioMeansJobs returned **0 jobs** for Chef within 5 miles of Moscow, Idaho, so there are no matching part-time, Accommodation and Food Services, corporate-only jobs to show. I set the search to Chef, Moscow, ID, and a 5-mile radius; the board reported “Sorry, no results found.”",
+  "session_id": "bench-baseline-v3-m2w-28e7574e",
+  "errors": [],
+  "target": [
+   "--socket",
+   "/tmp/open-browser-use/a9e731de-4b9c-454b-a59c-7e58bfad8b48.sock"
+  ],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.\nStart from https://ohiomeansjobs.ohio.gov/"
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Chef, Moscow, Idaho, and the 5-mile radius were applied and reflected in the results URL. Part-time and corporate-only filters were never applied. The industry was selected but never submitted or verified in a subsequent results observation. The zero-result page therefore did not satisfy all requested filters.",
+  "failure_category": "incomplete"
+ }
+}

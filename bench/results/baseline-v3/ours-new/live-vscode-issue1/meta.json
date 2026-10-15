@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours-new",
+ "stack": "new",
+ "task_id": "live-vscode-issue1",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 12.6,
+  "steps": 2,
+  "tokens": 100152,
+  "final": "“Open Source VS Code” — opened by **chrisdias**.",
+  "raw_final": "FINAL ANSWER: “Open Source VS Code” — opened by **chrisdias**.",
+  "session_id": "bench-baseline-v3-live-vscode-issue1",
+  "errors": [],
+  "target": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 2,
+   "tabs_after_agent": 2,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 2,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "prompt_given": "On github.com, open issue #1 of the repository microsoft/vscode. Report its title and the username of the person who opened it."
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports the title “Open Source VS Code” and opener username chrisdias, both supported by the trajectory.",
+  "failure_category": "none"
+ }
+}
