@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The trajectory supports ERICBS as the highest gainer on the BEPTEC heatmap (+3.85%), but the page shows intraday data at 12:53 on 15 October 2026. The agent never verified the latest market close and incorrectly described that intraday result as closing data.","failure_category":"wrong_answer"}

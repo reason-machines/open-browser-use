@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-rfc9110",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 9.6,
+  "steps": 1,
+  "tokens": 143531,
+  "final": "Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes.",
+  "raw_final": "RFC 9110 lists three editors and their organizations:\n\n- Roy T. Fielding — Adobe\n- Mark Nottingham — Fastly\n- Julian Reschke — greenbytes\n\n[[1]](https://www.rfc-editor.org/info/rfc9110) [[2]](https://www.rfc-editor.org/rfc/rfc9110.html?__prettifying=true)\n\nFINAL ANSWER: Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes.",
+  "session_id": "RAn3FcF7QKHXEaF6",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three editors and their correct organizations: Fielding—Adobe, Nottingham—Fastly, and Reschke—greenbytes.",
+  "failure_category": "none"
+ }
+}

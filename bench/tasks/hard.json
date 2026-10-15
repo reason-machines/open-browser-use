@@ -121,7 +121,7 @@
     "suite": "hard",
     "category": "multi-hop-nav",
     "prompt": "Using pypi.org in the browser, find the earliest version of the Python package 'requests' ever released and its release date.",
-    "answer_key": "Version 0.2.0, released 14 Feb 2011 (2011-02-14).",
+    "answer_key": "Version 0.0.1 (listed in PyPI release history with no files), released 13 or 14 Feb 2011 depending on timezone. Also accept 0.2.0 (14 Feb 2011, earliest release with files) ONLY if the answer explicitly notes 0.0.1 has no files; otherwise 0.0.1 is required.",
     "judge": "answer-key",
     "timeout_s": 600
   },

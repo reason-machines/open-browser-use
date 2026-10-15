@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-vscode-issue1",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 12.2,
+  "steps": 4,
+  "tokens": 109989,
+  "final": "Title: Open Source VS Code; opened by chrisdias.",
+  "raw_final": "FINAL ANSWER: Title: Open Source VS Code; opened by chrisdias.",
+  "session_id": "bench-baseline-20261015-live-vscode-issue1",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports the title 'Open Source VS Code' and opener 'chrisdias', both supported by the trajectory.",
+  "failure_category": "none"
+ }
+}

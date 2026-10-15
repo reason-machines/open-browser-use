@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent never configured the nucleus or ran proton emission in the simulation. Its reported result is unsupported and misidentifies 6 protons as beryllium; proton emission from 6 protons and 4 neutrons would leave 5 protons and 4 neutrons.","failure_category":"hallucination"}

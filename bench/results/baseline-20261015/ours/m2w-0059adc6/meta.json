@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.0,
+  "steps": 7,
+  "tokens": 171550,
+  "final": "Support services jobs in Bentonville, Arkansas include Customer Service Manager (SDI), Systems Administrator, Technology Support (Walmart; $50,000–$95,000/year), Customer Service Representative (Parmele Disability Advocates), Direct Support Professional roles (about $12–$16/hour estimated), and roles such as Trial Court Administrator, Help Desk Support Specialist I in Rogers, and Client Services Coordinator.",
+  "raw_final": "I found support related job listings in Bentonville, Arkansas:\n\n- **Customer Service Manager — SDI:** Full time; health and dental insurance; paid time off. Listed about 22 hours ago.\n- **Systems Administrator, Technology Support — Walmart:** Full time; $50,000–$95,000 per year; benefits. Listed about 2 days ago.\n- **Customer Service Representative — Parmele Disability Advocates:** Full time; health and dental insurance; paid time off. Listed about 14 days ago.\n- **Direct Support Professional roles:** Search pages show dozens of openings around Bentonville; estimated pay varies by source, roughly $12–$16 per hour.\n- **Support Services listings:** LinkedIn’s Bentonville results showed 608 roles, including Trial Court Administrator, Help Desk Support Specialist I (Rogers), and Client Services Coordinator.\n\nListings and pay can change; verify details on the job boards before applying.\n\nFINAL ANSWER: Support services jobs in Bentonville, Arkansas include Customer Service Manager (SDI), Systems Administrator, Technology Support (Walmart; $50,000–$95,000/year), Customer Service Representative (Parmele Disability Advocates), Direct Support Professional roles (about $12–$16/hour estimated), and roles such as Trial Court Administrator, Help Desk Support Specialist I in Rogers, and Client Services Coordinator.",
+  "session_id": "bench-baseline-20261015-m2w-0059adc6",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The searches included support services, Bentonville, and Arkansas, but the visible trajectory does not verify the specific jobs reported or their locations on listing pages. It also includes a role in Rogers, outside the required city. The claimed employers and salary details are not supported by the visible evidence.",
+  "failure_category": "hallucination"
+ }
+}

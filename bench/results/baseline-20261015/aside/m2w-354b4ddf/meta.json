@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-354b4ddf",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 49.3,
+  "steps": 7,
+  "tokens": 586828,
+  "final": "Indeed marketing jobs filtered by Bachelor's degree education level; 76,000 results shown. Examples: Marketing Coordinator at Boston Properties, Marketing Manager at Steven Engineering, and Social Media Manager at Stanford University.",
+  "raw_final": "I filtered Indeed’s marketing jobs to **Bachelor’s degree**. The results page shows **76,000 jobs**; examples include Marketing Coordinator (Boston Properties), Marketing Manager (Steven Engineering), and Social Media Manager (Stanford University). The listings shown are around the San Francisco area.\n\n![Indeed marketing jobs with Bachelor's degree filter applied](/Users/adi/.aside/u/0/sessions/2026-10-15_CI5dItOXWazJUtlZ/tmp/indeed-filtered-results.png)\n\nFINAL ANSWER: Indeed marketing jobs filtered by Bachelor's degree education level; 76,000 results shown. Examples: Marketing Coordinator at Boston Properties, Marketing Manager at Steven Engineering, and Social Media Manager at Stanford University.",
+  "session_id": "CI5dItOXWazJUtlZ",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The trajectory shows Indeed marketing job results, selection of Bachelor's degree, clicking Update, and verification that Bachelor's degree remained selected on the updated results page showing 76,000 marketing jobs. The final answer reports the applied filter and results.",
+  "failure_category": "none"
+ }
+}

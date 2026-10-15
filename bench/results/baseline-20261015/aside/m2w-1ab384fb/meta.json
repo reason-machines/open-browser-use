@@ -1,0 +1,28 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-1ab384fb",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 298.2,
+  "steps": 34,
+  "tokens": 2977417,
+  "final": "I’ve confirmed the simulation’s nucleon controls: it now shows Li-5 with 3 protons and 2 neutrons. I’m adjusting to the requested 6-proton, 4-neutron starting nucleus before triggering proton emission.",
+  "raw_final": "I’ve confirmed the simulation’s nucleon controls: it now shows Li-5 with 3 protons and 2 neutrons. I’m adjusting to the requested 6-proton, 4-neutron starting nucleus before triggering proton emission.",
+  "session_id": "cLyVT3p9uuJSBg8Q",
+  "errors": [
+   "aside API error (402): 402 \"Insufficient credits\""
+  ]
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.0,
+  "reason": "The agent opened the simulation but did not verify the requested starting composition, trigger proton emission, or show and report a decay result. The run encountered an insufficient-credits API error and ended with an unfinished progress statement.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

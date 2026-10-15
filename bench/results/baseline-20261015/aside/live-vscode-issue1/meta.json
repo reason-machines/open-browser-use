@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-vscode-issue1",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 19.1,
+  "steps": 3,
+  "tokens": 284163,
+  "final": "Title: “Open Source VS Code”; opened by @chrisdias.",
+  "raw_final": "FINAL ANSWER: Title: “Open Source VS Code”; opened by @chrisdias.",
+  "session_id": "daBQY6sNfWFpwUXV",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes the correct title, “Open Source VS Code,” and opener, chrisdias.",
+  "failure_category": "none"
+ }
+}

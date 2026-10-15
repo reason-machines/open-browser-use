@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-upload",
+ "category": "file-upload",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 80.4,
+  "steps": 11,
+  "tokens": 244948,
+  "final": "I couldn’t retrieve the checksum. The file chooser timed out, and Chrome rejected setting the file directly, so the upload did not complete.",
+  "raw_final": "FINAL ANSWER: I couldn’t retrieve the checksum. The file chooser timed out, and Chrome rejected setting the file directly, so the upload did not complete.",
+  "session_id": "bench-baseline-20261015-fx-upload",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The upload did not complete and the final answer omitted checksum 2f272eb0ca36. The file chooser timed out and Chrome denied the direct file-input upload.",
+  "failure_category": "download_or_upload"
+ }
+}

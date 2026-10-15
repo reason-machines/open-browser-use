@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-multitab-stars",
+ "category": "multi-tab-compare",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 50.2,
+  "steps": 6,
+  "tokens": 513439,
+  "final": "`facebook/react` (redirects to `react/react`) — 251k stars; `sveltejs/svelte` — 88.4k; `vuejs/core` — 54.6k. Ranked: React, Svelte, Vue.",
+  "raw_final": "The GitHub page requested as `facebook/react` redirected to `react/react`; its displayed count was **251k stars**.\n\nRanked from most to fewest:\n1. [facebook/react](https://github.com/facebook/react) (redirects to `react/react`): **251k**\n2. [sveltejs/svelte](https://github.com/sveltejs/svelte): **88.4k**\n3. [vuejs/core](https://github.com/vuejs/core): **54.6k**\n\nFINAL ANSWER: `facebook/react` (redirects to `react/react`) — 251k stars; `sveltejs/svelte` — 88.4k; `vuejs/core` — 54.6k. Ranked: React, Svelte, Vue.",
+  "session_id": "IeixmNIewETsbq98",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three displayed star counts match the allowed ranges, and the ranking is correctly React, Svelte, Vue. The trajectory confirms each repository was opened in a separate tab and the counts were read.",
+  "failure_category": "none"
+ }
+}

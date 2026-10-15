@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-nobel-physics",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 32.2,
+  "steps": 4,
+  "tokens": 399943,
+  "final": "The 1903 Nobel Prize in Physics laureates were Henri Becquerel, Pierre Curie, and Marie Skłodowska-Curie [[z7IMw0mBwG90lbGl2nHb3]](https://en.wikipedia.org/wiki/Henri_Becquerel). The 1921 laureate was Albert Einstein, born in Ulm [[50bW9AFc4F6BvTVgeHwZT]](https://en.wikipedia.org/wiki/Albert_Einstein) [[KAuhqCuPLqKnMEvZfK2np]](https://en.wikipedia.org/wiki/Albert_Einstein).",
+  "raw_final": "FINAL ANSWER: The 1903 Nobel Prize in Physics laureates were Henri Becquerel, Pierre Curie, and Marie Skłodowska-Curie [[z7IMw0mBwG90lbGl2nHb3]](https://en.wikipedia.org/wiki/Henri_Becquerel). The 1921 laureate was Albert Einstein, born in Ulm [[50bW9AFc4F6BvTVgeHwZT]](https://en.wikipedia.org/wiki/Albert_Einstein) [[KAuhqCuPLqKnMEvZfK2np]](https://en.wikipedia.org/wiki/Albert_Einstein).",
+  "session_id": "OAwRrMAm7p9jnTmt",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The answer includes all three 1903 laureates, Albert Einstein for 1921, and his birthplace city, Ulm. Marie Skłodowska-Curie is an equivalent name for Marie Curie.",
+  "failure_category": "none"
+ }
+}

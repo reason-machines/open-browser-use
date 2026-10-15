@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0170ca95",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 29.2,
+  "steps": 2,
+  "tokens": 225536,
+  "final": "Yes. An American citizen generally needs a UK work visa to take a healthcare job for longer than six months. The Health and Care Worker visa is the likely route if the applicant is qualified, the role is eligible, and a Home Office-approved UK employer sponsors them; otherwise another work route, such as Skilled Worker, may apply. A visitor stay does not permit ordinary employment. <citation refs=\"P3ZezcXb2CceEX0NebZl6,hQ_q7pImE-qqOjCSBcqgA,lT7ZAfYaoDuoInVE6abM_,nH2LACst9TvGOLrBt5u9F\">GOV.UK visa guidance</citation>",
+  "raw_final": "Yes. An American citizen generally needs UK work permission to take a healthcare job, including one lasting longer than six months. The Health and Care Worker visa may fit if you’re a qualified healthcare or adult social care professional with an eligible job offer from a Home Office-approved UK employer; the employer must sponsor you. If the role doesn’t qualify for that route, another work visa, such as the Skilled Worker visa, may apply. <citation refs=\"P3ZezcXb2CceEX0NebZl6,hQ_q7pImE-qqOjCSBcqgA\">GOV.UK: Health and Care Worker visa</citation> <citation refs=\"lT7ZAfYaoDuoInVE6abM_\">GOV.UK: Skilled Worker visa</citation>\n\nA visitor stay of up to six months does not authorize ordinary UK employment; visitors need a work visa for other paid or unpaid work. <citation refs=\"nH2LACst9TvGOLrBt5u9F\">GOV.UK: visitor business activities</citation>\n\nFINAL ANSWER: Yes. An American citizen generally needs a UK work visa to take a healthcare job for longer than six months. The Health and Care Worker visa is the likely route if the applicant is qualified, the role is eligible, and a Home Office-approved UK employer sponsors them; otherwise another work route, such as Skilled Worker, may apply. A visitor stay does not permit ordinary employment. <citation refs=\"P3ZezcXb2CceEX0NebZl6,hQ_q7pImE-qqOjCSBcqgA,lT7ZAfYaoDuoInVE6abM_,nH2LACst9TvGOLrBt5u9F\">GOV.UK visa guidance</citation>",
+  "session_id": "rROtHI8nZ6NsxbYN",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The answer addresses all five points, but the trajectory only shows general visa searches. It does not show the official visa checker with American nationality, work, healthcare, and longer than six months applied, or a resulting determination for those constraints.",
+  "failure_category": "incomplete"
+ }
+}

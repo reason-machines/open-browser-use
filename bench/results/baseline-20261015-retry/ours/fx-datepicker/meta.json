@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 17.4,
+  "steps": 10,
+  "tokens": 269400,
+  "final": "Booking reference: 1MY9A0K",
+  "raw_final": "FINAL ANSWER: Booking reference: 1MY9A0K",
+  "session_id": "bench-baseline-20261015-retry-fx-datepicker",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports 1MY9A0K, matching the answer key and the booking reference displayed in the trajectory.",
+  "failure_category": "none"
+ }
+}

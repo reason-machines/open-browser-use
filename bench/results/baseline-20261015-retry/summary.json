@@ -1,0 +1,53 @@
+[
+ {
+  "agent": "ours",
+  "stack": "obu",
+  "suite": "hard",
+  "task_id": "fx-datepicker",
+  "category": "complex-widget",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer reports 1MY9A0K, matching the answer key and the booking reference displayed in the trajectory.",
+  "seconds": 17.4,
+  "steps": 10,
+  "tokens": 269400,
+  "timed_out": false,
+  "final": "Booking reference: 1MY9A0K"
+ },
+ {
+  "agent": "ours",
+  "stack": "obu",
+  "suite": "hard",
+  "task_id": "fx-iframe",
+  "category": "iframe-oopif",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer contains the required confirmation code, 1PXLPZB, matching the answer key and observed page result.",
+  "seconds": 37.0,
+  "steps": 22,
+  "tokens": 563837,
+  "timed_out": false,
+  "final": "1PXLPZB"
+ },
+ {
+  "agent": "ours",
+  "stack": "obu",
+  "suite": "hard",
+  "task_id": "fx-widgets",
+  "category": "complex-widget",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer reports 0G8VB0T, exactly matching the answer key and verified saved profile status.",
+  "seconds": 17.3,
+  "steps": 6,
+  "tokens": 178281,
+  "timed_out": false,
+  "final": "Saved profile code: 0G8VB0T"
+ }
+]

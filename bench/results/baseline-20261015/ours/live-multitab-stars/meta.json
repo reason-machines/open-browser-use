@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-multitab-stars",
+ "category": "multi-tab-compare",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 19.1,
+  "steps": 10,
+  "tokens": 230771,
+  "final": "facebook/react — 251.0k; sveltejs/svelte — 88.4k; vuejs/core — 54.6k. Ranked most to fewest: React, Svelte, Vue.",
+  "raw_final": "GitHub displayed these star counts:\n\n1. **facebook/react** — 251.0k stars (redirected to `react/react`)\n2. **sveltejs/svelte** — 88.4k stars\n3. **vuejs/core** — 54.6k stars\n\nFINAL ANSWER: facebook/react — 251.0k; sveltejs/svelte — 88.4k; vuejs/core — 54.6k. Ranked most to fewest: React, Svelte, Vue.",
+  "session_id": "bench-baseline-20261015-live-multitab-stars",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three star counts are within the allowed ±10% range and match the displayed trajectory values. The ranking is exactly React, Svelte, Vue, and each repository was opened in a separate tab.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-shadow",
+ "category": "shadow-dom",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.7,
+  "steps": 2,
+  "tokens": 204161,
+  "final": "09MLBWN",
+  "raw_final": "Vault unlocked. The vault code is `09MLBWN`.\n\nFINAL ANSWER: 09MLBWN",
+  "session_id": "WOmgWUgSFrT7BiPJ",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports the vault code 09MLBWN, matching the answer key and observed vault status.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-iframe",
+ "category": "iframe-oopif",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 19.0,
+  "steps": 4,
+  "tokens": 155533,
+  "final": "Unable to retrieve the confirmation code because the pinned Chrome profile is not connected.",
+  "raw_final": "I couldn’t reach the fixture: OBU is pinned to Chrome Profile 2, but only Profile 1 (Adi) is connected. No confirmation code was available.\n\nFINAL ANSWER: Unable to retrieve the confirmation code because the pinned Chrome profile is not connected.",
+  "session_id": "bench-baseline-20261015-fx-iframe",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer does not contain confirmation code 1PXLPZB. A pinned Chrome profile mismatch prevented the agent from opening the page.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

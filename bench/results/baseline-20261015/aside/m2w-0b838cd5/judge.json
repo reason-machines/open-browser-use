@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent performed no browsing and reported only an API insufficient-credits error. None of the required constraints or dealer locations were verified or reported.","failure_category":"tool_error_or_infra"}

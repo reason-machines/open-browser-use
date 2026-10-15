@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-pypi-requests",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 69.7,
+  "steps": 11,
+  "tokens": 1037485,
+  "final": "requests 0.0.1 — February 13, 2011",
+  "raw_final": "PyPI lists `requests` **0.0.1** as the earliest release, dated **February 13, 2011**. ([PyPI release page](https://pypi.org/project/requests/0.0.1/))\n\nFINAL ANSWER: requests 0.0.1 — February 13, 2011",
+  "session_id": "ctXfolKuHOaecfFy",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer gives version 0.0.1 and February 13, 2011, matching the accepted version and date.",
+  "failure_category": "none"
+ }
+}

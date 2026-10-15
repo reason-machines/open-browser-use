@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 107.2,
+  "steps": 12,
+  "tokens": 1058185,
+  "final": "Two corporate part-time-eligible food-service jobs within 5 miles of Moscow, Idaho: Compass Group/Chartwells Cook at 1080 W. 6th St. ($19–$22/hour; cooking experience preferred) and Cook at 1215 Nez Perce Drive ($15–$17/hour; experience required). Both are cook-titled roles, not titled Chef; no verified part-time corporate Chef-title opening found.",
+  "raw_final": "I found **two corporate-employer openings** in Moscow, both within the requested area. They offer part-time schedules, but their titles are **Cook**, not Chef:\n\n- [Cook (Full or Part Time), Compass Group / Chartwells Higher Ed](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-OR-PART-TIME%29-ID-83844/1407465700/)  \n  **Location:** University of Idaho, 1080 W. 6th St., Moscow, ID 83844  \n  **Pay:** $19–$22/hour  \n  **Part-time:** Yes; AM/PM shifts, days may vary. Cooking experience preferred. The listing mentions a $150 sign-on bonus.\n\n- [Cook (Full Time and Part Time), Compass Group / Chartwells Higher Ed](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-TIME-AND-PART-TIME%29-ID-83844/1414655300/)  \n  **Location:** University of Idaho, 1215 Nez Perce Drive, Moscow, ID 83844  \n  **Pay:** $15–$17/hour  \n  **Part-time:** Yes; flexible schedules, days and hours may vary. Prior cooking experience required.\n\nI limited these to the corporate employer Compass Group/Chartwells, rather than private-household chef listings. I didn’t find a verified part-time opening with **Chef** in the job title; these are the closest matching corporate kitchen roles. I only searched and did not apply.\n\nFINAL ANSWER: Two corporate part-time-eligible food-service jobs within 5 miles of Moscow, Idaho: Compass Group/Chartwells Cook at 1080 W. 6th St. ($19–$22/hour; cooking experience preferred) and Cook at 1215 Nez Perce Drive ($15–$17/hour; experience required). Both are cook-titled roles, not titled Chef; no verified part-time corporate Chef-title opening found.",
+  "session_id": "X11S21Zb9uKmzGya",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent found part-time-eligible Cook listings, but did not reach Chef results or apply and verify the 5-mile radius, accommodation and food services industry, and corporate-only filters. Search terms and corporate employer selection do not establish those required website filters.",
+  "failure_category": "wrong_answer"
+ }
+}

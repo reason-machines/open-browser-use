@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-1223b075",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 132.5,
+  "steps": 40,
+  "tokens": 1667855,
+  "final": "Multiplication quiz completed with 11–12 facts, 10 questions, and unlimited time. Perfect score: **10 out of 10**.",
+  "raw_final": "FINAL ANSWER: Multiplication quiz completed with 11–12 facts, 10 questions, and unlimited time. Perfect score: **10 out of 10**.",
+  "session_id": "bench-baseline-20261015-m2w-1223b075",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The real website results confirm “Multiplication: 11-12, unlimited seconds” and “10 out of 10,” with all ten answers marked correct. The final answer accurately reports completion and the perfect score.",
+  "failure_category": "none"
+ }
+}

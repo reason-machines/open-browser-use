@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-354b4ddf",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 30.5,
+  "steps": 16,
+  "tokens": 416589,
+  "final": "Marketing jobs in San Francisco, CA; Bachelor’s Degree education filter not applied.",
+  "raw_final": "I found marketing job listings on Indeed in San Francisco, but the Education filter did not open, so I couldn’t apply the Bachelor’s Degree filter.\n\nFINAL ANSWER: Marketing jobs in San Francisco, CA; Bachelor’s Degree education filter not applied.",
+  "session_id": "bench-baseline-20261015-m2w-354b4ddf",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached marketing job listings on Indeed but failed to open the Education filter or apply Bachelor’s Degree, as its final answer acknowledges.",
+  "failure_category": "interaction_failed"
+ }
+}

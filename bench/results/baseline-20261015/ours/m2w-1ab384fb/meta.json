@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-1ab384fb",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 31.1,
+  "steps": 17,
+  "tokens": 376294,
+  "final": "For a nucleus with 6 protons and 4 neutrons (beryllium-10), proton emission removes one proton. The products are lithium-9 (3 protons, 6 neutrons) and a proton: **¹⁰Be → ⁹Li + ¹H**. I opened PhET’s “Build a Nucleus” simulation, but it did not provide a proton-emission decay control to run this reaction there.",
+  "raw_final": "FINAL ANSWER: For a nucleus with 6 protons and 4 neutrons (beryllium-10), proton emission removes one proton. The products are lithium-9 (3 protons, 6 neutrons) and a proton: **¹⁰Be → ⁹Li + ¹H**. I opened PhET’s “Build a Nucleus” simulation, but it did not provide a proton-emission decay control to run this reaction there.",
+  "session_id": "bench-baseline-20261015-m2w-1ab384fb",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent never configured the nucleus or ran proton emission in the simulation. Its reported result is unsupported and misidentifies 6 protons as beryllium; proton emission from 6 protons and 4 neutrons would leave 5 protons and 4 neutrons.",
+  "failure_category": "hallucination"
+ }
+}

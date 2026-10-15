@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 40.9,
+  "steps": 29,
+  "tokens": 397667,
+  "final": "I couldn’t confirm a currently accredited charity near ZIP 12023 with the best rating. The closest relevant BBB Wise Giving Alliance listing I found was **United Way of the Adirondack Region**, at **45 Tom Miller Rd, Plattsburgh, NY 12901**, phone **(518) 563-0028**. Give.org lists it as **“Review in Progress,”** so it isn’t confirmed as accredited. BBB’s local Upstate New York list shows other charities marked accredited, but does not provide comparative ratings. Source: [Give.org Upstate New York charity list](https://give.org/local-bbb-charity-reviews/bbb-of-upstate-new-york).",
+  "raw_final": "FINAL ANSWER: I couldn’t confirm a currently accredited charity near ZIP 12023 with the best rating. The closest relevant BBB Wise Giving Alliance listing I found was **United Way of the Adirondack Region**, at **45 Tom Miller Rd, Plattsburgh, NY 12901**, phone **(518) 563-0028**. Give.org lists it as **“Review in Progress,”** so it isn’t confirmed as accredited. BBB’s local Upstate New York list shows other charities marked accredited, but does not provide comparative ratings. Source: [Give.org Upstate New York charity list](https://give.org/local-bbb-charity-reviews/bbb-of-upstate-new-york).",
+  "session_id": "bench-baseline-20261015-m2w-05483c50",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent searched BBB near ZIP 12023, but never applied the BBB Accredited or highest-rated filters. It did not establish proximity or reach a qualifying result; the final answer names a charity whose accreditation was unconfirmed.",
+  "failure_category": "incomplete"
+ }
+}

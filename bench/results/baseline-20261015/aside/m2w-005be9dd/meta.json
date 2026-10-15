@@ -1,0 +1,28 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.5,
+  "steps": 0,
+  "tokens": 0,
+  "final": "• Error aside API error (402): 402 \"Insufficient credits\"",
+  "raw_final": "\n • Error aside API error (402): 402 \"Insufficient credits\"\n",
+  "session_id": "bM2dzzLzb1rhoQRP",
+  "errors": [
+   "aside API error (402): 402 \"Insufficient credits\""
+  ]
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent made no browsing steps and reported only an API insufficient-credits error. It did not find or report Qatar Airways economy baggage allowance.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

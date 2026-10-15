@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"No high-speed train ticket was selected. The agent reached the Shanghai–Beijing route page, but Search navigated to hotels, and it stopped without selecting a train or verifying its departure time before 23:00.","failure_category":"gave_up"}

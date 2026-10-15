@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-239a29bd",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 28.0,
+  "steps": 2,
+  "tokens": 224446,
+  "final": "** Use the gluten-free meal plan above as a balanced pregnancy eating pattern, not a weight-loss diet. Don’t intentionally try to lose weight during pregnancy without your prenatal clinician’s guidance; ask them to set your personal weight-gain and nutrition targets.",
+  "raw_final": "A gluten-free eating plan can support a healthy pregnancy, but **it should not be designed to make you lose weight while pregnant**. Intentional weight loss during pregnancy has not been established as safe; work with your prenatal clinician on an appropriate weight-gain goal instead. <citation refs=\"ClNH_xhyFSgIP597Pz1yp,lRkMxIQTf_Uql1x1fGert\">The goal is adequate nutrition and healthy pregnancy weight gain, not dieting.</citation>\n\nFor a pregnancy with **one baby**, recommended total gain depends on pre-pregnancy BMI: underweight, **28–40 lb**; normal weight, **25–35 lb**; overweight, **15–25 lb**; obesity, **11–20 lb**. Your clinician can individualize this, especially if you’re carrying multiples or have a medical condition. <citation refs=\"lRkMxIQTf_Uql1x1fGert,rkH9uueWOOnZLs_mO0V_i\">These ranges are based on pre-pregnancy BMI.</citation>\n\n## Gluten-free meal plan\n\nChoose naturally gluten-free foods and check labels for packaged items. If you have celiac disease, avoid cross-contact too. Good staples include vegetables, fruit, beans, potatoes, rice, quinoa, eggs, meat, fish, nuts, and pasteurized dairy. <citation refs=\"-zlNRJnRGqe643mJleFB4\">NIDDK lists these foods and notes that packaged gluten-free products can be higher in fat or sugar and lower in fiber, iron, or calcium.</citation>\n\n**Day 1**\n- Breakfast: Greek yogurt, berries, walnuts, and certified gluten-free oats\n- Lunch: Quinoa bowl with chicken, roasted vegetables, and avocado\n- Dinner: Baked salmon, potato, and broccoli\n- Snacks: Apple with peanut butter; carrots with hummus\n\n**Day 2**\n- Breakfast: Eggs with spinach, tomatoes, and corn tortillas\n- Lunch: Lentil soup and a side salad\n- Dinner: Turkey-and-bean chili with rice\n- Snacks: Cottage cheese and fruit; a handful of nuts\n\n**Day 3**\n- Breakfast: Certified gluten-free oatmeal with banana and chia seeds\n- Lunch: Tuna or chickpea salad over greens with a baked potato\n- Dinner: Chicken stir-fry with vegetables and brown rice\n- Snacks: Yogurt; pear with cheese\n\n**Day 4**\n- Breakfast: Smoothie with pasteurized yogurt, berries, spinach, and nut butter\n- Lunch: Black-bean, corn, and avocado bowl with brown rice\n- Dinner: Fully cooked beef or tofu, sweet potato, and green beans\n- Snacks: Hard-boiled egg; fruit with nuts\n\n**Day 5**\n- Breakfast: Cottage cheese, peaches, and certified gluten-free granola\n- Lunch: Egg salad on gluten-free bread with cucumber and tomato\n- Dinner: Shrimp tacos on corn tortillas with cabbage and beans\n- Snacks: Hummus with vegetables; yogurt\n\n**Day 6**\n- Breakfast: Buckwheat pancakes with fruit and yogurt\n- Lunch: Leftover chicken or beans over greens with quinoa\n- Dinner: Baked cod, rice, and roasted vegetables\n- Snacks: Banana with peanut butter; cheese and crackers labeled gluten-free\n\n**Day 7**\n- Breakfast: Veggie omelet, fruit, and gluten-free toast\n- Lunch: Bean-and-vegetable soup with a side of quinoa\n- Dinner: Roast chicken, potatoes, and salad\n- Snacks: Yogurt with berries; nuts and fruit\n\nKeep the plan flexible: include protein, produce, and a gluten-free grain or starchy vegetable at meals, and use snacks if you’re hungry. During pregnancy, calorie needs generally don’t increase in the first trimester; with one baby, ACOG says about **340 extra calories/day** in the second trimester and **450/day** in the third. <citation refs=\"rkH9uueWOOnZLs_mO0V_i,lRkMxIQTf_Uql1x1fGert\">Your individual needs can vary, so don’t use those figures as a calorie limit.</citation>\n\nTake your prenatal vitamin as directed; don’t increase the dose on your own. If celiac disease is suspected but not diagnosed, talk to a clinician before eliminating gluten, because avoiding it can affect test accuracy. <citation refs=\"rkH9uueWOOnZLs_mO0V_i,-zlNRJnRGqe643mJleFB4\">A clinician or registered dietitian can tailor the plan and check for nutrient gaps.</citation> For fish, choose lower-mercury options; FDA recommends **8–12 oz per week** during pregnancy. <citation refs=\"dL2mjJKa5Qo-w95RLFfJu\">Use the FDA’s fish-choice chart for specific species.</citation>\n\n**FINAL ANSWER:** Use the gluten-free meal plan above as a balanced pregnancy eating pattern, not a weight-loss diet. Don’t intentionally try to lose weight during pregnancy without your prenatal clinician’s guidance; ask them to set your personal weight-gain and nutrition targets.",
+  "session_id": "qmyKg5UejwHZ8Zya",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The trajectory provides gluten-free pregnancy nutrition guidance, but explicitly substitutes healthy pregnancy weight gain for the required weight-loss diet. All three constraints were not satisfied.",
+  "failure_category": "wrong_answer"
+ }
+}

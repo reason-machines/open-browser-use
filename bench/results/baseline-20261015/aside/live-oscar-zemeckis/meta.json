@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-oscar-zemeckis",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 29.9,
+  "steps": 6,
+  "tokens": 538420,
+  "final": "*Forrest Gump*; director Robert Zemeckis; birthplace Chicago; University of Southern California (USC).",
+  "raw_final": "The 67th Academy Awards’ Best Picture was *Forrest Gump*, directed by Robert Zemeckis. Zemeckis was born in Chicago and graduated from the University of Southern California (USC) in 1973. [[1]](https://en.wikipedia.org/wiki/67th_Academy_Awards) [[2]](https://en.wikipedia.org/wiki/Forrest_Gump) [[3]](https://en.wikipedia.org/wiki/Robert_Zemeckis)\n\nFINAL ANSWER: *Forrest Gump*; director Robert Zemeckis; birthplace Chicago; University of Southern California (USC).",
+  "session_id": "phGoClZwf9Ua5Cej",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all required values: Forrest Gump, Robert Zemeckis, Chicago, and University of Southern California (USC).",
+  "failure_category": "none"
+ }
+}

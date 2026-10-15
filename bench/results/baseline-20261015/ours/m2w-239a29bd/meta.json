@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-239a29bd",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.1,
+  "steps": 10,
+  "tokens": 223812,
+  "final": "**During pregnancy, don’t try to lose weight.** ACOG recommends focusing on healthy nutrition, activity approved by your clinician, and an appropriate pregnancy weight-gain goal. That goal depends on factors such as your pre-pregnancy BMI and whether you’re carrying one baby or multiples, so ask your obstetric clinician to set it with you.\n\nIf you need to eat gluten-free—especially if you have celiac disease—here’s a balanced day to discuss with your clinician or a registered dietitian:\n\n- **Breakfast:** Eggs with spinach, plus fruit and certified gluten-free oats or yogurt.\n- **Lunch:** Lentil or chicken bowl with quinoa or brown rice, vegetables, and avocado.\n- **Snack:** Apple with nut butter, or yogurt with berries.\n- **Dinner:** Salmon, chicken, tofu, or beans; a baked potato or rice; and cooked vegetables.\n- **If hungry:** Add another nutrient-rich snack rather than restricting food.\n\nBuild meals around vegetables and fruit, protein, and naturally gluten-free grains and starches such as rice, quinoa, potatoes, corn, and certified gluten-free oats. Limit highly processed gluten-free snacks and sweets when practical, but don’t cut out whole food groups to control weight. Follow strict gluten avoidance if prescribed for celiac disease, including attention to cross-contamination.\n\nPregnancy and gluten-free eating can both make nutrients worth checking. Ask your care team about your prenatal vitamin and whether you need testing or tailored advice for iron, folate, calcium, vitamin D, B12, or fiber; don’t start extra supplements without their guidance. A gluten-free diet by itself isn’t a weight-loss treatment.\n\nSources consulted: [ACOG pregnancy weight gain guidance](https://www.acog.org/womens-health/faqs/weight-gain-during-pregnancy), [ACOG obesity and pregnancy](https://www.acog.org/womens-health/faqs/obesity-and-pregnancy), [Beyond Celiac pregnancy nutrition](https://www.beyondceliac.org/living-with-celiac-disease/womens-health/).",
+  "raw_final": "FINAL ANSWER: **During pregnancy, don’t try to lose weight.** ACOG recommends focusing on healthy nutrition, activity approved by your clinician, and an appropriate pregnancy weight-gain goal. That goal depends on factors such as your pre-pregnancy BMI and whether you’re carrying one baby or multiples, so ask your obstetric clinician to set it with you.\n\nIf you need to eat gluten-free—especially if you have celiac disease—here’s a balanced day to discuss with your clinician or a registered dietitian:\n\n- **Breakfast:** Eggs with spinach, plus fruit and certified gluten-free oats or yogurt.\n- **Lunch:** Lentil or chicken bowl with quinoa or brown rice, vegetables, and avocado.\n- **Snack:** Apple with nut butter, or yogurt with berries.\n- **Dinner:** Salmon, chicken, tofu, or beans; a baked potato or rice; and cooked vegetables.\n- **If hungry:** Add another nutrient-rich snack rather than restricting food.\n\nBuild meals around vegetables and fruit, protein, and naturally gluten-free grains and starches such as rice, quinoa, potatoes, corn, and certified gluten-free oats. Limit highly processed gluten-free snacks and sweets when practical, but don’t cut out whole food groups to control weight. Follow strict gluten avoidance if prescribed for celiac disease, including attention to cross-contamination.\n\nPregnancy and gluten-free eating can both make nutrients worth checking. Ask your care team about your prenatal vitamin and whether you need testing or tailored advice for iron, folate, calcium, vitamin D, B12, or fiber; don’t start extra supplements without their guidance. A gluten-free diet by itself isn’t a weight-loss treatment.\n\nSources consulted: [ACOG pregnancy weight gain guidance](https://www.acog.org/womens-health/faqs/weight-gain-during-pregnancy), [ACOG obesity and pregnancy](https://www.acog.org/womens-health/faqs/obesity-and-pregnancy), [Beyond Celiac pregnancy nutrition](https://www.beyondceliac.org/living-with-celiac-disease/womens-health/).",
+  "session_id": "bench-baseline-20261015-m2w-239a29bd",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The answer provides a gluten-free meal plan tailored to pregnancy, but does not find a diet for weight loss, instead replacing that constraint with appropriate pregnancy weight gain. The trajectory shows only search results, not verification of a diet satisfying all three requirements on a source website.",
+  "failure_category": "incomplete"
+ }
+}

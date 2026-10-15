@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent made no website interactions and reported only an API insufficient-credits error. None of the required result or constraints was verified or answered.","failure_category":"tool_error_or_infra"}

@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-jqueryui-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 24.8,
+  "steps": 12,
+  "tokens": 298152,
+  "final": "11/20/2026",
+  "raw_final": "FINAL ANSWER: 11/20/2026",
+  "session_id": "bench-baseline-20261015-live-jqueryui-datepicker",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the answer key exactly, and the trajectory confirms the date input contained 11/20/2026 after selecting November 20.",
+  "failure_category": "none"
+ }
+}

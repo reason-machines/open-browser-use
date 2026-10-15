@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-widgets",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.9,
+  "steps": 6,
+  "tokens": 136839,
+  "final": "Saved profile code unavailable.",
+  "raw_final": "I couldn’t retrieve the saved profile code: Chrome became unreachable before the page confirmed the result. I finalized the tab. Please reopen the pinned Chrome profile so I can continue.\n\nFINAL ANSWER: Saved profile code unavailable.",
+  "session_id": "bench-baseline-20261015-fx-widgets",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer omits the required code 0G8VB0T. The browser host became unreachable before the settings could be applied and the confirmation read.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

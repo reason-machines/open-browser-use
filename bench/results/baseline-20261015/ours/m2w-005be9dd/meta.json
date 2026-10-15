@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 29.6,
+  "steps": 9,
+  "tokens": 248868,
+  "final": "Economy baggage allowance varies by route and fare: typically 20–35 kg on weight-based routes, or one or two bags up to 23 kg each on flights to or from the Americas.",
+  "raw_final": "Qatar Airways’ Economy checked baggage allowance depends on your route and fare. It’s typically **20–35 kg** on weight-based routes; for flights to or from the Americas, it’s usually **one or two bags of up to 23 kg each**, depending on the ticket. Check your booking for the exact allowance. [Official baggage allowance](https://www.qatarairways.com/en/baggage/allowance.html)\n\nFINAL ANSWER: Economy baggage allowance varies by route and fare: typically 20–35 kg on weight-based routes, or one or two bags up to 23 kg each on flights to or from the Americas.",
+  "session_id": "bench-baseline-20261015-m2w-005be9dd",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached Qatar Airways’ official baggage page, but the visible trajectory does not show Economy-specific allowance weights. The reported 20–35 kg and 23 kg figures are unsupported by the provided website evidence.",
+  "failure_category": "hallucination"
+ }
+}

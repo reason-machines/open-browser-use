@@ -1,0 +1,60 @@
+[
+ {
+  "agent": "aside",
+  "stack": "aside",
+  "suite": "hard",
+  "task_id": "fx-popup",
+  "category": "popup-multi-window",
+  "model": "openai-codex/gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer contains both required values: Token TK-7731-QV and Session 0HDNMNF.",
+  "seconds": 32.8,
+  "steps": 7,
+  "tokens": 561898,
+  "timed_out": false,
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "final": "Token: `TK-7731-QV`; Session: `0HDNMNF`"
+ },
+ {
+  "agent": "ours",
+  "stack": "obu",
+  "suite": "hard",
+  "task_id": "fx-popup",
+  "category": "popup-multi-window",
+  "model": "gpt-6-luna",
+  "success": true,
+  "score": 1.0,
+  "failure_category": "none",
+  "reason": "The final answer contains both required values: Token TK-7731-QV and Session 0HDNMNF.",
+  "seconds": 31.0,
+  "steps": 19,
+  "tokens": 368318,
+  "timed_out": false,
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  },
+  "final": "Token: TK-7731-QV; Session: 0HDNMNF"
+ }
+]

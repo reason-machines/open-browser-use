@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 13.0,
+  "steps": 3,
+  "tokens": 108660,
+  "final": "Booking reference unavailable — Chrome host unreachable.",
+  "raw_final": "I couldn’t reach the pinned Chrome profile: Open Browser Use reports that no Chrome host is running for “Profile 2.” I wasn’t able to open the fixture or retrieve a booking reference.\n\nFINAL ANSWER: Booking reference unavailable — Chrome host unreachable.",
+  "session_id": "bench-baseline-20261015-fx-datepicker",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer did not contain booking reference 1MY9A0K because the Chrome host was unreachable.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

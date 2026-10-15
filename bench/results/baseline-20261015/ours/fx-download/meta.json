@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-download",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 27.2,
+  "steps": 14,
+  "tokens": 281314,
+  "final": "EMEA total amount: 56,966; EMEA rows: 9.",
+  "raw_final": "FINAL ANSWER: EMEA total amount: 56,966; EMEA rows: 9.",
+  "session_id": "bench-baseline-20261015-fx-download",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer correctly reports EMEA total 56,966 across 9 rows.",
+  "failure_category": "none"
+ }
+}

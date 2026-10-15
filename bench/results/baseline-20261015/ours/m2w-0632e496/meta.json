@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0632e496",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 38.2,
+  "steps": 13,
+  "tokens": 371837,
+  "final": "Three recipe options: Eat With Clarity, Mama Knows Gluten Free, and Against All Grain, with recipe links, ingredient highlights, bake times, and allergy-label caveat above.",
+  "raw_final": "Found three gluten-free chocolate chip cookie recipes with no nuts listed among the ingredients:\n\n- [Eat With Clarity — Gluten Free Chocolate Chip Cookies](https://eatwithclarity.com/gluten-free-chocolate-chip-cookies/) — The author describes these as nut-free. Uses a gluten-free 1:1 flour blend, butter, sugars, egg, and chocolate chips. Chill 2 hours; bake at 350°F for 10–14 minutes. Rated 4.94/5 from 112 votes.\n- [Mama Knows Gluten Free — Gluten-Free Chocolate Chip Cookies](https://www.mamaknowsglutenfree.com/gluten-free-chocolate-chip-cookies/) — Uses gluten-free flour with xanthan gum, butter, sugars, egg, and chocolate chips. Bakes at 375°F for 8–10 minutes, with no chilling required. Rated 4.64/5. The page doesn’t specifically label it nut-free, so check ingredient packaging and cross-contact information if that matters.\n- [Against All Grain — Nut-Free Chocolate Chip Cookies](https://againstallgrain.com/2018/07/13/nut-free-chocolate-chip-cookies/) — Explicitly labeled nut-free and tagged gluten-free. Uses tahini (sesame), arrowroot, egg white or flax egg, and chocolate. Makes about 12; bake at 350°F for 12–15 minutes. The author says sunflower seed butter can replace the tahini.\n\nFor a serious allergy, check the flour, chocolate, and other product labels for nut warnings and cross-contact risk; “nut-free” recipe ingredients alone can’t guarantee allergen safety. FINAL ANSWER: Three recipe options: Eat With Clarity, Mama Knows Gluten Free, and Against All Grain, with recipe links, ingredient highlights, bake times, and allergy-label caveat above.",
+  "session_id": "bench-baseline-20261015-m2w-0632e496",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent browsed three actual recipe pages for gluten-free chocolate chip cookies, checked nut-free suitability, and reported linked options with ingredient details and relevant sesame and cross-contact caveats.",
+  "failure_category": "none"
+ }
+}

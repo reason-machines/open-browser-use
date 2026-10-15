@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 39.8,
+  "steps": 8,
+  "tokens": 641950,
+  "final": "Booking reference: **1MY9A0K**",
+  "raw_final": "FINAL ANSWER: Booking reference: **1MY9A0K**",
+  "session_id": "6S0buLAiPDKSgSpW",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required booking reference, 1MY9A0K, and the trajectory confirms it.",
+  "failure_category": "none"
+ }
+}

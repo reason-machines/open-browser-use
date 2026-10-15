@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-jqueryui-datepicker",
+ "category": "complex-widget",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.1,
+  "steps": 4,
+  "tokens": 354480,
+  "final": "11/20/2026",
+  "raw_final": "The date input shows `11/20/2026`.\n\nFINAL ANSWER: 11/20/2026",
+  "session_id": "WpIbMNPOqUiin5Hf",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer exactly matches the required value, 11/20/2026, and the trajectory shows calendar clicks selecting November 20.",
+  "failure_category": "none"
+ }
+}

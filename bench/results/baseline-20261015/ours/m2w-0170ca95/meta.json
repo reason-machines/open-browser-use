@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0170ca95",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 23.8,
+  "steps": 10,
+  "tokens": 205290,
+  "final": "Yes. If you’re an American citizen coming to the UK to work in an eligible healthcare job for more than six months, you’ll generally need an appropriate work visa before starting work. For qualifying roles, that is usually the **Health and Care Worker visa**. You need an eligible job offer from a Home Office approved UK employer, a certificate of sponsorship, and to meet the role’s salary and other requirements. The visa can last up to five years and can be extended if you continue to qualify.\n\nThe six-month Standard Visitor allowance does **not** let you take a regular paid or unpaid job for a UK employer. Visitor status is for permitted activities, not ongoing healthcare employment.\n\nSources: [GOV.UK Health and Care Worker visa](https://www.gov.uk/health-care-worker-visa) · [GOV.UK Standard Visitor rules](https://www.gov.uk/standard-visitor)",
+  "raw_final": "FINAL ANSWER: Yes. If you’re an American citizen coming to the UK to work in an eligible healthcare job for more than six months, you’ll generally need an appropriate work visa before starting work. For qualifying roles, that is usually the **Health and Care Worker visa**. You need an eligible job offer from a Home Office approved UK employer, a certificate of sponsorship, and to meet the role’s salary and other requirements. The visa can last up to five years and can be extended if you continue to qualify.\n\nThe six-month Standard Visitor allowance does **not** let you take a regular paid or unpaid job for a UK employer. Visitor status is for permitted activities, not ongoing healthcare employment.\n\nSources: [GOV.UK Health and Care Worker visa](https://www.gov.uk/health-care-worker-visa) · [GOV.UK Standard Visitor rules](https://www.gov.uk/standard-visitor)",
+  "session_id": "bench-baseline-20261015-m2w-0170ca95",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent reached official healthcare visa and visitor guidance, but the trajectory does not show American nationality or a stay longer than six months being applied or verified on the website. The final answer mentions every constraint, but the browsing evidence does not establish the required nationality-specific result.",
+  "failure_category": "incomplete"
+ }
+}

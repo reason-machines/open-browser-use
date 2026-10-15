@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-delayed",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 24.3,
+  "steps": 5,
+  "tokens": 419369,
+  "final": "04F17GY",
+  "raw_final": "The key is `04F17GY`.\n\nFINAL ANSWER: 04F17GY",
+  "session_id": "nrACOOf1up2xk2H8",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required key, 04F17GY, and the trajectory confirms it was generated on the page.",
+  "failure_category": "none"
+ }
+}

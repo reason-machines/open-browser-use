@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent reached Qatar Airways’ official baggage page, but the visible trajectory does not show Economy-specific allowance weights. The reported 20–35 kg and 23 kg figures are unsupported by the provided website evidence.","failure_category":"hallucination"}

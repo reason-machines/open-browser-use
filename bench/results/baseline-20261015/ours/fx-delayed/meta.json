@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-delayed",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 20.0,
+  "steps": 9,
+  "tokens": 256121,
+  "final": "04F17GY",
+  "raw_final": "FINAL ANSWER: 04F17GY",
+  "session_id": "bench-baseline-20261015-fx-delayed",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required key, 04F17GY, and is supported by the trajectory.",
+  "failure_category": "none"
+ }
+}

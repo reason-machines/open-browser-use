@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-herokuapp-gauntlet",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 63.9,
+  "steps": 29,
+  "tokens": 599416,
+  "final": "(1) “Hello World!” appeared after pressing Start. (2) The third avatar shows “user3”. (3) The bottom frame says “BOTTOM”. (4) After entering “bench” in the prompt, the Result line says “You entered: bench”.",
+  "raw_final": "FINAL ANSWER: (1) “Hello World!” appeared after pressing Start. (2) The third avatar shows “user3”. (3) The bottom frame says “BOTTOM”. (4) After entering “bench” in the prompt, the Result line says “You entered: bench”.",
+  "session_id": "bench-baseline-20261015-live-herokuapp-gauntlet",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: Hello World!, user3, BOTTOM, and You entered: bench.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-1223b075",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.6,
+  "steps": 0,
+  "tokens": 0,
+  "final": "• Error aside API error (402): 402 \"Insufficient credits\"",
+  "raw_final": "\n • Error aside API error (402): 402 \"Insufficient credits\"\n",
+  "session_id": "C5MAu2124iGG1elw",
+  "errors": [
+   "aside API error (402): 402 \"Insufficient credits\""
+  ]
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "No website actions were performed; no quiz settings or 10/10 result were demonstrated. The run failed due to an API insufficient-credits error.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

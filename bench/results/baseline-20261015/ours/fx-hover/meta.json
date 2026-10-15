@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-hover",
+ "category": "hover-menus",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 36.5,
+  "steps": 16,
+  "tokens": 257133,
+  "final": "SKU not shown",
+  "raw_final": "I followed Products → Hardware → Quantum Router, but the fixture did not show a SKU after the click, so I can’t report one. I closed the tab I opened.\n\nFINAL ANSWER: SKU not shown",
+  "session_id": "bench-baseline-20261015-fx-hover",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The final answer omits the required SKU 0SAJR18. The attempted menu click did not reveal the SKU, and the agent stopped without resolving the failed interaction.",
+  "failure_category": "interaction_failed"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0b2623e9",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 26.3,
+  "steps": 17,
+  "tokens": 281449,
+  "final": "I couldn’t verify any dogs matching all the criteria. Petfinder was blocked by an Akamai challenge in the pinned Chrome session, and the public search snippets did not confirm current availability, short hair, compatibility with both kids and cats, distance within 100 miles of 94587, or a listing age over 30 days. I can’t provide a reliable list from the accessible results.",
+  "raw_final": "FINAL ANSWER: I couldn’t verify any dogs matching all the criteria. Petfinder was blocked by an Akamai challenge in the pinned Chrome session, and the public search snippets did not confirm current availability, short hair, compatibility with both kids and cats, distance within 100 miles of 94587, or a listing age over 30 days. I can’t provide a reliable list from the accessible results.",
+  "session_id": "bench-baseline-20261015-m2w-0b2623e9",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent provided no verified dogs and did not satisfy all six constraints. Petfinder displayed an Akamai challenge, and search snippets did not establish qualifying results.",
+  "failure_category": "blocked_or_captcha"
+ }
+}

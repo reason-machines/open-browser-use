@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-arxiv-transformer",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.2,
+  "steps": 10,
+  "tokens": 197059,
+  "final": "arXiv:1706.03762; 8 authors; v1 submitted 12 June 2017; “Transformer (big)” EN-DE BLEU score in Table 2: 28.4.",
+  "raw_final": "FINAL ANSWER: arXiv:1706.03762; 8 authors; v1 submitted 12 June 2017; “Transformer (big)” EN-DE BLEU score in Table 2: 28.4.",
+  "session_id": "bench-baseline-20261015-live-arxiv-transformer",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: arXiv 1706.03762, 8 authors, 12 June 2017, and EN-DE BLEU 28.4.",
+  "failure_category": "none"
+ }
+}

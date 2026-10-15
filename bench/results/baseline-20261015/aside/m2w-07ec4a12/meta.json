@@ -1,0 +1,28 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-07ec4a12",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.7,
+  "steps": 0,
+  "tokens": 0,
+  "final": "• Error aside API error (402): 402 \"Insufficient credits\"",
+  "raw_final": "\n • Error aside API error (402): 402 \"Insufficient credits\"\n",
+  "session_id": "krhYy4uXv81h4G2y",
+  "errors": [
+   "aside API error (402): 402 \"Insufficient credits\""
+  ]
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent performed no website actions and did not check the interaction between melatonin and Folate Forte because the API returned insufficient credits.",
+  "failure_category": "tool_error_or_infra"
+ }
+}

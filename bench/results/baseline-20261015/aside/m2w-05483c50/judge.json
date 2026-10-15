@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent found charity accreditation evidence, but never applied highest-rated or proximity-to-12023 filters, reached a verified best match, or delivered a final recommendation. The run ended with an insufficient-credits API error.","failure_category":"tool_error_or_infra"}

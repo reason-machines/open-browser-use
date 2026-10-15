@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-iframe",
+ "category": "iframe-oopif",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 37.0,
+  "steps": 22,
+  "tokens": 563837,
+  "final": "1PXLPZB",
+  "raw_final": "The confirmation code is **1PXLPZB**.\n\nFINAL ANSWER: 1PXLPZB",
+  "session_id": "bench-baseline-20261015-retry-fx-iframe",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains the required confirmation code, 1PXLPZB, matching the answer key and observed page result.",
+  "failure_category": "none"
+ }
+}

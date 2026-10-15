@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 45.9,
+  "steps": 17,
+  "tokens": 660631,
+  "final": "Campus Cook — Chartwells Higher Education Dining Services; part-time option; accommodation and food services; corporate employer (Compass Group brand); University of Idaho, Moscow, Idaho; $21–$23/hour; prior cooking experience required. The available listing doesn’t confirm an exact address or 5-mile radius.",
+  "raw_final": "**Matching corporate job found:** Campus Cook — Chartwells Higher Education Dining Services, at the University of Idaho in Moscow, Idaho. The listing says full-time and part-time, with flexible schedules and pay of **$21–$23/hour**. It requires prior cooking experience and mentions preparing food to standardized recipes and following HACCP food safety standards. [View the listing](https://www.learn4good.com/jobs/moscow/idaho/restaurant_and_food_service/5543720690/e/).\n\nChartwells is a Compass Group brand, so this is a corporate food-services employer. The listing places the job in Moscow but doesn’t give a street address; I couldn’t verify its exact distance or set a 5-mile radius in Google Jobs. I also found a Compass Group Cook listing at **1080 W 6th St, Moscow**, marked full- or part-time at **$19/hour**, but couldn’t confirm it was chef-level or match it to the same active posting.\n\nFINAL ANSWER: Campus Cook — Chartwells Higher Education Dining Services; part-time option; accommodation and food services; corporate employer (Compass Group brand); University of Idaho, Moscow, Idaho; $21–$23/hour; prior cooking experience required. The available listing doesn’t confirm an exact address or 5-mile radius.",
+  "session_id": "bench-baseline-20261015-m2w-28e7574e",
+  "errors": []
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "Found a Moscow cooking job with a part-time option, but did not verify the 5-mile radius, apply the accommodation and food services or corporate-only filters, or establish that Campus Cook satisfied the chef position requirement. Search query terms and a corporate employer do not prove the required filters were applied.",
+  "failure_category": "incomplete"
+ }
+}

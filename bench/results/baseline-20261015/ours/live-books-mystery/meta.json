@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-books-mystery",
+ "category": "ecommerce-filter-sort",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 22.7,
+  "steps": 11,
+  "tokens": 233998,
+  "final": "The Mystery category has 32 books. The cheapest is *Tastes Like Fear (DI Marnie Rome #3)* at £10.69; the most expensive is *Boar Island (Anna Pigeon #19)* at £59.48.",
+  "raw_final": "FINAL ANSWER: The Mystery category has 32 books. The cheapest is *Tastes Like Fear (DI Marnie Rome #3)* at £10.69; the most expensive is *Boar Island (Anna Pigeon #19)* at £59.48.",
+  "session_id": "bench-baseline-20261015-live-books-mystery",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all required values: 32 books, Tastes Like Fear (DI Marnie Rome #3) at £10.69, and Boar Island (Anna Pigeon #19) at £59.48. The trajectory confirms both category pages were inspected.",
+  "failure_category": "none"
+ }
+}

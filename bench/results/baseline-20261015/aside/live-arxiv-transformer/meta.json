@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-arxiv-transformer",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 41.7,
+  "steps": 6,
+  "tokens": 508311,
+  "final": "arXiv:1706.03762; 8 authors; v1 submitted June 12, 2017; EN-DE BLEU for “Transformer (big)” in Table 2: 28.4.",
+  "raw_final": "- **arXiv ID:** 1706.03762\n- **Authors:** 8\n- **v1 submission date:** June 12, 2017\n- **EN-DE BLEU, “Transformer (big)” (Table 2):** 28.4\n\nSources: [arXiv record](https://arxiv.org/abs/1706.03762) · [paper PDF](https://arxiv.org/pdf/1706.03762)\n\nFINAL ANSWER: arXiv:1706.03762; 8 authors; v1 submitted June 12, 2017; EN-DE BLEU for “Transformer (big)” in Table 2: 28.4.",
+  "session_id": "ChwjScfpEGalIhGu",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: arXiv 1706.03762, 8 authors, v1 submitted 12 Jun 2017, and Transformer (big) EN-DE BLEU 28.4.",
+  "failure_category": "none"
+ }
+}

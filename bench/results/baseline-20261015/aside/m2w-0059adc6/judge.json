@@ -1,0 +1,1 @@
+{"success":false,"score":0,"reason":"The agent took no website actions and found no jobs. The run was blocked by an API 402 insufficient-credits error, so none of the required criteria were satisfied.","failure_category":"tool_error_or_infra"}

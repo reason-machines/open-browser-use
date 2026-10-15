@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-upload",
+ "category": "file-upload",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 45.8,
+  "steps": 10,
+  "tokens": 781846,
+  "final": "2f272eb0ca36",
+  "raw_final": "Uploaded `upload-me.txt`. The page displayed the SHA-256 prefix checksum:\n\n![Upload confirmation](/Users/adi/.aside/u/0/sessions/2026-10-15_TSAvO38Yi3tm6Bj6/tmp/upload-confirmation.png)\n\nFINAL ANSWER: 2f272eb0ca36",
+  "session_id": "TSAvO38Yi3tm6Bj6",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final checksum 2f272eb0ca36 matches the answer key, and the trajectory confirms the page displayed it for upload-me.txt.",
+  "failure_category": "none"
+ }
+}

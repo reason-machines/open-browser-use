@@ -17,14 +17,37 @@ ASIDE_SESSIONS_LOG = STATE / ".aside-sessions-created"
 UPLOAD_FILE = Path.home() / "Downloads/obu-bench/upload-me.txt"
 FIXTURE_PORT = int(os.environ.get("BENCH_FIXTURE_PORT", "18731"))
 AGENT_MODEL = os.environ.get("BENCH_AGENT_MODEL", "gpt-6-luna")
-ASIDE_MODEL = os.environ.get("BENCH_ASIDE_MODEL", f"aside/{AGENT_MODEL}")
+# openai-codex = the user's ChatGPT subscription route, the same backend codex uses for our agent.
+# (The Aside-hosted route `aside/gpt-6-luna` ran out of credits mid-baseline: 402 Insufficient credits.)
+ASIDE_MODEL = os.environ.get("BENCH_ASIDE_MODEL", f"openai-codex/{AGENT_MODEL}")
 JUDGE_MODEL = os.environ.get("BENCH_JUDGE_MODEL", "gpt-6.1-sol")
 CHROME_PROFILE = os.environ.get("BENCH_CHROME_PROFILE", "Profile 2")  # "QA Runner": no personal logins
+REAL_PROFILE = os.environ.get("BENCH_REAL_PROFILE", "Profile 1")  # the user's real logged-in profile (tasks with "profile": "real")
 
 SUFFIX = """
 
 Safety rules: never complete a real purchase or payment, log in, sign up, post, send messages, or change account settings on a real public website. Using page controls is allowed and expected: search boxes, filters, sorting, date pickers, quizzes, selecting options, and any form, dialog, upload or download on the local test pages at 127.0.0.1 / localhost (those are offline test fixtures, so submitting them is fine). Work in your own new tab(s); do not touch tabs you did not open.
 When you are done, end your reply with one line that starts with `FINAL ANSWER:` followed by the complete answer (include every requested value)."""
+
+SAFETY_OVERRIDES = {
+    "test_login": """
+
+Safety rules: logging in with the TEST credentials given in the task is allowed on these public demo/test sites and on the local test pages at 127.0.0.1 / localhost. Never use any other credentials, never purchase or pay for real, never post or send anything on a real website. Interacting with page controls and submitting forms on the demo sites and local fixtures is allowed. Work in your own new tab(s); do not touch tabs you did not open. Close every tab you opened when you finish.
+When you are done, end your reply with one line that starts with `FINAL ANSWER:` followed by the complete answer (include every requested value).""",
+    "compose_discard": """
+
+Safety rules (STRICT, real account): this browser is the user's REAL logged-in account. You may open the post composer, type text, add mentions/hashtags and attach the image, and you must verify the composer state. You must NEVER click Post / Tweet / Reply / Send / Publish / Share, and never press Cmd+Enter or Ctrl+Enter inside a composer. Do not like, follow, repost, message, or change any setting. When finished, close the composer and choose Discard/Delete so that no draft is saved and nothing is published. Work in your own new tab(s); do not touch tabs you did not open, and close the tabs you opened when you finish.
+When you are done, end your reply with one line that starts with `FINAL ANSWER:` followed by the complete answer (include every requested value and explicitly state whether the draft was discarded).""",
+    "real_read": """
+
+Safety rules (STRICT, real account): this browser is the user's REAL logged-in account. Read only: never post, reply, like, follow, repost, message, vote, or change any setting, and do not open direct messages. Work in your own new tab(s); do not touch tabs you did not open, and close the tabs you opened when you finish.
+When you are done, end your reply with one line that starts with `FINAL ANSWER:` followed by the complete answer (include every requested value).""",
+}
+
+
+def suffix_for(task):
+    return SAFETY_OVERRIDES.get(task.get("safety"), SUFFIX)
+
 
 # Guidance for our agent: plays the role of the guide Aside bakes into its own agent.
 OURS_PREAMBLE = """You control a real Chrome browser through the `obu` MCP tools (Open Browser Use). The browser profile and session are already pinned for you.
@@ -120,7 +143,7 @@ ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 def run_aside(task, tdir):
     events = tdir / "events.ndjson"
-    cmd = ["aside", "-m", ASIDE_MODEL, "--effort", "medium", "--log-dump", str(events), task["prompt"] + SUFFIX]
+    cmd = ["aside", "-m", ASIDE_MODEL, "--effort", "medium", "--log-dump", str(events), task["prompt"] + suffix_for(task)]
     code, secs = run_proc(cmd, tdir / "stdout.txt", tdir / "stderr.txt", task["timeout_s"])
     out = ANSI.sub("", (tdir / "stdout.txt").read_text(errors="replace"))
     err = ANSI.sub("", (tdir / "stderr.txt").read_text(errors="replace"))
@@ -165,25 +188,29 @@ def run_aside(task, tdir):
 
 # ---------------------------------------------------------------- our runner (adapter)
 
-def mcp_server(stack, session_id):
+def profile_for(task):
+    return REAL_PROFILE if task.get("profile") == "real" else CHROME_PROFILE
+
+
+def mcp_server(stack, session_id, profile=None):
     """Adapter: which MCP server backs our agent. Swap stacks with --stack."""
     if stack == "obu":
-        return "obu", ["mcp", "--profile", CHROME_PROFILE, "--session-id", session_id, "--timeout", "60s"]
+        return "obu", ["mcp", "--profile", profile or CHROME_PROFILE, "--session-id", session_id, "--timeout", "60s"]
     if stack == "obu-agent":  # new daemon (packages/obu-agent); thin MCP proxy over the resident daemon
-        return os.environ.get("OBU_AGENT_BIN", "obu-agent"), ["mcp", "--attach", "--profile", CHROME_PROFILE,
+        return os.environ.get("OBU_AGENT_BIN", "obu-agent"), ["mcp", "--attach", "--profile", profile or CHROME_PROFILE,
                                                                "--session-id", session_id]
     raise SystemExit(f"unknown stack {stack}")
 
 
-def finalize_obu(stack, session_id):
+def finalize_obu(stack, session_id, profile=None):
     if stack == "obu":
-        subprocess.run(["obu", "--profile", CHROME_PROFILE, "finalize-tabs", "--session-id", session_id, "--keep", "[]"],
+        subprocess.run(["obu", "--profile", profile or CHROME_PROFILE, "finalize-tabs", "--session-id", session_id, "--keep", "[]"],
                        stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
 
 
 def run_ours(task, tdir, stack, run_id):
     session_id = f"bench-{run_id}-{task['id']}"[:80]
-    cmd_bin, cmd_args = mcp_server(stack, session_id)
+    cmd_bin, cmd_args = mcp_server(stack, session_id, profile_for(task))
     work = tdir / "work"
     work.mkdir(exist_ok=True)
     cmd = ["codex", "exec", "--ignore-user-config", "--skip-git-repo-check", "--json", "-m", AGENT_MODEL,
@@ -194,12 +221,8 @@ def run_ours(task, tdir, stack, run_id):
            "-c", "mcp_servers.obu.tool_timeout_sec=120",
            "-c", "mcp_servers.obu.startup_timeout_sec=30",
            "-c", 'mcp_servers.obu.default_tools_approval_mode="approve"',
-           OURS_PREAMBLE + task["prompt"] + SUFFIX]
+           OURS_PREAMBLE + task["prompt"] + suffix_for(task)]
     code, secs = run_proc(cmd, tdir / "transcript.jsonl", tdir / "stderr.txt", task["timeout_s"])
-    try:
-        finalize_obu(stack, session_id)
-    except Exception:
-        pass
     steps, tok, final_text, traj, errors = 0, 0, "", [], []
     for line in (tdir / "transcript.jsonl").read_text(errors="replace").splitlines():
         try:
@@ -230,6 +253,94 @@ def run_ours(task, tdir, stack, run_id):
     return {"exit": code, "timed_out": code is None, "seconds": round(secs, 1), "steps": steps, "tokens": tok,
             "final": extract_final(final_text), "raw_final": final_text, "session_id": session_id,
             "errors": errors[-3:]}, traj
+
+
+# ---------------------------------------------------------------- tab hygiene
+# The user's rule: every task must leave the browser with the tabs it found. We snapshot every tab
+# (all windows, all profiles) of the app the agent drives before and after the task. Per-agent
+# concurrency defaults to 1 so new tabs are attributable: Aside drives Aside.app, ours drives Chrome.
+
+APP_FOR = {"aside": "Aside", "ours": "Google Chrome"}
+TAB_SCRIPT = """tell application "%s"
+set out to ""
+repeat with w in windows
+  repeat with t in (tabs of w)
+    set out to out & ((id of t) as text) & "\t" & (URL of t) & linefeed
+  end repeat
+end repeat
+return out
+end tell"""
+
+
+def tab_snapshot(app):
+    try:
+        r = subprocess.run(["osascript", "-e", TAB_SCRIPT % app], capture_output=True, text=True, timeout=20)
+    except subprocess.TimeoutExpired:
+        return None
+    if r.returncode != 0:
+        return None
+    tabs = {}
+    for line in r.stdout.splitlines():
+        if "\t" in line:
+            i, u = line.split("\t", 1)
+            tabs[i.strip()] = u.strip()
+    return tabs
+
+
+def close_tabs(app, ids):
+    for i in ids:
+        subprocess.run(["osascript", "-e", f'tell application "{app}" to close (every tab of every window whose id is {int(i)})'],
+                       capture_output=True, timeout=20)
+
+
+HOST_RE = re.compile(r"https?://([A-Za-z0-9.-]+)")
+
+
+def task_hosts(task, traj):
+    hosts = set(HOST_RE.findall(task["prompt"] + "\n" + "\n".join(traj)))
+    hosts |= {"127.0.0.1", "localhost"}
+    base = set()
+    for h in hosts:
+        parts = h.lower().split(".")
+        base.add(".".join(parts[-2:]) if len(parts) >= 2 else h.lower())
+    return base
+
+
+def attributable(url, hosts):
+    if url in ("about:blank", "", "chrome://newtab/") or url.startswith(("chrome://newtab", "blob:", "data:")):
+        return True
+    m = HOST_RE.match(url)
+    if not m:
+        return False
+    parts = m.group(1).lower().split(".")
+    return (".".join(parts[-2:]) if len(parts) >= 2 else parts[0]) in hosts
+
+
+def hygiene(agent, task, before, traj, harness_cleanup):
+    """Measure tabs the agent left behind, then close them and verify we are back to `before`."""
+    app = APP_FOR[agent]
+    after = tab_snapshot(app)
+    if before is None or after is None:
+        return {"measured": False}
+    new = {i: u for i, u in after.items() if i not in before}
+    hosts = task_hosts(task, traj)
+    ours_new = {i: u for i, u in new.items() if attributable(u, hosts)}
+    left_by_agent = len(ours_new)
+    try:
+        harness_cleanup()
+    except Exception:
+        pass
+    mid = tab_snapshot(app) or {}
+    still = [i for i in ours_new if i in mid]
+    if still:
+        close_tabs(app, still)
+    final = tab_snapshot(app) or {}
+    remaining = [i for i in ours_new if i in final]
+    return {"measured": True, "tabs_before": len(before), "tabs_after_agent": len(after),
+            "left_by_agent": left_by_agent, "left_urls": sorted(set(ours_new.values()))[:10],
+            "closed_by_harness": left_by_agent - len(remaining), "remaining_after_cleanup": len(remaining),
+            "tabs_after_cleanup": len(final), "unattributed_new_tabs": len(new) - left_by_agent,
+            "back_to_baseline": len(remaining) == 0}
 
 
 # ---------------------------------------------------------------- judge
@@ -306,19 +417,29 @@ def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
         res = meta["result"]
     else:
         log(f"[{agent}] start {task['id']}")
+        before = tab_snapshot(APP_FOR[agent])
         if agent == "aside":
             res, traj = run_aside(task, tdir)
+            cleanup = lambda: None
         else:
             res, traj = run_ours(task, tdir, stack, run_id)
+            cleanup = lambda: finalize_obu(stack, res["session_id"], profile_for(task))
+        res["tabs"] = hygiene(agent, task, before, traj, cleanup)
         (tdir / "trajectory.json").write_text(json.dumps(traj, indent=1, ensure_ascii=False))
     verdict = judge(task, res, traj, tdir)
     meta = {"agent": agent, "stack": stack if agent == "ours" else "aside", "task_id": task["id"],
             "category": task["category"], "suite": task["suite"], "model": ASIDE_MODEL if agent == "aside" else AGENT_MODEL,
             "judge_model": JUDGE_MODEL, "result": res, "verdict": verdict}
     meta_path.write_text(json.dumps(meta, indent=1, ensure_ascii=False))
+    tabs = res.get("tabs") or {}
     log(f"[{agent}] done  {task['id']}: {'PASS' if verdict.get('success') else 'FAIL'} "
-        f"{res['seconds']}s steps={res['steps']} ({verdict.get('failure_category')})")
+        f"{res['seconds']}s steps={res['steps']} ({verdict.get('failure_category')}) "
+        f"tabs_left={tabs.get('left_by_agent', '?')} clean={tabs.get('back_to_baseline', '?')}")
     return meta
+
+
+def left(m):
+    return ((m["result"].get("tabs") or {}).get("left_by_agent") or 0)
 
 
 def summarize(run_dir):
@@ -327,15 +448,16 @@ def summarize(run_dir):
     for m in metas:
         rows.setdefault((m["suite"], m["agent"]), []).append(m)
     lines = [f"# Run {run_dir.name}", "",
-             "| suite | agent | tasks | success | score | median s | median steps | median tokens |",
-             "|---|---|---|---|---|---|---|---|"]
+             "| suite | agent | tasks | success | score | median s | median steps | median tokens | tab leaks (tasks) | tabs left (total) |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for (suite, agent), ms in sorted(rows.items()):
         ok = sum(1 for m in ms if m["verdict"].get("success"))
         lines.append(f"| {suite} | {agent} | {len(ms)} | {ok}/{len(ms)} ({100 * ok // max(len(ms), 1)}%) | "
                      f"{sum(m['verdict'].get('score', 0) for m in ms):.1f} | "
                      f"{statistics.median([m['result']['seconds'] for m in ms]):.0f} | "
                      f"{statistics.median([m['result']['steps'] for m in ms]):.0f} | "
-                     f"{statistics.median([m['result']['tokens'] for m in ms]):.0f} |")
+                     f"{statistics.median([m['result']['tokens'] for m in ms]):.0f} | "
+                     f"{sum(1 for m in ms if left(m) > 0)} | {sum(left(m) for m in ms)} |")
     lines += ["", "| task | category | " + " | ".join(sorted({m['agent'] for m in metas})) + " |",
               "|---|---|" + "---|" * len({m['agent'] for m in metas})]
     by_task = {}
@@ -347,7 +469,8 @@ def summarize(run_dir):
         for a in agents:
             m = d.get(a)
             cells.append("—" if not m else f"{'✅' if m['verdict'].get('success') else '❌'} {m['result']['seconds']:.0f}s "
-                         f"{m['result']['steps']}st {'' if m['verdict'].get('success') else m['verdict'].get('failure_category')}")
+                         f"{m['result']['steps']}st {'' if m['verdict'].get('success') else m['verdict'].get('failure_category')}"
+                         f"{f' 🗂{left(m)} tab(s) left' if left(m) else ''}")
         lines.append(f"| {tid} | {cat} | " + " | ".join(cells) + " |")
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n")
     (run_dir / "summary.json").write_text(json.dumps(
@@ -355,7 +478,7 @@ def summarize(run_dir):
          {"success": m["verdict"].get("success"), "score": m["verdict"].get("score"),
           "failure_category": m["verdict"].get("failure_category"), "reason": m["verdict"].get("reason"),
           "seconds": m["result"]["seconds"], "steps": m["result"]["steps"], "tokens": m["result"]["tokens"],
-          "timed_out": m["result"]["timed_out"], "final": m["result"]["final"][:500]} for m in metas], indent=1,
+          "timed_out": m["result"]["timed_out"], "tabs": m["result"].get("tabs"), "final": m["result"]["final"][:500]} for m in metas], indent=1,
         ensure_ascii=False))
     return "\n".join(lines)
 
@@ -366,7 +489,7 @@ def main():
     ap.add_argument("--suite", default="hard", choices=["hard", "mind2web", "all"])
     ap.add_argument("--tasks", default="")
     ap.add_argument("--stack", default=os.environ.get("BENCH_STACK", "obu"), choices=["obu", "obu-agent"])
-    ap.add_argument("--concurrency", type=int, default=3)
+    ap.add_argument("--concurrency", type=int, default=1, help="per agent; >1 makes tab hygiene attribution unreliable")
     ap.add_argument("--run", default="", help="run id (reuse to resume/rejudge)")
     ap.add_argument("--rejudge", action="store_true", help="re-run only the judge on existing results")
     ap.add_argument("--skip-existing", action="store_true")

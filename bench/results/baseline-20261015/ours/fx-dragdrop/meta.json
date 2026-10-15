@@ -1,0 +1,26 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "fx-dragdrop",
+ "category": "drag-drop",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 59.6,
+  "steps": 24,
+  "tokens": 486416,
+  "final": "03LGSL9",
+  "raw_final": "The alphabetical order is Apple, Banana, Cherry, Date, Elder. The code is `03LGSL9`.\n\nFINAL ANSWER: 03LGSL9",
+  "session_id": "bench-baseline-20261015-fx-dragdrop",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer exactly matches the required code 03LGSL9.",
+  "failure_category": "none"
+ }
+}

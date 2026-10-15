@@ -1,0 +1,26 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "fx-dragdrop",
+ "category": "drag-drop",
+ "suite": "hard",
+ "model": "aside/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 53.1,
+  "steps": 9,
+  "tokens": 707211,
+  "final": "03LGSL9",
+  "raw_final": "FINAL ANSWER: 03LGSL9",
+  "session_id": "r2RsTfZjvb9wX1bg",
+  "errors": []
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer matches the required code 03LGSL9, confirmed by the page after successful sorting.",
+  "failure_category": "none"
+ }
+}
