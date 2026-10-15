@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 22.4,
+  "steps": 8,
+  "tokens": 178068,
+  "final": "Part-time corporate food-service opening near Moscow, Idaho: Cook (full or part time) at Compass Group / Chartwells Higher Ed, University of Idaho, 1080 W. 6th St., Moscow, ID 83844; $19–$22/hour; AM/PM shifts with variable days and some holidays; cooking experience preferred; applications accepted ongoing. Job title is Cook, not Chef.",
+  "raw_final": "I found one matching corporate food-service opening within 5 miles of Moscow:\n\n- **Cook (full or part time)** — Compass Group / Chartwells Higher Ed, University of Idaho\n- **Location:** 1080 W. 6th St., Moscow, ID 83844\n- **Pay:** $19–$22 per hour\n- **Schedule:** Full or part time; AM/PM shifts, variable days, some holidays\n- **Experience:** Cooking experience preferred\n- **Status:** Applications accepted on an ongoing basis\n- **Listing:** [Compass Group job posting](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-OR-PART-TIME%29-ID-83844/1407465700/)\n\nThe listing is titled **Cook**, rather than Chef, but its duties include preparing food and it offers part-time hours. I did not apply.\n\nFINAL ANSWER: Part-time corporate food-service opening near Moscow, Idaho: Cook (full or part time) at Compass Group / Chartwells Higher Ed, University of Idaho, 1080 W. 6th St., Moscow, ID 83844; $19–$22/hour; AM/PM shifts with variable days and some holidays; cooking experience preferred; applications accepted ongoing. Job title is Cook, not Chef.",
+  "session_id": "bench-baseline-v2-m2w-28e7574e",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent verified a Moscow food-service listing with part-time availability, but substituted Cook for the requested Chef position. It did not apply or verify the 5-mile radius, accommodation and food services industry, or corporate-only filters; searching those terms and choosing a corporate employer does not satisfy the requested filter selections.",
+  "failure_category": "incomplete"
+ }
+}

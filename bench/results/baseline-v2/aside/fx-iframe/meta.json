@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "aside",
  "stack": "aside",
  "task_id": "fx-iframe",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The final answer contains the correct confirmation code, 1PXLPZB, verified in the iframe status.",
+  "reason": "The final answer matches the required confirmation code 1PXLPZB, verified in the iframe status.",
   "failure_category": "none"
  }
 }

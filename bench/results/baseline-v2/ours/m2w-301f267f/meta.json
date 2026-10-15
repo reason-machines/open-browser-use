@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-301f267f",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 27.8,
+  "steps": 19,
+  "tokens": 331343,
+  "final": "Try soy-sesame chili edamame for the clearest match: about 3–5 minutes and 15 g protein per serving.`",
+  "raw_final": "The strongest matches I found are quick edamame snacks. They’re savory, vegan, and rich in plant protein; times assume the frozen edamame is microwave-ready.\n\n- **Soy-sesame chili edamame — about 3–5 minutes, ~15 g protein per serving.** Microwave 1 cup shelled edamame for 2–3 minutes, drain, and toss with 1 tsp soy sauce or tamari, ½ tsp sesame oil, and chili flakes. A search result attributed the nutrition estimate to Nutritiously Delicia. [Search results](https://www.google.com/search?q=5+minute+vegan+snack+edamame+protein+recipe+nutrition)\n- **Simple seasoned edamame — about 3–5 minutes, ~12 g protein per serving.** Warm shelled edamame and season to taste with salt, chili, or lemon. Dietetic Directions lists about 120 calories, 12 g protein, and 8 g fiber for its 5-minute recipe. [Dietetic Directions](https://dieteticdirections.com/)\n- **Edamame crunch salad — about 5 minutes, ~17 g protein per cup of edamame.** Toss edamame with shredded carrot and cabbage; add sesame seeds and a light soy or citrus dressing. The protein figure is for the edamame itself, so the finished serving depends on how much you use. [Confessions of a Mother Runner](https://confessionsofamotherrunner.com/)\n\nThe protein and timing figures are source-reported estimates and may vary by portion and brand. `FINAL ANSWER: Try soy-sesame chili edamame for the clearest match: about 3–5 minutes and 15 g protein per serving.`",
+  "session_id": "bench-baseline-v2-m2w-301f267f",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The observations support soy-sesame chili edamame as a healthy, savory, vegan snack with a 5-minute preparation time and approximately 15 g protein per serving. The agent reached and reported this matching recipe; its ingredients, microwave instructions, timing, and protein estimate appear in the observed search results.",
+  "failure_category": "none"
+ }
+}

@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "aside",
  "stack": "aside",
  "task_id": "live-quotes-scroll",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The final answer correctly gives both required totals: 14 quotes tagged love and 10 quotes by Albert Einstein.",
+  "reason": "The final answer correctly states both required totals: 14 quotes tagged love and 10 by Albert Einstein.",
   "failure_category": "none"
  }
 }

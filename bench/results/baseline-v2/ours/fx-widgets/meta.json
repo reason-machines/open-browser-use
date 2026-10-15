@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "ours",
  "stack": "obu",
  "task_id": "fx-widgets",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The final answer exactly matches the required saved profile code, 0G8VB0T, and the trajectory confirms it was saved.",
+  "reason": "The final answer matches the required saved profile code 0G8VB0T, confirmed by the trajectory.",
   "failure_category": "none"
  }
 }

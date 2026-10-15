@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent verified the healthcare work visa route and that it supports stays exceeding six months, but never checked American nationality through the visa checker or other observed guidance. The nationality-specific visa requirement in the answer is unsupported by the observations.","failure_category":"incomplete"}

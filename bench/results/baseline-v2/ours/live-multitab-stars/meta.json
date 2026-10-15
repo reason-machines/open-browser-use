@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-multitab-stars",
+ "category": "multi-tab-compare",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.6,
+  "steps": 11,
+  "tokens": 167194,
+  "final": "Ranked by displayed stars: 1. [facebook/react](https://github.com/facebook/react) — 251k stars; 2. [sveltejs/svelte](https://github.com/sveltejs/svelte) — 88.4k stars; 3. [vuejs/core](https://github.com/vuejs/core) — 54.6k stars.",
+  "raw_final": "FINAL ANSWER: Ranked by displayed stars: 1. [facebook/react](https://github.com/facebook/react) — 251k stars; 2. [sveltejs/svelte](https://github.com/sveltejs/svelte) — 88.4k stars; 3. [vuejs/core](https://github.com/vuejs/core) — 54.6k stars.",
+  "session_id": "bench-baseline-v2-live-multitab-stars",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three repositories were opened in separate tabs. Reported star counts match the displayed values and fall within the allowed ranges, with the exact required ranking: facebook/react, sveltejs/svelte, vuejs/core.",
+  "failure_category": "none"
+ }
+}

@@ -1,1 +1,1 @@
-{"success":true,"score":1.0,"reason":"The final answer correctly reports $315.37 for item #437 and 108 items tagged rare.","failure_category":"none"}
+{"success":true,"score":1.0,"reason":"Both required values match: item #437 costs $315.37, and 108 items carry the rare tag.","failure_category":"none"}

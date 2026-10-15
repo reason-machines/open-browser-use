@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-07bdc595",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 5.7,
+  "steps": 0,
+  "tokens": 67827,
+  "final": "What date should I search for? Ticket availability and departure times depend on the travel date.",
+  "raw_final": "What date should I search for? Ticket availability and departure times depend on the travel date.",
+  "session_id": "RITWaO3bqfF12sLe",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent only asked for a travel date and took no website actions. No high-speed ticket from Shanghai to Beijing departing before 23:00 was selected or verified.",
+  "failure_category": "incomplete"
+ }
+}

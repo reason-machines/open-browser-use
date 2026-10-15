@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 17.4,
+  "steps": 2,
+  "tokens": 211238,
+  "final": "Administrative Assistant (Full Time), Crystal Bridges Museum of American Art, Bentonville, AR; $25/hour; Monday–Friday, 9 a.m.–5 p.m.; requires administrative/data-entry experience and strong computer skills. Also found: Customer Care Specialist, Movista, Bentonville, AR.",
+  "raw_final": "I found this support-services-related opening in Bentonville:\n\n- **Administrative Assistant (Full Time)** at Crystal Bridges Museum of American Art, 600 Museum Way, Bentonville, AR 72712\n- **Pay:** $25/hour\n- **Schedule:** Full-time, Monday–Friday, 9 a.m.–5 p.m.\n- **Requirements:** Previous administrative and data-entry experience; strong computer skills\n- **Role:** Provides clerical and administrative support, including records, staffing coordination, data entry, and financial reconciliations\n- [View job listing on Indeed](https://www.indeed.com/q-support-staff-l-bentonville,-ar-jobs.html)\n\nIndeed also surfaced a **Customer Care Specialist** role at Movista in Bentonville, involving inbound customer calls and product support; [view the listing](https://www.indeed.com/viewjob?jk=8ce7711d3ea14dee).\n\nFINAL ANSWER: Administrative Assistant (Full Time), Crystal Bridges Museum of American Art, Bentonville, AR; $25/hour; Monday–Friday, 9 a.m.–5 p.m.; requires administrative/data-entry experience and strong computer skills. Also found: Customer Care Specialist, Movista, Bentonville, AR.",
+  "session_id": "LiyVMYevciP58aR4",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The trajectory shows actual listings for administrative support and customer care jobs in Bentonville, Arkansas. The final answer reports both roles, and the administrative job’s pay, schedule, and requirements are supported by the fetched listing.",
+  "failure_category": "none"
+ }
+}

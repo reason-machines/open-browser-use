@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent correctly identified Seven Seas Grandeur using Costco member ratings and extracted its onboard activities from the ship page. However, it never applied the required highest-rated sort; search results showing comparative ratings do not satisfy the explicit sorting requirement.","failure_category":"incomplete"}

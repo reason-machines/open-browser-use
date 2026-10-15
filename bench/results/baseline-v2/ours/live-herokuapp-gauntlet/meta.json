@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-herokuapp-gauntlet",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 58.2,
+  "steps": 21,
+  "tokens": 547380,
+  "final": "(1) Dynamic loading text: **Hello World!** (2) Third avatar: **name: user3** (3) Bottom frame text: **BOTTOM** (4) JavaScript prompt result: **You entered: bench**",
+  "raw_final": "FINAL ANSWER: (1) Dynamic loading text: **Hello World!** (2) Third avatar: **name: user3** (3) Bottom frame text: **BOTTOM** (4) JavaScript prompt result: **You entered: bench**",
+  "session_id": "bench-baseline-v2-live-herokuapp-gauntlet",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values, each supported by the trajectory.",
+  "failure_category": "none"
+ }
+}

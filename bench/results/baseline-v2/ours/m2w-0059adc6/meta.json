@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0059adc6",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 16.4,
+  "steps": 7,
+  "tokens": 211855,
+  "final": "Support-related jobs in Bentonville, Arkansas include Patient Access Representative at Southeast Hospital/Mercy Clinic Hwy 102 (part-time days; registration and scheduling; high school diploma required), Clinical Social Worker—Fee for Service at Thriveworks (part-time hybrid; Arkansas LCSW required; search summary says up to $100,300 based on session volume), Customer Service Representative at Parmele Disability Advocates (full-time), Customer Service Manager at SDI (full-time), Systems Administrator, Technology Support at Walmart (full-time; search summary estimates $50,000–$95,000/year), Personal Care Assistant at Circle of Life Hospice (full-time; starting at $16.50/hour plus weekend differential), and Direct Support Professional openings (Indeed showed 93 jobs in the area, with a $16–$18/hour summary range). Listing details may change.",
+  "raw_final": "I found these support-related openings in Bentonville, Arkansas:\n\n- **Patient Access Representative — Southeast Hospital / Mercy Clinic Hwy 102**: Part-time, days. Patient registration, scheduling, benefit verification, and financial clearance. High school diploma required; 1–3 years of clerical or customer service experience preferred.\n- **Clinical Social Worker, Fee for Service — Thriveworks**: Part-time, hybrid. Requires an independent Arkansas LCSW license. Search results mention pay up to $100,300 based on session volume; confirm details with the employer.\n- **Customer Service Representative — Parmele Disability Advocates**: Full-time. Benefits listed include health, dental, and paid time off.\n- **Customer Service Manager — SDI**: Full-time. Benefits listed include health, dental, and paid time off.\n- **Systems Administrator, Technology Support — Walmart**: Full-time. Search results showed an estimated $50,000–$95,000 annual range.\n- **Personal Care Assistant — Circle of Life Hospice**: Full-time. Search results listed starting pay of $16.50/hour plus a weekend differential.\n- **Direct Support Professional**: Indeed showed 93 jobs in the Bentonville area, with an advertised range of $16–$18/hour; individual listings vary.\n\nListings and pay are based on search result summaries and may change. Sources included Indeed, LinkedIn job results, and Google job search results.\n\nFINAL ANSWER: Support-related jobs in Bentonville, Arkansas include Patient Access Representative at Southeast Hospital/Mercy Clinic Hwy 102 (part-time days; registration and scheduling; high school diploma required), Clinical Social Worker—Fee for Service at Thriveworks (part-time hybrid; Arkansas LCSW required; search summary says up to $100,300 based on session volume), Customer Service Representative at Parmele Disability Advocates (full-time), Customer Service Manager at SDI (full-time), Systems Administrator, Technology Support at Walmart (full-time; search summary estimates $50,000–$95,000/year), Personal Care Assistant at Circle of Life Hospice (full-time; starting at $16.50/hour plus weekend differential), and Direct Support Professional openings (Indeed showed 93 jobs in the area, with a $16–$18/hour summary range). Listing details may change.",
+  "session_id": "bench-baseline-v2-m2w-0059adc6",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The trajectory shows searches for support services jobs in Bentonville, Arkansas and visible results identifying multiple support roles explicitly located in Bentonville, AR. The final answer reports those roles and supported listing details, satisfying all three required points.",
+  "failure_category": "none"
+ }
+}

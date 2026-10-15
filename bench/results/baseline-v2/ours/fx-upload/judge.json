@@ -1,1 +1,1 @@
-{"success":false,"score":0,"reason":"The final answer omitted checksum 2f272eb0ca36. Upload failed after file chooser waits timed out and direct file input was denied.","failure_category":"download_or_upload"}
+{"success":false,"score":0,"reason":"The agent did not upload the file or report checksum 2f272eb0ca36. File chooser waits timed out, and DOM.setFileInputFiles was denied.","failure_category":"download_or_upload"}

@@ -1,0 +1,1 @@
+{"success":false,"score":0.0,"reason":"The agent opened the simulation but never verified the requested nucleus composition, applied proton emission, or reached and showed its decay result. It explicitly stopped without a verified result.","failure_category":"gave_up"}

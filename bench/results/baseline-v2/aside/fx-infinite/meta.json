@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "aside",
  "stack": "aside",
  "task_id": "fx-infinite",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The final answer correctly reports $315.37 for item #437 and 108 items tagged rare.",
+  "reason": "Both required values match: item #437 costs $315.37, and 108 items carry the rare tag.",
   "failure_category": "none"
  }
 }

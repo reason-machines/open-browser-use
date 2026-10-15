@@ -1,0 +1,41 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-1223b075",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 50.5,
+  "steps": 23,
+  "tokens": 745223,
+  "final": "No perfect score achieved; the quiz result is unverified.",
+  "raw_final": "I wasn’t able to complete the quiz. The first answer was submitted incorrectly, and I couldn’t verify a perfect 10/10 score. I’ve closed out my browser task.  \nFINAL ANSWER: No perfect score achieved; the quiz result is unverified.",
+  "session_id": "bench-baseline-v2-m2w-1223b075",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 11,
+   "left_by_agent": 1,
+   "left_urls": [
+    "https://www.coolmath4kids.com/quizzes/multiplication"
+   ],
+   "closed_by_harness": 1,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent opened the correct multiplication quiz and applied 11–12 facts, 10 questions, and unlimited time. It did not complete all 10 questions or reach an observed 10/10 result, and stopped voluntarily.",
+  "failure_category": "gave_up"
+ }
+}

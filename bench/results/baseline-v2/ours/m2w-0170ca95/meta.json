@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0170ca95",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 23.8,
+  "steps": 11,
+  "tokens": 237638,
+  "final": "Yes—an American generally needs a UK work visa to work in healthcare for longer than 6 months. For an eligible role, apply for a Health and Care Worker visa with a qualifying sponsored job offer.**",
+  "raw_final": "Yes. An American citizen planning to work in the UK in healthcare for more than 6 months generally needs a work visa. For an eligible healthcare role, the main route is the [Health and Care Worker visa](https://www.gov.uk/health-care-worker-visa). You need a qualifying job offer from a Home Office-approved employer and a certificate of sponsorship; the role and salary must also meet the visa requirements. The visa can last up to 5 years and can be extended if you remain eligible.\n\nGOV.UK’s [Health and Care Worker visa guidance](https://www.gov.uk/health-care-worker-visa) is the source. **FINAL ANSWER: Yes—an American generally needs a UK work visa to work in healthcare for longer than 6 months. For an eligible role, apply for a Health and Care Worker visa with a qualifying sponsored job offer.**",
+  "session_id": "bench-baseline-v2-m2w-0170ca95",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent verified the healthcare work visa route and that it supports stays exceeding six months, but never checked American nationality through the visa checker or other observed guidance. The nationality-specific visa requirement in the answer is unsupported by the observations.",
+  "failure_category": "incomplete"
+ }
+}

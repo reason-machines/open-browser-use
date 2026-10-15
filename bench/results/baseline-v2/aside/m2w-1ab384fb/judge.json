@@ -1,0 +1,1 @@
+{"success":false,"score":0.0,"reason":"The agent opened the simulation but failed to assemble the requested nucleus or trigger proton emission. No simulated decay result was reached or observed. The reported lithium-9 result is unsupported by the observations and incorrectly labels a nucleus with 5 protons as lithium.","failure_category":"interaction_failed"}

@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-28e7574e",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 18.6,
+  "steps": 3,
+  "tokens": 299575,
+  "final": "One matching corporate part-time food-services opening: Compass Group / Chartwells Higher Ed Cook at 1080 W. 6th St., Moscow, ID 83844, $19–$22/hour, AM/PM shifts, days vary, some holidays required; requisition 1548917. [Official listing](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-OR-PART-TIME%29-ID-83844/1407465700/). It is listed as Cook, not Chef.",
+  "raw_final": "One matching corporate job found:\n\n- **Cook (full or part time)** at **Compass Group / Chartwells Higher Ed**, serving the University of Idaho\n- **Location:** 1080 W. 6th St., Moscow, ID 83844\n- **Pay:** $19–$22/hour\n- **Part-time:** Yes, with AM/PM shifts available; days vary and some holidays required\n- **Application:** [View the official Compass Group listing](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-OR-PART-TIME%29-ID-83844/1407465700/) (requisition 1548917; applications accepted on an ongoing basis)\n\nThe posting calls the role **Cook**, not Chef. It is within Moscow; the listing gives a street address but not a distance from a specific starting point. I found no exact “Chef” title that met the part-time and corporate-only filters in the results reviewed. I did not apply or sign in.\n\nFINAL ANSWER: One matching corporate part-time food-services opening: Compass Group / Chartwells Higher Ed Cook at 1080 W. 6th St., Moscow, ID 83844, $19–$22/hour, AM/PM shifts, days vary, some holidays required; requisition 1548917. [Official listing](https://jobs.compassgroupcareers.com/United_States/job/MOSCOW-COOK-%28FULL-OR-PART-TIME%29-ID-83844/1407465700/). It is listed as Cook, not Chef.",
+  "session_id": "Gqz7NwURBElzLm3w",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The observed listing supports part-time food-service work in Moscow, but the role is Cook rather than Chef. The agent did not apply or verify the requested 5-mile radius, industry, or corporate-only filters on the task website. A corporate employer listing does not establish that the corporate-only filter was selected.",
+  "failure_category": "incomplete"
+ }
+}

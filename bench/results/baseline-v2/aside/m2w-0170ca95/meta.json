@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0170ca95",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 14.1,
+  "steps": 2,
+  "tokens": 143853,
+  "final": "Yes. An American citizen needs appropriate UK work permission to take a healthcare job in the UK for more than six months. For an eligible role, this is usually the Health and Care Worker visa, which requires an eligible sponsored job offer and Certificate of Sponsorship. ETA/visitor status does not permit ordinary employment with a UK employer.",
+  "raw_final": "Yes. An American citizen who plans to work in a UK healthcare job for longer than six months generally needs a work visa before starting. For an eligible healthcare role, the usual route is the **Health and Care Worker visa**, a type of Skilled Worker visa. You’ll generally need an eligible job offer from a UK employer approved to sponsor workers, a Certificate of Sponsorship, and to meet the role’s other requirements. The visa can cover the sponsored employment for up to five years at a time. <citation refs=\"9qFX4iio2cgEJF4bY-Fi8,6MG4eMxsQXFTaSd3E_PjD\">$1</citation>\n\nA visitor entry or ETA does **not** authorize ordinary paid or unpaid work for a UK employer. The Health and Care Worker route also does not charge the Immigration Health Surcharge. <citation refs=\"78livawtveO-NDKG1mheW,6MG4eMxsQXFTaSd3E_PjD\">$2</citation>\n\nThe exact visa depends on the job and occupation code; check the role against the current [GOV.UK Health and Care Worker visa guidance](https://www.gov.uk/health-care-worker-visa).\n\nFINAL ANSWER: Yes. An American citizen needs appropriate UK work permission to take a healthcare job in the UK for more than six months. For an eligible role, this is usually the Health and Care Worker visa, which requires an eligible sponsored job offer and Certificate of Sponsorship. ETA/visitor status does not permit ordinary employment with a UK employer.",
+  "session_id": "e17QCiBYMURKPdCt",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The searches and observed GOV.UK guidance support the reported result: an American citizen needs a work visa for UK healthcare employment lasting more than six months. The answer covers all five requirements and identifies the eligible Health and Care Worker route and visitor/ETA restrictions.",
+  "failure_category": "none"
+ }
+}

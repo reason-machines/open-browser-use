@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-0632e496",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 21.0,
+  "steps": 11,
+  "tokens": 208992,
+  "final": "Two options: Eat With Clarity’s explicitly nut-free recipe (350°F, 10–14 min, 2-hour chill; 4.94/5 from 112 votes) and Mama Knows Gluten Free’s recipe (375°F, 8–10 min, no chill listed; 4.64/5 from 116 votes). Both list no nuts; check ingredient labels for cross-contact.",
+  "raw_final": "I found two gluten-free chocolate chip cookie recipes with no nuts listed in their ingredients:\n\n- [Eat With Clarity: Gluten Free Chocolate Chip Cookies](https://eatwithclarity.com/gluten-free-chocolate-chip-cookies/) — The author describes them as nut-free. Ingredients include a gluten-free 1:1 flour blend, butter, sugars, egg, vanilla, baking soda, baking powder, salt, and chocolate chips. Chill the dough for 2 hours, then bake at 350°F for 10–14 minutes. The page shows a 4.94/5 rating from 112 votes.\n- [Mama Knows Gluten Free: Gluten-Free Chocolate Chip Cookies](https://www.mamaknowsglutenfree.com/gluten-free-chocolate-chip-cookies/) — Ingredients include gluten-free flour with xanthan gum, butter, sugars, egg, molasses, vanilla, baking soda, baking powder, salt, and chocolate chips. Bake at 375°F for 8–10 minutes; no chilling is listed. The page shows a 4.64/5 rating from 116 votes.\n\nFor a nut allergy, check the flour and chocolate packaging for cross-contact warnings. FINAL ANSWER: Two options: Eat With Clarity’s explicitly nut-free recipe (350°F, 10–14 min, 2-hour chill; 4.94/5 from 112 votes) and Mama Knows Gluten Free’s recipe (375°F, 8–10 min, no chill listed; 4.64/5 from 116 votes). Both list no nuts; check ingredient labels for cross-contact.",
+  "session_id": "bench-baseline-v2-m2w-0632e496",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent browsed two gluten-free chocolate chip cookie recipe pages and reported nut-free options. Eat With Clarity explicitly describes its recipe as nut-free; the reported ingredient lists contain no nuts. The final answer identifies both recipes and includes cross-contact guidance.",
+  "failure_category": "none"
+ }
+}

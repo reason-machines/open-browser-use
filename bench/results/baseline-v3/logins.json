@@ -1,0 +1,54 @@
+{
+ "chrome:Profile 1": {
+  "x": {
+   "logged_in": true,
+   "final_url": "https://x.com/home"
+  },
+  "linkedin": {
+   "logged_in": true,
+   "final_url": "https://www.linkedin.com/feed/"
+  },
+  "gmail": {
+   "logged_in": true,
+   "final_url": "https://mail.google.com/mail/u/0/#inbox"
+  },
+  "github": {
+   "logged_in": true,
+   "final_url": "https://github.com/"
+  },
+  "reddit": {
+   "logged_in": true,
+   "final_url": "https://www.reddit.com/"
+  },
+  "bluesky": {
+   "logged_in": false,
+   "final_url": "https://bsky.app/"
+  }
+ },
+ "aside.app": {
+  "x": {
+   "logged_in": true,
+   "final_url": "https://x.com/home"
+  },
+  "linkedin": {
+   "logged_in": true,
+   "final_url": "https://www.linkedin.com/feed/"
+  },
+  "gmail": {
+   "logged_in": true,
+   "final_url": "https://mail.google.com/mail/u/0/#inbox"
+  },
+  "github": {
+   "logged_in": true,
+   "final_url": "https://github.com/"
+  },
+  "reddit": {
+   "logged_in": true,
+   "final_url": "https://www.reddit.com/"
+  },
+  "bluesky": {
+   "logged_in": false,
+   "final_url": "https://bsky.app/"
+  }
+ }
+}

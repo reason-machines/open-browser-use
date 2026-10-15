@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 21.1,
+  "steps": 8,
+  "tokens": 184409,
+  "final": "Economy carry-on: 1 piece up to 7 kg (15 lb). Checked baggage varies by route; check your booking for the specific allowance.",
+  "raw_final": "For **checked baggage**, Qatar Airways has no single economy weight allowance: it varies by route and fare. For **carry-on baggage**, economy passengers may bring one piece weighing up to **7 kg (15 lb)**. Check your booking confirmation for your checked allowance.\n\nFINAL ANSWER: Economy carry-on: 1 piece up to 7 kg (15 lb). Checked baggage varies by route; check your booking for the specific allowance.",
+  "session_id": "bench-baseline-v2-m2w-005be9dd",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The trajectory supports the 7 kg economy carry-on allowance, but the agent never retrieved or reported economy checked-baggage weight allowances. Saying they vary by route leaves the baggage allowance request incomplete.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "ours",
  "stack": "obu",
  "task_id": "fx-upload",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": false,
   "score": 0,
-  "reason": "The final answer omitted checksum 2f272eb0ca36. Upload failed after file chooser waits timed out and direct file input was denied.",
+  "reason": "The agent did not upload the file or report checksum 2f272eb0ca36. File chooser waits timed out, and DOM.setFileInputFiles was denied.",
   "failure_category": "download_or_upload"
  }
 }

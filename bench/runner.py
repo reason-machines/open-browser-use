@@ -62,6 +62,8 @@ Task:
 """
 
 TERMINAL_LOCK = threading.Lock()
+RESULT_CLIP = 8000          # per tool result kept for the judge (page snapshots carry the evidence)
+JUDGE_TRAJ_BUDGET = 240_000  # chars of trajectory shown to the judge
 
 
 def log(msg):
@@ -143,6 +145,32 @@ def clip(s, n):
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
+def parse_aside_events(events):
+    steps, tokens, final_text, traj, errors = 0, 0, "", [], []
+    if events.exists():
+        for line in events.read_text(errors="replace").splitlines():
+            try:
+                e = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            ty, msg = e.get("type"), e.get("message") or {}
+            if ty == "tool_execution_start":
+                steps += 1
+                traj.append(f"CALL {e.get('toolName')}: {clip(e.get('args'), 1200)}")
+            elif ty == "tool_execution_end":
+                res = e.get("result")
+                traj.append(f"RESULT{' (error)' if e.get('isError') else ''}: {clip(res, RESULT_CLIP)}")
+            elif ty == "message_end" and msg.get("role") == "assistant":
+                tokens += (msg.get("usage") or {}).get("totalTokens", 0) or 0
+                txt = "".join(c.get("text", "") for c in msg.get("content") or [] if c.get("type") == "text")
+                if txt.strip():
+                    final_text = txt
+                    traj.append(f"ASSISTANT: {clip(txt, 1500)}")
+                if msg.get("errorMessage"):
+                    errors.append(msg["errorMessage"])
+    return steps, tokens, final_text, traj, errors
+
+
 def run_aside(task, tdir):
     events = tdir / "events.ndjson"
     cmd = ["aside", "-m", ASIDE_MODEL, "--effort", "medium", "--log-dump", str(events), task["prompt"] + suffix_for(task)]
@@ -159,28 +187,7 @@ def run_aside(task, tdir):
             subprocess.run(["aside", "session", "stop", sid], stdin=subprocess.DEVNULL, capture_output=True, timeout=60)
         subprocess.run(["aside", "session", "archive", sid], stdin=subprocess.DEVNULL, capture_output=True, timeout=60)
 
-    steps, tokens, final_text, traj, errors = 0, 0, "", [], []
-    if events.exists():
-        for line in events.read_text(errors="replace").splitlines():
-            try:
-                e = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            ty, msg = e.get("type"), e.get("message") or {}
-            if ty == "tool_execution_start":
-                steps += 1
-                traj.append(f"CALL {e.get('toolName')}: {clip(e.get('args'), 1200)}")
-            elif ty == "tool_execution_end":
-                res = e.get("result")
-                traj.append(f"RESULT{' (error)' if e.get('isError') else ''}: {clip(res, 1500)}")
-            elif ty == "message_end" and msg.get("role") == "assistant":
-                tokens += (msg.get("usage") or {}).get("totalTokens", 0) or 0
-                txt = "".join(c.get("text", "") for c in msg.get("content") or [] if c.get("type") == "text")
-                if txt.strip():
-                    final_text = txt
-                    traj.append(f"ASSISTANT: {clip(txt, 1500)}")
-                if msg.get("errorMessage"):
-                    errors.append(msg["errorMessage"])
+    steps, tokens, final_text, traj, errors = parse_aside_events(events)
     if not final_text:
         final_text = out
     return {"exit": code, "timed_out": code is None, "seconds": round(secs, 1), "steps": steps,
@@ -234,6 +241,37 @@ def finalize_obu(stack, session_id, target):
                        stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
 
 
+def parse_ours_transcript(path):
+    steps, tok, final_text, traj, errors = 0, 0, "", [], []
+    for line in path.read_text(errors="replace").splitlines():
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        it = e.get("item") or {}
+        if e.get("type") == "item.completed":
+            ty = it.get("type")
+            if ty == "mcp_tool_call":
+                steps += 1
+                res = it.get("result") or it.get("error")
+                traj.append(f"CALL {it.get('tool')}: {clip(it.get('arguments'), 1200)}")
+                traj.append(f"RESULT{' (error)' if it.get('status') != 'completed' else ''}: {clip(res, RESULT_CLIP)}")
+            elif ty == "command_execution":
+                steps += 1
+                traj.append(f"SHELL {clip(it.get('command'), 600)} -> {clip(it.get('aggregated_output', ''), 3000)}")
+            elif ty == "agent_message":
+                final_text = it.get("text", "")
+                traj.append(f"ASSISTANT: {clip(final_text, 1500)}")
+            elif ty == "error":
+                errors.append(it.get("message"))
+        elif e.get("type") == "turn.completed":
+            u = e.get("usage") or {}
+            tok += (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0)
+        elif e.get("type") in ("turn.failed", "error"):
+            errors.append(json.dumps(e)[:400])
+    return steps, tok, final_text, traj, errors
+
+
 def run_ours(task, tdir, stack, run_id, target):
     session_id = f"bench-{run_id}-{task['id']}"[:80]
     cmd_bin, cmd_args = mcp_server(stack, session_id, target)
@@ -249,33 +287,7 @@ def run_ours(task, tdir, stack, run_id, target):
            "-c", 'mcp_servers.obu.default_tools_approval_mode="approve"',
            OURS_PREAMBLE + task["prompt"] + suffix_for(task)]
     code, secs = run_proc(cmd, tdir / "transcript.jsonl", tdir / "stderr.txt", task["timeout_s"])
-    steps, tok, final_text, traj, errors = 0, 0, "", [], []
-    for line in (tdir / "transcript.jsonl").read_text(errors="replace").splitlines():
-        try:
-            e = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        it = e.get("item") or {}
-        if e.get("type") == "item.completed":
-            ty = it.get("type")
-            if ty == "mcp_tool_call":
-                steps += 1
-                res = it.get("result") or it.get("error")
-                traj.append(f"CALL {it.get('tool')}: {clip(it.get('arguments'), 1200)}")
-                traj.append(f"RESULT{' (error)' if it.get('status') != 'completed' else ''}: {clip(res, 1500)}")
-            elif ty == "command_execution":
-                steps += 1
-                traj.append(f"SHELL {clip(it.get('command'), 600)} -> {clip(it.get('aggregated_output', ''), 800)}")
-            elif ty == "agent_message":
-                final_text = it.get("text", "")
-                traj.append(f"ASSISTANT: {clip(final_text, 1500)}")
-            elif ty == "error":
-                errors.append(it.get("message"))
-        elif e.get("type") == "turn.completed":
-            u = e.get("usage") or {}
-            tok += (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0)
-        elif e.get("type") in ("turn.failed", "error"):
-            errors.append(json.dumps(e)[:400])
+    steps, tok, final_text, traj, errors = parse_ours_transcript(tdir / "transcript.jsonl")
     return {"exit": code, "timed_out": code is None, "seconds": round(secs, 1), "steps": steps, "tokens": tok,
             "final": extract_final(final_text), "raw_final": final_text, "session_id": session_id,
             "errors": errors[-3:]}, traj
@@ -286,7 +298,8 @@ def run_ours(task, tdir, stack, run_id, target):
 # (all windows, all profiles) of the app the agent drives before and after the task. Per-agent
 # concurrency defaults to 1 so new tabs are attributable: Aside drives Aside.app, ours drives Chrome.
 
-APP_FOR = {"aside": "Aside", "ours": "Google Chrome", "ours-in-aside": "Aside"}
+APP_FOR = {"aside": "Aside", "ours": "Google Chrome", "ours-old": "Google Chrome", "ours-in-aside": "Aside"}
+# ours-old always uses the original `obu mcp` stack, so it stays a fixed comparison point when --stack obu-agent lands.
 TAB_SCRIPT = """tell application "%s"
 set out to ""
 repeat with w in windows
@@ -401,15 +414,31 @@ def judge(task, res, traj, tdir):
                 "(formatting/wording differences are fine; numeric values must match unless the key allows a range).")
     else:
         criteria = f"KEY POINTS the task requires (Online-Mind2Web / WebJudge style):\n{task['key_points']}"
-        rule = ("success=true only if the trajectory shows the agent actually satisfied every key point on the real website "
-                "(correct site, every filter/constraint applied, the right result reached) and the final answer reports it. "
-                "Be strict like WebJudge: missing any filter or constraint is a failure. Do not give credit for answers that "
-                "are not supported by what the trajectory shows.")
-    t = traj[-80:]
+        rule = ("Follow the Online-Mind2Web WebJudge protocol, adapted to text observations: (1) the key points above are "
+                "the requirements; (2) use the action history AND the page observations (snapshots/page text returned by "
+                "tools) as evidence, the same way WebJudge uses key screenshots; (3) success=true only if every key point is "
+                "satisfied on the task's website: each requested filter/sort/selection was actually applied (an action plus a "
+                "later observation reflecting it counts), and the agent reached the requested result. For 'find/show/browse' "
+                "tasks, reaching and reporting the correctly filtered page or item is success; the answer need not list "
+                "everything. Fail if a constraint was skipped or substituted, the wrong site/item was used, or the reported "
+                "values contradict or are absent from every observation (hallucination). Observations may be clipped: do not "
+                "fail solely because a value is cut off if the surrounding evidence clearly shows the state was reached.")
+    t = list(traj)
+    if sum(len(x) for x in t) > JUDGE_TRAJ_BUDGET:  # keep the start (navigation) and the end (evidence + answer)
+        head, tail, used = [], [], 0
+        for x in reversed(t):
+            if used + len(x) > JUDGE_TRAJ_BUDGET * 0.8:
+                break
+            tail.insert(0, x); used += len(x)
+        for x in t[: len(t) - len(tail)]:
+            if used + len(x) > JUDGE_TRAJ_BUDGET:
+                break
+            head.append(x); used += len(x)
+        t = head + [f"…[{len(traj) - len(head) - len(tail)} middle entries omitted]…"] + tail
     prompt = f"""You are a strict grader for a web-browsing agent benchmark.
 
 TASK given to the agent:
-{task['prompt']}
+{res.get('prompt_given') or re.sub(r"\nStart from \S+$", "", task['prompt'])}
 
 {criteria}
 
@@ -418,7 +447,7 @@ AGENT FINAL ANSWER:
 
 AGENT RUN FACTS: timed_out={res['timed_out']} exit={res['exit']} tool_steps={res['steps']} errors={res['errors']}
 
-AGENT TRAJECTORY (last {len(t)} entries, truncated):
+AGENT TRAJECTORY ({len(traj)} entries; long tool results clipped):
 {chr(10).join(t)}
 
 {rule}
@@ -441,13 +470,21 @@ Do not browse or run commands; judge only from the text above."""
 # ---------------------------------------------------------------- orchestration
 
 def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
+    if agent == "ours-old":
+        stack = "obu"
     tdir = run_dir / agent / task["id"]
     tdir.mkdir(parents=True, exist_ok=True)
     meta_path = tdir / "meta.json"
     if rejudge and meta_path.exists():
         meta = json.loads(meta_path.read_text())
-        traj = json.loads((tdir / "trajectory.json").read_text())
         res = meta["result"]
+        if agent == "aside" and (tdir / "events.ndjson").exists():
+            traj = parse_aside_events(tdir / "events.ndjson")[3]
+        elif agent != "aside" and (tdir / "transcript.jsonl").exists():
+            traj = parse_ours_transcript(tdir / "transcript.jsonl")[3]
+        else:
+            traj = json.loads((tdir / "trajectory.json").read_text())
+        (tdir / "trajectory.json").write_text(json.dumps(traj, indent=1, ensure_ascii=False))
     else:
         log(f"[{agent}] start {task['id']}")
         before = tab_snapshot(APP_FOR[agent])
@@ -460,6 +497,7 @@ def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
             res["target"] = target
             cleanup = lambda: finalize_obu(stack, res["session_id"], target)
         res["tabs"] = hygiene(agent, task, before, traj, cleanup)
+        res["prompt_given"] = task["prompt"]
         (tdir / "trajectory.json").write_text(json.dumps(traj, indent=1, ensure_ascii=False))
     verdict = judge(task, res, traj, tdir)
     meta = {"requires_login": task.get("requires_login"), "agent": agent, "stack": "aside" if agent == "aside" else stack, "task_id": task["id"],
@@ -537,7 +575,7 @@ def summarize(run_dir):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", default="both", help="aside | ours | ours-in-aside | both (aside+ours) | all, or a comma list")
+    ap.add_argument("--agent", default="both", help="aside | ours | ours-old | ours-in-aside | both (aside+ours) | all (aside+ours+ours-in-aside), or a comma list")
     ap.add_argument("--suite", default="hard", choices=["hard", "hard2", "mind2web", "all"])
     ap.add_argument("--tasks", default="")
     ap.add_argument("--stack", default=os.environ.get("BENCH_STACK", "obu"), choices=["obu", "obu-agent"])

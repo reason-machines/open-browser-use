@@ -1,1 +1,1 @@
-{"success":true,"score":1.0,"reason":"The final answer correctly gives requests version 0.0.1 and February 13, 2011, an accepted release date.","failure_category":"none"}
+{"success":true,"score":1.0,"reason":"The final answer gives version 0.0.1 and February 13, 2011, both matching the answer key.","failure_category":"none"}

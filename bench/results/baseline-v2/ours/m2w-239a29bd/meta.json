@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-239a29bd",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 26.3,
+  "steps": 10,
+  "tokens": 243786,
+  "final": "During pregnancy, don’t start a weight-loss diet unless your obstetric clinician specifically recommends a supervised plan. Ask your OB or pregnancy dietitian to set an appropriate weight-gain goal and tailor a gluten-free menu. Build meals around naturally gluten-free whole foods, include protein, produce, and nutritious grains or starches, use a prenatal vitamin as prescribed, and avoid calorie restriction or supplements without medical advice.",
+  "raw_final": "A **gluten-free way of eating can fit pregnancy**, but a weight-loss diet generally isn’t appropriate during pregnancy. Please ask your obstetrician or a registered dietitian who specializes in pregnancy to set a healthy weight-gain goal for your starting BMI, pregnancy stage, and health. ACOG’s general guidance is to focus on healthy eating and appropriate gain, rather than trying to lose weight.\n\nHere’s a balanced gluten-free day to discuss with them:\n\n- **Breakfast:** Eggs with spinach, fruit, and certified gluten-free oats or a fortified gluten-free cereal.\n- **Lunch:** Quinoa or brown rice bowl with chicken, beans, or tofu; plenty of vegetables; and avocado or olive oil.\n- **Snack:** Yogurt with berries and nuts, or hummus with vegetables.\n- **Dinner:** Salmon or thoroughly cooked beans, potatoes or brown rice, and cooked vegetables.\n- **Drinks:** Water; choose pasteurized dairy or fortified alternatives.\n\nFavor naturally gluten-free foods—vegetables, fruit, beans, lentils, eggs, meat, fish, dairy, rice, potatoes, corn, quinoa, and buckwheat. Gluten-free packaged foods can be low in fiber or enriched nutrients, so check labels and choose fortified options when useful. Continue your prenatal vitamin as prescribed; don’t add supplements or restrict calories without your clinician’s guidance. If you have celiac disease, strict gluten avoidance and attention to nutrient levels are especially important.\n\n**Sources:** [ACOG: Healthy Eating During Pregnancy](https://www.acog.org/womens-health/faqs/healthy-eating-during-pregnancy) and [ACOG: Obesity and Pregnancy](https://www.acog.org/womens-health/faqs/obesity-and-pregnancy).\n\nFINAL ANSWER: During pregnancy, don’t start a weight-loss diet unless your obstetric clinician specifically recommends a supervised plan. Ask your OB or pregnancy dietitian to set an appropriate weight-gain goal and tailor a gluten-free menu. Build meals around naturally gluten-free whole foods, include protein, produce, and nutritious grains or starches, use a prenatal vitamin as prescribed, and avoid calorie restriction or supplements without medical advice.",
+  "session_id": "bench-baseline-v2-m2w-239a29bd",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent provided pregnancy-appropriate guidance and gluten-free meal suggestions, but did not find and report a diet satisfying all three requirements. It substituted healthy pregnancy weight gain for weight loss, and the observed destination was general pregnancy nutrition guidance.",
+  "failure_category": "incomplete"
+ }
+}

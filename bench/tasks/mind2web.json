@@ -3,7 +3,7 @@
     "id": "m2w-04613880",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Find discussions of the community and open one with the most replies on Flightaware.",
+    "prompt": "Find discussions of the community and open one with the most replies on Flightaware.\nStart from https://www.flightaware.com/",
     "answer_key": null,
     "key_points": "1. Platform: flightaware  \n2. Find discussions of \u201ccommunity\u201d  \n3. Determine which community discussion has the most replies  \n4. Open the discussion with the most replies",
     "judge": "webjudge-keypoints",
@@ -11,14 +11,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "046138801a05ddf56ad94e8672942496",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 6,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.flightaware.com/"
   },
   {
     "id": "m2w-0a0fa834",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "What are the onboard activities of the highest-rated Regent Seven Seas Cruise ship based on Costco member reviews?",
+    "prompt": "What are the onboard activities of the highest-rated Regent Seven Seas Cruise ship based on Costco member reviews?\nStart from https://www.costco.com/",
     "answer_key": null,
     "key_points": "1. Select Regent Seven Seas Cruise ships\n2. Sort by highest-rated\n3. Use Costco member reviews as the data source\n4. Extract the onboard activities of the highest-rated ship",
     "judge": "webjudge-keypoints",
@@ -26,14 +30,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0a0fa834ce41b5297c6474293383759d",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 8,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.costco.com/"
   },
   {
     "id": "m2w-1ab384fb",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Show me the result of a proton emission decay for a Beryllium nucleus with 6 protons and 4 neutrons in the simulation.",
+    "prompt": "Show me the result of a proton emission decay for a Beryllium nucleus with 6 protons and 4 neutrons in the simulation.\nStart from https://phet.colorado.edu/",
     "answer_key": null,
     "key_points": "1. Task involves proton emission decay  \n2. Initial nucleus is Beryllium  \n3. Nucleus composition: 6 protons and 4 neutrons  \n4. Use the simulation to obtain the result  \n5. Show the decay result",
     "judge": "webjudge-keypoints",
@@ -41,14 +49,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "1ab384fb3a791edfb410213cc6b82151",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "hard",
+      "reference_length": 13,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://phet.colorado.edu/"
   },
   {
     "id": "m2w-239a29bd",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Find me a gluten-free diet to lose weight for a pregnant woman.",
+    "prompt": "Find me a gluten-free diet to lose weight for a pregnant woman.\nStart from https://www.healthline.com/",
     "answer_key": null,
     "key_points": "1. Gluten-free diet  \n2. Weight loss  \n3. For a pregnant woman",
     "judge": "webjudge-keypoints",
@@ -56,14 +68,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "239a29bde438fe44fe17fe1390ef1634",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 8,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.healthline.com/"
   },
   {
     "id": "m2w-28e7574e",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.",
+    "prompt": "Get a part-time job within 5 miles of Moscow, Idaho in the accommodation and food services industry, as a chef, and show jobs for corporate only.\nStart from https://ohiomeansjobs.ohio.gov/",
     "answer_key": null,
     "key_points": "1. Job type: part-time\n2. Location: within 5 miles of Moscow, Idaho\n3. Industry: accommodation and food services\n4. Position: chef\n5. Filter by corporate only",
     "judge": "webjudge-keypoints",
@@ -71,14 +87,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "28e7574e7bd6d14f36d2988a5ef2bd23",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "hard",
+      "reference_length": 12,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://ohiomeansjobs.ohio.gov/"
   },
   {
     "id": "m2w-301f267f",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.",
+    "prompt": "Find healthy savory vegan snack recipes which can be cooked within 5 minutes and contain a high level of protein.\nStart from https://www.healthline.com/",
     "answer_key": null,
     "key_points": "1. Healthy  \n2. Savory  \n3. Vegan snack recipes  \n4. Cook within 5 minutes  \n5. Contain high level of protein",
     "judge": "webjudge-keypoints",
@@ -86,14 +106,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "301f267f421b93045874726183e8f722",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 10,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.healthline.com/"
   },
   {
     "id": "m2w-354b4ddf",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Browse marketing jobs and filter by Bachelor's Degree education level.",
+    "prompt": "Browse marketing jobs and filter by Bachelor's Degree education level.\nStart from https://ohiomeansjobs.ohio.gov/",
     "answer_key": null,
     "key_points": "1. Browse marketing jobs\n2. Filter by Bachelor\u2019s Degree education level",
     "judge": "webjudge-keypoints",
@@ -101,14 +125,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "354b4ddf048815f8fd4163d0d7e1aaa3",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 6,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://ohiomeansjobs.ohio.gov/"
   },
   {
     "id": "m2w-39c388cd",
     "suite": "mind2web",
     "category": "mind2web-hard",
-    "prompt": "Calculate the estimated car loan payment amount for an average credit-rated person for a 15,000-dollar car with a down payment of 2000 dollars and loan tenure of 48 months in zip 65215 and shop for the lowest-priced car.",
+    "prompt": "Calculate the estimated car loan payment amount for an average credit-rated person for a 15,000-dollar car with a down payment of 2000 dollars and loan tenure of 48 months in zip 65215 and shop for the lowest-priced car.\nStart from https://www.cars.com/",
     "answer_key": null,
     "key_points": "1. Calculate estimated car loan payment amount\n2. Credit rating: average\n3. Car price: 15000 dollars\n4. Down payment: 2000 dollars\n5. Loan tenure: 48 months\n6. Zip code: 65215\n7. Filter by lowest",
     "judge": "webjudge-keypoints",
@@ -116,14 +144,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "39c388cdc468688c8139cc2bb5157c13",
-      "human_successes_of_6_agents": 0
-    }
+      "human_successes_of_6_agents": 0,
+      "level": "medium",
+      "reference_length": 9,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.cars.com/"
   },
   {
     "id": "m2w-0170ca95",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Check if a visa is required to work in the UK for longer than 6 months in Healthcare as an American citizen.",
+    "prompt": "Check if a visa is required to work in the UK for longer than 6 months in Healthcare as an American citizen.\nStart from https://www.gov.uk/",
     "answer_key": null,
     "key_points": "1. Check if a visa is required  \n2. Working in the UK  \n3. Duration longer than 6 months  \n4. Sector: Healthcare  \n5. Nationality: American citizen",
     "judge": "webjudge-keypoints",
@@ -131,14 +163,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0170ca95038b05fa58d463fe627ac605",
-      "human_successes_of_6_agents": 1
-    }
+      "human_successes_of_6_agents": 1,
+      "level": "hard",
+      "reference_length": 12,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.gov.uk/"
   },
   {
     "id": "m2w-05483c50",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Look for the best rated BBB accredited charity near 12023.",
+    "prompt": "Look for the best rated BBB accredited charity near 12023.\nStart from https://www.bbb.org/",
     "answer_key": null,
     "key_points": "1. Filter by BBB accreditation  \n2. Filter by highest-rated  \n3. Filter by proximity to ZIP code 12023",
     "judge": "webjudge-keypoints",
@@ -146,14 +182,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "05483c50cc9b04c8ac44c574758fb2bd",
-      "human_successes_of_6_agents": 2
-    }
+      "human_successes_of_6_agents": 2,
+      "level": "medium",
+      "reference_length": 8,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.bbb.org/"
   },
   {
     "id": "m2w-070c907d",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Find a dentist who specializes in pediatric dentistry and is located near zip code 90210 (within 5-mile distance).",
+    "prompt": "Find a dentist who specializes in pediatric dentistry and is located near zip code 90210 (within 5-mile distance).\nStart from https://www.healthgrades.com/",
     "answer_key": null,
     "key_points": "1. Find a dentist  \n2. Specializes in pediatric dentistry  \n3. Located near zip code 90210  \n4. Within 5 miles distance",
     "judge": "webjudge-keypoints",
@@ -161,14 +201,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "070c907d34a4ce71dfdbea38f9c5d4d8",
-      "human_successes_of_6_agents": 2
-    }
+      "human_successes_of_6_agents": 2,
+      "level": "medium",
+      "reference_length": 7,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.healthgrades.com/"
   },
   {
     "id": "m2w-0b2623e9",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.",
+    "prompt": "Find a list of shorthaired dogs available for adoption within 100 miles of zip code 94587 that are good with kids and cats, and have been on Petfinder for over 30 days.\nStart from https://www.petfinder.com/",
     "answer_key": null,
     "key_points": "1. Shorthaired dogs  \n2. Available for adoption  \n3. Within 100 miles of zip code 94587  \n4. Good with kids  \n5. Good with cats  \n6. On Petfinder for over 30 days",
     "judge": "webjudge-keypoints",
@@ -176,14 +220,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0b2623e9fa5cea997f76490bcbc5220f",
-      "human_successes_of_6_agents": 1
-    }
+      "human_successes_of_6_agents": 1,
+      "level": "hard",
+      "reference_length": 13,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.petfinder.com/"
   },
   {
     "id": "m2w-0b838cd5",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Find all the locations for the second-best-rated used car dealer less than 5 miles from New York.",
+    "prompt": "Find all the locations for the second-best-rated used car dealer less than 5 miles from New York.\nStart from https://www.bbb.org/",
     "answer_key": null,
     "key_points": "1. Used car dealer  \n2. Less than 5 miles from New York  \n3. Sort by rating to identify the second best rated  \n4. Find all locations for that dealer",
     "judge": "webjudge-keypoints",
@@ -191,14 +239,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0b838cd54f826c59c71f600c56b89a11",
-      "human_successes_of_6_agents": 1
-    }
+      "human_successes_of_6_agents": 1,
+      "level": "hard",
+      "reference_length": 11,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.bbb.org/"
   },
   {
     "id": "m2w-1223b075",
     "suite": "mind2web",
     "category": "mind2web-medium",
-    "prompt": "Complete a multiplication quiz on https://www.coolmath4kids.com/, covering multiplication facts for 11-12. The quiz should consist of 10 questions, with unlimited time allowed for each. The goal is to achieve a perfect score of 10 out of 10.",
+    "prompt": "Complete a multiplication quiz on https://www.coolmath4kids.com/, covering multiplication facts for 11-12. The quiz should consist of 10 questions, with unlimited time allowed for each. The goal is to achieve a perfect score of 10 out of 10.\nStart from https://www.coolmath4kids.com/",
     "answer_key": null,
     "key_points": "1. Complete a multiplication quiz on https://www.coolmath4kids.com/\n2. Cover multiplication facts for 11\u201312\n3. Consist of 10 questions\n4. Allow unlimited time per question\n5. Achieve a perfect score of 10 out of 10",
     "judge": "webjudge-keypoints",
@@ -206,14 +258,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "1223b07536a87e0170ff87cbbebd1d3c",
-      "human_successes_of_6_agents": 2
-    }
+      "human_successes_of_6_agents": 2,
+      "level": "hard",
+      "reference_length": 24,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.coolmath4kids.com/"
   },
   {
     "id": "m2w-0059adc6",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Find support services jobs in Bentonville, in the state of Arkansas.",
+    "prompt": "Find support services jobs in Bentonville, in the state of Arkansas.\nStart from https://careers.walmart.com/",
     "answer_key": null,
     "key_points": "1. Find support services jobs  \n2. Location: Bentonville  \n3. State: Arkansas",
     "judge": "webjudge-keypoints",
@@ -221,14 +277,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0059adc6b12a3822305deb68929b2de8",
-      "human_successes_of_6_agents": 4
-    }
+      "human_successes_of_6_agents": 4,
+      "level": "medium",
+      "reference_length": 8,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://careers.walmart.com/"
   },
   {
     "id": "m2w-005be9dd",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Find the weight of baggage allowance for economy class on Qatar Airways.",
+    "prompt": "Find the weight of baggage allowance for economy class on Qatar Airways.\nStart from https://www.qatarairways.com/",
     "answer_key": null,
     "key_points": "1. Weight of baggage allowance  \n2. Economy class  \n3. Qatar Airways",
     "judge": "webjudge-keypoints",
@@ -236,14 +296,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "005be9dd91c95669d6ddde9ae667125c",
-      "human_successes_of_6_agents": 4
-    }
+      "human_successes_of_6_agents": 4,
+      "level": "easy",
+      "reference_length": 4,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.qatarairways.com/"
   },
   {
     "id": "m2w-01abae96",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Show me the code for the company that is the top mover in the Cboe Europe Technology Sector Index (BEPTEC) as of the latest market close.",
+    "prompt": "Show me the code for the company that is the top mover in the Cboe Europe Technology Sector Index (BEPTEC) as of the latest market close.\nStart from https://www.cboe.com/",
     "answer_key": null,
     "key_points": "1. Show the code for the company  \n2. Filter by highest mover  \n3. Within the Cboe Europe Technology Sector Index (BEPTEC)  \n4. As of the latest market close",
     "judge": "webjudge-keypoints",
@@ -251,14 +315,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "01abae9608f2d8752a83e08f136f720c",
-      "human_successes_of_6_agents": 4
-    }
+      "human_successes_of_6_agents": 4,
+      "level": "medium",
+      "reference_length": 6,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.cboe.com/"
   },
   {
     "id": "m2w-0632e496",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.",
+    "prompt": "Browse recipes for gluten-free chocolate chip cookies that can be made without nuts.\nStart from https://cookpad.com/",
     "answer_key": null,
     "key_points": "1. Browse recipes  \n2. Recipes for gluten-free chocolate chip cookies  \n3. Recipes that can be made without nuts",
     "judge": "webjudge-keypoints",
@@ -266,14 +334,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "0632e496d37badee0350dad358f047c5",
-      "human_successes_of_6_agents": 6
-    }
+      "human_successes_of_6_agents": 6,
+      "level": "easy",
+      "reference_length": 4,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://cookpad.com/"
   },
   {
     "id": "m2w-07bdc595",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Select a high speed train ticket with a departure time before 23:00  from Shanghai to Beijing.",
+    "prompt": "Select a high speed train ticket with a departure time before 23:00  from Shanghai to Beijing.\nStart from https://us.trip.com/",
     "answer_key": null,
     "key_points": "1. Select a high speed train ticket  \n2. Departure time before 23:00  \n3. Departure city: Shanghai  \n4. Arrival city: Beijing",
     "judge": "webjudge-keypoints",
@@ -281,14 +353,18 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "07bdc595306729a028ba06cc7451a80a",
-      "human_successes_of_6_agents": 4
-    }
+      "human_successes_of_6_agents": 4,
+      "level": "medium",
+      "reference_length": 7,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://us.trip.com/"
   },
   {
     "id": "m2w-07ec4a12",
     "suite": "mind2web",
     "category": "mind2web-easy",
-    "prompt": "Check drug interaction for melatonin and Folate Forte.",
+    "prompt": "Check drug interaction for melatonin and Folate Forte.\nStart from https://www.drugs.com/",
     "answer_key": null,
     "key_points": "1. Check drug interaction  \n2. Melatonin  \n3. Folate Forte",
     "judge": "webjudge-keypoints",
@@ -296,7 +372,11 @@
     "source": {
       "dataset": "Online-Mind2Web",
       "task_id": "07ec4a12cba8090e2dc524d558ac7675",
-      "human_successes_of_6_agents": 5
-    }
+      "human_successes_of_6_agents": 5,
+      "level": "medium",
+      "reference_length": 6,
+      "website_from": "browserbase/stagehand packages/evals/datasets/onlineMind2Web (mirror of the gated HF dataset)"
+    },
+    "website": "https://www.drugs.com/"
   }
 ]

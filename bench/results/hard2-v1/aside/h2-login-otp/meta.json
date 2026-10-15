@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "h2-login-otp",
+ "category": "login-2fa-session",
+ "suite": "hard2",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 65.0,
+  "steps": 15,
+  "tokens": 1173392,
+  "final": "API secret: `0ZMHRTM`",
+  "raw_final": "The test user is signed in, the verification check was completed, and all tabs I opened have been closed.\n\nFINAL ANSWER: API secret: `0ZMHRTM`",
+  "session_id": "M0BjoDVYLzb77Z6K",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 78,
+   "tabs_after_agent": 78,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 78,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer reports API secret 0ZMHRTM, exactly matching the answer key and the Account page observed in the trajectory.",
+  "failure_category": "none"
+ }
+}

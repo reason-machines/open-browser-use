@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-multitab-stars",
+ "category": "multi-tab-compare",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 56.2,
+  "steps": 4,
+  "tokens": 381306,
+  "final": "**Most to fewest stars** (as displayed on GitHub):\n\n1. [facebook/react](https://github.com/facebook/react): **251k**\n2. [sveltejs/svelte](https://github.com/sveltejs/svelte): **88.4k**\n3. [vuejs/core](https://github.com/vuejs/core): **54.6k**",
+  "raw_final": "FINAL ANSWER: **Most to fewest stars** (as displayed on GitHub):\n\n1. [facebook/react](https://github.com/facebook/react): **251k**\n2. [sveltejs/svelte](https://github.com/sveltejs/svelte): **88.4k**\n3. [vuejs/core](https://github.com/vuejs/core): **54.6k**",
+  "session_id": "I6bk3WzbLmPRcpM2",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "All three repositories were opened in separate tabs. The final ranking is correct, and all reported star counts are within the allowed ±10% range.",
+  "failure_category": "none"
+ }
+}

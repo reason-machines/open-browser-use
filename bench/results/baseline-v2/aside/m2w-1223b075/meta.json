@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-1223b075",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 168.0,
+  "steps": 20,
+  "tokens": 1665921,
+  "final": "Completed the 10-question multiplication quiz for facts 11–12 with unlimited time and scored **10 out of 10**.",
+  "raw_final": "FINAL ANSWER: Completed the 10-question multiplication quiz for facts 11–12 with unlimited time and scored **10 out of 10**.",
+  "session_id": "LrbKheyQU1br3gAE",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The website results explicitly confirm Multiplication: 11–12, unlimited seconds, and 10 out of 10, with all ten answers marked correct. The final answer accurately reports completion.",
+  "failure_category": "none"
+ }
+}

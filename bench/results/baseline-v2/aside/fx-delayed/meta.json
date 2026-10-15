@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "aside",
  "stack": "aside",
  "task_id": "fx-delayed",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The final answer matches the required key, 04F17GY, and the trajectory confirms it was generated on the page.",
+  "reason": "The final answer matches the required key, 04F17GY, confirmed in the trajectory.",
   "failure_category": "none"
  }
 }

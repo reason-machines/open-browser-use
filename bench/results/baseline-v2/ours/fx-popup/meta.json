@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "ours",
  "stack": "obu",
  "task_id": "fx-popup",

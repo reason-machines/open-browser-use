@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-01abae96",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 24.8,
+  "steps": 10,
+  "tokens": 305168,
+  "final": "ERICBS — Telefonaktiebolaget LM Ericsson (Class B)",
+  "raw_final": "The top positive mover in the Cboe Europe Technology Sector Index (BEPTEC) was Telefonaktiebolaget LM Ericsson’s Class B shares, code **ERICBS**, up **3.85%** on Sharecast’s 15 October 2026 heatmap.\n\nFINAL ANSWER: ERICBS — Telefonaktiebolaget LM Ericsson (Class B)",
+  "session_id": "bench-baseline-v2-m2w-01abae96",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent identified ERICBS as the highest positive mover in BEPTEC's heatmap, but used intraday data timestamped 13:26 on 15 October 2026. It never verified the top mover as of the latest market close, so the required time constraint was not satisfied.",
+  "failure_category": "wrong_answer"
+ }
+}

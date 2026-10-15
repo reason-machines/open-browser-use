@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-005be9dd",
+ "category": "mind2web-easy",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 10.2,
+  "steps": 1,
+  "tokens": 143095,
+  "final": "Economy carry-on is generally 1 piece up to 7 kg (15 lb). Checked baggage is 20 kg (Lite), 25 kg (Classic), 30 kg (Convenience), or 35 kg (Comfort) on most routes; to/from Africa or the Americas, Lite includes 1 × 23 kg bag and other Economy fares include 2 × 23 kg bags. Brazil carry-on exception: up to 10 kg.",
+  "raw_final": "Qatar Airways’ Economy baggage allowance depends on route and fare:\n\n- **Carry-on:** 1 piece up to **7 kg (15 lb)**. Flights to/from Brazil allow up to **10 kg (22 lb)**.\n- **Checked, flights to/from Africa or the Americas:** Economy Lite allows **1 bag up to 23 kg (50 lb)**; Classic, Convenience and Comfort allow **2 bags up to 23 kg each**.\n- **Checked, other destinations:** Lite **20 kg**, Classic **25 kg**, Convenience **30 kg**, Comfort **35 kg**.\n\nCheck your ticket for the exact allowance, as route and fare rules apply. <citation refs=\"wZiIEKS_yt7wEaFTFMbvS\">$20–35 kg checked allowances and 7 kg carry-on</citation>\n\nFINAL ANSWER: Economy carry-on is generally 1 piece up to 7 kg (15 lb). Checked baggage is 20 kg (Lite), 25 kg (Classic), 30 kg (Convenience), or 35 kg (Comfort) on most routes; to/from Africa or the Americas, Lite includes 1 × 23 kg bag and other Economy fares include 2 × 23 kg bags. Brazil carry-on exception: up to 10 kg.",
+  "session_id": "3mU7IqcnkV1B2VqC",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The trajectory includes Qatar Airways’ official baggage allowance page, explicitly showing Economy carry-on and checked baggage weights by fare and route. The final answer accurately reports those allowances and the Brazil exception.",
+  "failure_category": "none"
+ }
+}

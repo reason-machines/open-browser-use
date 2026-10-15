@@ -1,0 +1,1 @@
+{"success":false,"score":0.5,"reason":"The agent opened the correct multiplication quiz and applied 11–12 facts, 10 questions, and unlimited time. It did not complete all 10 questions or reach an observed 10/10 result, and stopped voluntarily.","failure_category":"gave_up"}

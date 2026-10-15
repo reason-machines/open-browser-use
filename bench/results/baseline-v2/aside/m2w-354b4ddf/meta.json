@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-354b4ddf",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 19.4,
+  "steps": 6,
+  "tokens": 525358,
+  "final": "Marketing jobs filtered by Bachelor's degree education level on Indeed (about 76,000 results).",
+  "raw_final": "Filtered Indeed’s marketing job results to **Bachelor’s degree**. The filter is active, and Indeed now shows about **76,000** matching results.\n\nFINAL ANSWER: Marketing jobs filtered by Bachelor's degree education level on Indeed (about 76,000 results).",
+  "session_id": "c4dbPmrQ7waG7CNs",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The agent searched Indeed for marketing jobs, selected Bachelor's degree, and clicked Update. The later observation shows an active Education 1 filter and 76,000 marketing results, confirming both requirements.",
+  "failure_category": "none"
+ }
+}

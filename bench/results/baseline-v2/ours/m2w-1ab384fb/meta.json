@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-1ab384fb",
+ "category": "mind2web-hard",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 79.3,
+  "steps": 41,
+  "tokens": 932628,
+  "final": "No verified result — the simulation displayed Helium‑6, not the requested nucleus.",
+  "raw_final": "I couldn’t complete the requested simulation. The PhET “Build a Nucleus” screen showed **Helium‑6** after my interactions, not the requested 6‑proton, 4‑neutron nucleus, so I can’t report that as a valid decay result.\n\nFINAL ANSWER: No verified result — the simulation displayed Helium‑6, not the requested nucleus.",
+  "session_id": "bench-baseline-v2-m2w-1ab384fb",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.0,
+  "reason": "The agent opened the simulation but never verified the requested nucleus composition, applied proton emission, or reached and showed its decay result. It explicitly stopped without a verified result.",
+  "failure_category": "gave_up"
+ }
+}

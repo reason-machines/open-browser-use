@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "ours",
  "stack": "obu",
  "task_id": "live-pypi-requests",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": true,
   "score": 1.0,
-  "reason": "The answer correctly identifies version 0.0.1 and February 13, 2011, an accepted release date.",
+  "reason": "The answer correctly identifies version 0.0.1 and February 13, 2011, an accepted release date, supported by the PyPI browser trajectory.",
   "failure_category": "none"
  }
 }

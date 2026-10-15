@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-0b2623e9",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 31.5,
+  "steps": 8,
+  "tokens": 677925,
+  "final": "** No dogs could be verified against all requested criteria. The Petfinder search needs a working 94587 location filter before I can provide a trustworthy list.",
+  "raw_final": "I couldn’t complete a reliable list. Petfinder’s search stayed on San Francisco instead of applying ZIP 94587, and its filters didn’t reliably accept the “good with kids and cats” selections. The page showed 1,268 dogs after a cats filter, but I couldn’t verify short coat, kid compatibility, or over 30 days listed for individual dogs.\n\n**FINAL ANSWER:** No dogs could be verified against all requested criteria. The Petfinder search needs a working 94587 location filter before I can provide a trustworthy list.",
+  "session_id": "k3klWBa5GVYxaFLk",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0,
+  "reason": "The agent never reached the requested results. Only the cats filter was confirmed; the search remained in San Francisco, and short coat, good with kids, and over 30 days were never applied or verified. It stopped without providing a qualifying list or correctly filtered page.",
+  "failure_category": "gave_up"
+ }
+}

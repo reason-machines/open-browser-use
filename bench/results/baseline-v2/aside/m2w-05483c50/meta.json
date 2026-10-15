@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 32.9,
+  "steps": 9,
+  "tokens": 587244,
+  "final": "Spina Bifida Association of New York State, 133 Saratoga Road, Scotia, NY 12302; BBB Accredited Charity, reviewed by BBB of Upstate New York. BBB charity evaluations use “Meets Standards,” not a letter grade.",
+  "raw_final": "The strongest nearby match I found is **Spina Bifida Association of New York State**, at **133 Saratoga Road, Scotia, NY 12302**. It serves people and families across New York, and its website links to its BBB Accredited Charity report. Scotia is in the Capital Region, roughly 30 miles from Berne (ZIP 12023). <citation refs=\"cZuqoKPb9mXXCm6fpEchr,v69wGver_EyCsbvO4_U0G,zTX0llaBs7QRhDqLpUyTO\">Details and location</citation>\n\nBBB charity reports use **“Meets Standards”** accreditation status, not the letter-grade ratings used for businesses. The local report is from BBB of Upstate New York; I couldn’t verify a separate numerical or letter rating for this charity. <citation refs=\"v69wGver_EyCsbvO4_U0G,ARgPKKl2H3USBxORH5uCg\">\n\nFINAL ANSWER: Spina Bifida Association of New York State, 133 Saratoga Road, Scotia, NY 12302; BBB Accredited Charity, reviewed by BBB of Upstate New York. BBB charity evaluations use “Meets Standards,” not a letter grade.",
+  "session_id": "0CMdky9K9QhFZ23u",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The agent identified a plausible nearby charity, but never applied or verified BBB accreditation, highest-rated, and ZIP 12023 proximity filters on BBB. Search queries and a general explanation of charity standards do not establish the requested filtered result or highest-rated selection.",
+  "failure_category": "incomplete"
+ }
+}

@@ -1,4 +1,5 @@
 {
+ "requires_login": null,
  "agent": "ours",
  "stack": "obu",
  "task_id": "fx-dragdrop",
@@ -32,7 +33,7 @@
  "verdict": {
   "success": false,
   "score": 0,
-  "reason": "The final answer omitted the required code 03LGSL9. Repeated drag attempts failed to reorder the cards or reveal the code.",
+  "reason": "The final answer omitted the required code 03LGSL9. Repeated drag attempts failed to reorder the cards or trigger the pointer handlers.",
   "failure_category": "interaction_failed"
  }
 }

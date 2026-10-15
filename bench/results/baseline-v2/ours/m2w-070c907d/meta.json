@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-070c907d",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 27.2,
+  "steps": 7,
+  "tokens": 166569,
+  "final": "Beverly Hills Pediatric Dentistry — 414 N Camden Dr, Suite 675, Beverly Hills, CA 90210; pediatric and adolescent dentistry; (310) 271-5231; within 5 miles of ZIP 90210.",
+  "raw_final": "Beverly Hills Pediatric Dentistry is a pediatric and adolescent dentistry practice at **414 N Camden Dr, Suite 675, Beverly Hills, CA 90210**—in the requested ZIP code, so it’s within 5 miles of 90210. The practice lists Dr. Mark Goldenberg and Dr. Darrin Hirt as pediatric dentists with specialized training. Phone: **(310) 271-5231**. [Website](https://beverlyhillspediatricdentistry.com/)\n\nFINAL ANSWER: Beverly Hills Pediatric Dentistry — 414 N Camden Dr, Suite 675, Beverly Hills, CA 90210; pediatric and adolescent dentistry; (310) 271-5231; within 5 miles of ZIP 90210.",
+  "session_id": "bench-baseline-v2-m2w-070c907d",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.5,
+  "reason": "The observations verify a pediatric dentistry practice at the reported 90210 address, but no distance search, radius filter, or measurement establishes that it is within 5 miles. Sharing the ZIP code substitutes for verifying the explicit distance constraint.",
+  "failure_category": "incomplete"
+ }
+}

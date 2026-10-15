@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-nobel-physics",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 17.1,
+  "steps": 7,
+  "tokens": 195531,
+  "final": "The 1903 Nobel Prize in Physics was awarded to Henri Becquerel, Marie Curie, and Pierre Curie. The 1921 laureate was Albert Einstein, born in Ulm.",
+  "raw_final": "FINAL ANSWER: The 1903 Nobel Prize in Physics was awarded to Henri Becquerel, Marie Curie, and Pierre Curie. The 1921 laureate was Albert Einstein, born in Ulm.",
+  "session_id": "bench-baseline-v2-live-nobel-physics",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes all three 1903 laureates, Albert Einstein for 1921, and his birthplace city, Ulm.",
+  "failure_category": "none"
+ }
+}

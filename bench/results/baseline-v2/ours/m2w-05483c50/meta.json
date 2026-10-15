@@ -1,0 +1,39 @@
+{
+ "requires_login": null,
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "m2w-05483c50",
+ "category": "mind2web-medium",
+ "suite": "mind2web",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 80.3,
+  "steps": 30,
+  "tokens": 691851,
+  "final": "No current best-rated BBB-accredited charity near 12023 could be verified. The closest match found was CEK RN Consulting, 1 Steuben Pl, Albany, NY 12207, phone (518) 334-2254; its BBB report says “Meets Standards,” but the accreditation expired February 2025.",
+  "raw_final": "I couldn’t verify a currently accredited charity near ZIP 12023 with a current rating. The closest match I found was CEK RN Consulting in Albany, NY (about 25 miles away). BBB Wise Giving Alliance’s report says it met all 20 Charity Accountability Standards, but that accreditation expired in February 2025, so it can’t be confirmed as current.\n\nReport: https://give.org/charity-reviews/human-services/cek-rn-consulting-in-albany-ny-0041-236012992\n\nFINAL ANSWER: No current best-rated BBB-accredited charity near 12023 could be verified. The closest match found was CEK RN Consulting, 1 Steuben Pl, Albany, NY 12207, phone (518) 334-2254; its BBB report says “Meets Standards,” but the accreditation expired February 2025.",
+  "session_id": "bench-baseline-v2-m2w-05483c50",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": false,
+  "score": 0.0,
+  "reason": "The agent never applied BBB accreditation, highest-rated, or ZIP 12023 proximity filters on the task website. It inspected one Albany charity report with an expired review and did not reach a verified best-rated accredited result.",
+  "failure_category": "incomplete"
+ }
+}
