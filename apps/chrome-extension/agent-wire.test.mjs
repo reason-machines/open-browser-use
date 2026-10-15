@@ -224,6 +224,32 @@ test("popups opened by a session tab are adopted into that session", async () =>
   assert.equal(notifications(fake, "popupOpened").length, 1);
 });
 
+test("background-tab popups are attributed via the agent group and never steal the user's tab", async () => {
+  const { fake } = await setup();
+  const user = fake.userTab({ active: true });
+  fake.activateTab(user.id);
+  const agentTab = await ok(fake, "createTab", S("child", { parent_session_id: "root" }));
+  await ok(fake, "executeCdp", { ...S("child"), target: { tabId: agentTab.id }, method: "Runtime.evaluate", commandParams: { expression: "pop.click()" } });
+  // Chrome reports the window's active (user) tab as opener but puts the new
+  // tab in the source tab's group, in the foreground.
+  const groupId = fake.state.tabs.get(agentTab.id).groupId;
+  const popup = await fake.chrome.tabs.create({ url: "https://p.example/", windowId: 1, active: true, openerTabId: user.id, groupId });
+  await settle();
+  const [opened] = notifications(fake, "popupOpened");
+  assert.equal(opened.tabId, popup.id);
+  assert.equal(opened.sessionId, "child");
+  assert.equal(opened.openerTabId, agentTab.id);
+  assert.equal(fake.state.tabs.get(user.id).active, true, "user's tab re-activated");
+  assert.equal(fake.state.tabs.get(popup.id).active, false);
+});
+
+test("the active tab of a visible but unfocused window is still guarded", async () => {
+  const { fake } = await setup({ windows: [{ id: 1, focused: false, type: "normal", state: "normal" }] });
+  const tab = await ok(fake, "createTab", S("s1"));
+  fake.activateTab(tab.id);
+  assert.equal((await ok(fake, "closeTab", { ...S("s1"), tabId: tab.id })).reason, "user_viewing");
+});
+
 test("popup-window tabs that cannot be grouped are still owned and closable", async () => {
   const { fake } = await setup({
     windows: [
@@ -393,4 +419,21 @@ test("deliverables never merge into a live agent group that shares the brand tit
   assert.notEqual(doneGroup, liveGroup);
   assert.equal(fake.state.groups.get(doneGroup).title, bg.BRAND.deliverableGroupTitle);
   assert.equal(fake.state.groups.get(doneGroup).color, bg.BRAND.deliverableGroupColor);
+});
+
+test("lease backstop: idle sessions are finalized by the extension (agent tabs closed, handoff kept)", async () => {
+  const { fake, bg } = await setup();
+  const idle = await ok(fake, "createTab", S("idle"));
+  const handedOff = await ok(fake, "createTab", S("handoff"));
+  await ok(fake, "finalizeTabs", { ...S("handoff"), keep: [{ tabId: handedOff.id, status: "handoff" }] });
+  const fresh = await ok(fake, "createTab", S("fresh"));
+  await ok(fake, "configure", { sessionLeaseMs: 1000 });
+  bg.backend.store.state.sessions.idle.lastSeenAt -= 5000;
+  bg.backend.store.state.sessions.handoff.lastSeenAt -= 5000;
+  const swept = await bg.backend.sweepExpiredSessions();
+  assert.deepEqual(JSON.parse(JSON.stringify(swept.map((r) => r.sessionId))), ["idle"]);
+  assert.ok(!fake.state.tabs.has(idle.id), "idle agent tab closed");
+  assert.ok(fake.state.tabs.has(handedOff.id), "handoff tab stays");
+  assert.ok(fake.state.tabs.has(fresh.id), "live session untouched");
+  assert.equal(notifications(fake, "sessionExpired")[0].sessionId, "idle");
 });

@@ -125,7 +125,7 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
       onUpdated: event(),
       onRemoved: event(),
       onMoved: event(),
-      async create({ url = "about:blank", windowId, active = true, openerTabId }) {
+      async create({ url = "about:blank", windowId, active = true, openerTabId, groupId = -1 }) {
         const id = state.nextTabId++;
         const tab = {
           id,
@@ -133,7 +133,7 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
           url,
           title: "",
           active: Boolean(active),
-          groupId: -1,
+          groupId,
           index: state.tabs.size,
           ...(Number.isInteger(openerTabId) ? { openerTabId } : {})
         };
@@ -142,6 +142,7 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
         state.targets.set(id, `target-${id}`);
         state.created.push({ id, windowId, active: Boolean(active), url });
         chrome.tabs.onCreated.fire(tabCopy(tab));
+        if (active) chrome.tabs.onActivated.fire({ tabId: id, windowId });
         return tabCopy(tab);
       },
       async get(tabId) {
@@ -176,6 +177,8 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
           state.groups.set(target, { id: target, windowId: first.windowId, title: "", color: "blue", collapsed: false });
         } else if (!state.groups.has(target)) {
           throw new Error(`No group with id: ${target}.`);
+        } else if (ids.some((id) => state.windows.get(state.tabs.get(id)?.windowId)?.type === "popup")) {
+          throw new Error("Tabs can only be moved to and from normal windows.");
         }
         for (const id of ids) {
           const tab = state.tabs.get(id);
@@ -190,6 +193,17 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
           if (tab) setGroup(tab, -1);
         }
         disposeEmptyGroups();
+      },
+      onActivated: event(),
+      async update(tabId, props) {
+        const tab = state.tabs.get(tabId);
+        if (!tab) throw new Error(`No tab with id: ${tabId}.`);
+        if (props.active) {
+          for (const other of state.tabs.values()) if (other.windowId === tab.windowId) other.active = false;
+          tab.active = true;
+          chrome.tabs.onActivated.fire({ tabId, windowId: tab.windowId });
+        }
+        return tabCopy(tab);
       },
       async sendMessage() {
         return { ok: true };
@@ -253,6 +267,7 @@ export function createChromeFake({ windows = [{ id: 1, focused: true, type: "nor
       const tab = state.tabs.get(tabId);
       for (const other of state.tabs.values()) if (other.windowId === tab.windowId) other.active = false;
       tab.active = true;
+      chrome.tabs.onActivated.fire({ tabId, windowId: tab.windowId });
     },
     userTab(props = {}) {
       const id = state.nextTabId++;

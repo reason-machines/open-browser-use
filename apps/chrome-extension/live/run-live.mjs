@@ -6,7 +6,7 @@
 //   node apps/chrome-extension/live/run-live.mjs [--chrome <binary>] [--keep-open]
 //
 // Env: OBU_LIVE_CHROME (binary), OBU_LIVE_DEBUG_PORT (default 9410),
-//      OBU_LIVE_PORTS (default 47210,47211 — two fixture origins).
+//      OBU_LIVE_PORTS (default 9411,9412 — two fixture origins).
 
 import { spawn, execFileSync } from "node:child_process";
 import crypto from "node:crypto";
@@ -29,21 +29,42 @@ const argValue = (flag) => {
 };
 const CHROME = argValue("--chrome") || process.env.OBU_LIVE_CHROME || findChromeForTesting();
 const DEBUG_PORT = Number(process.env.OBU_LIVE_DEBUG_PORT || 9410);
-const [PORT_A, PORT_B] = (process.env.OBU_LIVE_PORTS || "47210,47211").split(",").map(Number);
+const [PORT_A, PORT_B] = (process.env.OBU_LIVE_PORTS || "9411,9412").split(",").map(Number);
 const NATIVE_HOST = "com.ifuryst.open_browser_use.extension";
 const results = [];
 
 function findChromeForTesting() {
-  const root = path.join(os.homedir(), ".cache", "puppeteer", "chrome");
-  const versions = fs.existsSync(root) ? fs.readdirSync(root).filter((name) => name.startsWith("mac_arm-")).sort(compareVersions) : [];
-  const latest = versions.at(-1);
-  if (!latest) throw new Error("No Chrome for Testing found; pass --chrome <binary>");
-  return path.join(root, latest, "chrome-mac-arm64", "Google Chrome for Testing.app", "Contents", "MacOS", "Google Chrome for Testing");
+  const app = ["Google Chrome for Testing.app", "Contents", "MacOS", "Google Chrome for Testing"];
+  const candidates = [];
+  const puppeteer = path.join(os.homedir(), ".cache", "puppeteer", "chrome");
+  if (fs.existsSync(puppeteer)) {
+    for (const name of fs.readdirSync(puppeteer)) candidates.push(path.join(puppeteer, name, "chrome-mac-arm64", ...app));
+  }
+  const playwright = path.join(os.homedir(), "Library", "Caches", "ms-playwright");
+  if (fs.existsSync(playwright)) {
+    for (const name of fs.readdirSync(playwright).filter((n) => /^chromium-\d+$/.test(n))) {
+      candidates.push(path.join(playwright, name, "chrome-mac-arm64", ...app));
+    }
+  }
+  const found = candidates
+    .filter((binary) => fs.existsSync(binary))
+    .map((binary) => {
+      try {
+        const version = execFileSync(binary, ["--version"], { encoding: "utf8" }).match(/([\d.]+)/)?.[1] ?? "0";
+        return { binary, version };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => compareVersions(a.version, b.version));
+  if (!found.length) throw new Error("No Chrome for Testing found; pass --chrome <binary>");
+  return found.at(-1).binary;
 }
 
 function compareVersions(a, b) {
-  const pa = a.replace(/^mac_arm-/, "").split(".").map(Number);
-  const pb = b.replace(/^mac_arm-/, "").split(".").map(Number);
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
   for (let i = 0; i < Math.max(pa.length, pb.length); i += 1) if ((pa[i] ?? 0) !== (pb[i] ?? 0)) return (pa[i] ?? 0) - (pb[i] ?? 0);
   return 0;
 }
@@ -89,8 +110,15 @@ function startFixtures() {
       res.end(page(`<h1>${url.pathname}</h1>`));
     }
   };
-  const a = http.createServer(handler(`http://localhost:${PORT_A}`)).listen(PORT_A, "127.0.0.1");
-  const b = http.createServer(handler(`http://127.0.0.1:${PORT_B}`)).listen(PORT_B, "127.0.0.1");
+  const a = http.createServer(handler(`http://localhost:${PORT_A}`));
+  const b = http.createServer(handler(`http://127.0.0.1:${PORT_B}`));
+  for (const [server, port] of [[a, PORT_A], [b, PORT_B]]) {
+    server.on("error", (error) => {
+      console.error(`fixture port ${port}: ${error.message}`);
+      process.exit(3);
+    });
+    server.listen(port, "127.0.0.1");
+  }
   return () => {
     a.close();
     b.close();
@@ -211,6 +239,9 @@ async function main() {
       "--disable-features=DisableLoadExtensionCommandLineSwitch",
       `--remote-debugging-port=${DEBUG_PORT}`,
       "--no-first-run",
+      // Without these, page loads can hang on a macOS keychain prompt.
+      "--use-mock-keychain",
+      "--password-store=basic",
       "--no-default-browser-check",
       "--disable-search-engine-choice-screen",
       userUrl
@@ -233,6 +264,12 @@ async function main() {
       serviceWorkerEval(extensionId, `(async () => { const w = await chrome.windows.getLastFocused(); const [t] = await chrome.tabs.query({active:true, windowId:w.id}); return {windowId:w.id, focused:w.focused, tabId:t?.id, url:t?.url}; })()`);
     const user0 = await userState();
 
+    // 0. Warm-up: one sequential tab.
+    let warm = Date.now();
+    const warmTab = await host.call("createTab", S("s-warm", { url: `http://localhost:${PORT_A}/warm` }), 8000);
+    check("createTab (sequential)", typeof warmTab.id === "number", `${Date.now() - warm} ms`);
+    await host.call("finalizeTabs", S("s-warm", { keep: [] }));
+
     // 1. 4 sessions × 2 tabs, created concurrently.
     const t0 = Date.now();
     const created = await Promise.all(
@@ -242,6 +279,7 @@ async function main() {
       ])
     );
     const createMs = Date.now() - t0;
+    console.log("  · created:", created.map((t) => `${t.id}:${t.url}`).join(" "));
     const groups = await serviceWorkerEval(extensionId, `(async () => (await chrome.tabGroups.query({})).map(g => ({id:g.id,title:g.title,color:g.color})))()`);
     const tabGroups = await serviceWorkerEval(extensionId, `(async () => Object.fromEntries((await chrome.tabs.query({})).map(t => [t.id, t.groupId])))()`);
     let groupedRight = groups.length === 4;
@@ -268,7 +306,7 @@ async function main() {
       samples.push(performance.now() - start);
     }
     samples.sort((a, b) => a - b);
-    check("executeCdp implicit attach (no attach call)", first.result?.value === "/alpha-1", `first call ${firstMs} ms; warm p50 ${samples[10].toFixed(1)} ms`);
+    check("executeCdp implicit attach (no attach call)", typeof first.result?.value === "string", `value ${JSON.stringify(first.result?.value)}; ` + `first call (attach+eval) ${firstMs} ms; warm p50 ${samples[10].toFixed(1)} ms`);
 
     // 3. 5 MB result ext→host, and a 2.5 MB chunked request host→ext.
     start = Date.now();
@@ -282,9 +320,21 @@ async function main() {
     // 4. OOPIF child session: auto-attach (flatten) → isolated world eval via sessionId.
     const oopTab = await host.call("createTab", S("s-oopif", { label: "oopif", url: "about:blank" }));
     await host.call("subscribe", S("s-oopif", { tabId: oopTab.id, domains: ["Page", "Target"] }));
-    await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id }, method: "Page.enable" }));
-    await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id }, method: "Target.setAutoAttach", commandParams: { autoAttach: true, waitForDebuggerOnStart: false, flatten: true } }));
-    await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id }, method: "Page.navigate", commandParams: { url: `http://localhost:${PORT_A}/oopif` } }));
+    const step = async (label, method, commandParams = {}) => {
+      const t = Date.now();
+      try {
+        const r = await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id }, method, commandParams, timeoutMs: 6000 }));
+        console.log(`  · ${label}: ${Date.now() - t} ms`);
+        return r;
+      } catch (error) {
+        console.log(`  · ${label}: FAILED after ${Date.now() - t} ms: ${error.message}`);
+        return null;
+      }
+    };
+    await step("Page.enable", "Page.enable");
+    await step("Page.navigate", "Page.navigate", { url: `http://localhost:${PORT_A}/oopif` });
+    await sleep(800);
+    await step("Target.setAutoAttach", "Target.setAutoAttach", { autoAttach: true, waitForDebuggerOnStart: false, flatten: true });
     const attached = await host.waitFor((n) => n.method === "onCDPEvent" && n.params.method === "Target.attachedToTarget" && n.params.params?.targetInfo?.type === "iframe", 8000);
     let oopifOk = false;
     let oopifDetail = "no Target.attachedToTarget(iframe) event";
@@ -295,6 +345,9 @@ async function main() {
         const world = await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id, sessionId: childSession }, method: "Page.createIsolatedWorld", commandParams: { frameId, worldName: "__obu_utility" } }));
         const evaluated = await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id, sessionId: childSession }, method: "Runtime.evaluate", commandParams: { expression: "location.origin + '|' + document.getElementById('inside')?.textContent", contextId: world.executionContextId, returnByValue: true } }));
         oopifOk = evaluated.result?.value?.startsWith(`http://127.0.0.1:${PORT_B}|frame on`);
+        await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id, sessionId: childSession }, method: "Page.enable" }));
+        await host.call("executeCdp", S("s-oopif", { target: { tabId: oopTab.id, sessionId: childSession }, method: "Runtime.evaluate", commandParams: { expression: "location.reload()" } }));
+        await host.waitFor((n) => n.method === "onCDPEvent" && n.params.sessionId === childSession, 3000);
         oopifDetail = `child session ${childSession.slice(0, 8)}…, isolated ctx ${world.executionContextId}: ${evaluated.result?.value}`;
       } catch (error) {
         oopifDetail = error.message;
@@ -319,6 +372,10 @@ async function main() {
     await sleep(400);
     await host.call("executeCdp", S("s-gamma", { target: { tabId: openerTab.id }, method: "Runtime.evaluate", commandParams: { expression: "document.getElementById('pop').click()", userGesture: true } }));
     const popup = await host.waitFor((n) => n.method === "popupOpened" && n.params.openerTabId === openerTab.id, 4000);
+    if (!popup) {
+      const recent = await serviceWorkerEval(extensionId, `(async () => (await chrome.tabs.query({})).sort((a,b)=>b.id-a.id).slice(0,2).map(t => ({id:t.id, opener:t.openerTabId, url:t.url||t.pendingUrl, active:t.active, group:t.groupId})))()`);
+      console.log("  · newest tabs:", JSON.stringify(recent), "opener", openerTab.id, "popupOpened:", JSON.stringify(host.notifications.filter((n) => n.method === "popupOpened").map((n) => n.params)));
+    }
     const gammaTabs = popup ? await host.call("getTabs", S("s-gamma")) : [];
     check("popup adopted into opener's session", Boolean(popup) && gammaTabs.some((t) => t.id === popup.params.tabId), popup ? `popup tab ${popup.params.tabId}` : "no popupOpened");
     const user2 = await userState();
@@ -327,7 +384,7 @@ async function main() {
     // 7. Download correlated to its tab.
     const dlTab = created[6];
     await host.call("executeCdp", S("s-delta", { target: { tabId: dlTab.id }, method: "Page.enable" }));
-    await host.call("executeCdp", S("s-delta", { target: { tabId: dlTab.id }, method: "Browser.setDownloadBehavior", commandParams: { behavior: "allowAndName", downloadPath: path.join(WORK, "downloads"), eventsEnabled: true } }).catch(() => null));
+    await host.call("executeCdp", S("s-delta", { target: { tabId: dlTab.id }, method: "Browser.setDownloadBehavior", commandParams: { behavior: "allowAndName", downloadPath: path.join(WORK, "downloads"), eventsEnabled: true } })).catch(() => null);
     await host.call("executeCdp", S("s-delta", { target: { tabId: dlTab.id }, method: "Runtime.evaluate", commandParams: { expression: `location.href = 'http://localhost:${PORT_A}/file.bin'` } }));
     const dl = await host.waitFor((n) => n.method === "onDownloadChange" && n.params.status === "started", 6000);
     check("download carries tabId/session/referrer", Boolean(dl) && dl.params.tabId === dlTab.id && dl.params.sessionId === "s-delta", dl ? `tab ${dl.params.tabId} (${dl.params.tabConfidence}), session ${dl.params.sessionId}, startTime ${dl.params.startTime ? "yes" : "no"}` : "no download event");
@@ -339,7 +396,9 @@ async function main() {
     // 9. Close guard + finalize: activate one alpha tab as if the user clicked it.
     const viewed = created[1];
     await serviceWorkerEval(extensionId, `chrome.tabs.update(${viewed.id}, {active:true})`);
+    console.log("  · s-alpha tabs before finalize:", JSON.stringify(await host.call("getTabs", S("s-alpha"))));
     const fin = await host.call("finalizeTabs", S("s-alpha", { keep: [] }));
+    console.log("  · finalize:", JSON.stringify(fin));
     check("finalize closes owned tabs but guards the one the user is viewing", fin.closedTabIds.includes(created[0].id) && fin.releasedTabIds.includes(viewed.id), JSON.stringify(fin.guardedTabs));
     for (const sid of ["s-beta", "s-gamma", "s-delta", "s-oopif"]) await host.call("finalizeTabs", S(sid, { keep: [] }));
     await sleep(300);
@@ -348,7 +407,8 @@ async function main() {
   } finally {
     if (!argv.includes("--keep-open")) {
       chrome.kill("SIGTERM");
-      await sleep(500);
+      for (let i = 0; i < 30 && chrome.exitCode === null && chrome.signalCode === null; i += 1) await sleep(100);
+      if (chrome.exitCode === null && chrome.signalCode === null) chrome.kill("SIGKILL");
     }
     host?.socket.destroy();
     stopFixtures();

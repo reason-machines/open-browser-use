@@ -32,6 +32,11 @@ const LEGACY_DELIVERABLE_GROUP_TITLES = new Set(["✅ Open Browser Use"]);
 // '"<extension>" started debugging this browser' infobar goes away between
 // bursts of agent work; the next CDP call re-attaches implicitly.
 const DEFAULT_IDLE_DETACH_MS = 30_000;
+// Backstop lease: a session with no request for this long (daemon crashed,
+// host gone, client forgot to finalize) is finalized by the extension itself,
+// closing its agent tabs. The daemon's own 60 s lease normally fires first.
+const DEFAULT_SESSION_LEASE_MS = 5 * 60_000;
+const LEASE_SWEEP_ALARM_NAME = "open-browser-use-lease-sweep";
 // Host→extension native-messaging frames are capped at 1 MB by Chrome; the host
 // splits larger JSON payloads into {chunk:{id,i,n,data}} slices (WS-B pairs).
 const CHUNK_TTL_MS = 30_000;
@@ -497,6 +502,11 @@ class BrowserBackend {
     this.notify = null;
     this.profileId = null;
     this.idleDetachMs = DEFAULT_IDLE_DETACH_MS;
+    // windowId -> recently activated tab ids (newest last), to hand focus back
+    // when an agent-opened popup grabs it.
+    this.activationHistory = new Map();
+    this.sessionLeaseMs = DEFAULT_SESSION_LEASE_MS;
+    this.lastAgentAction = null;
     this.idleTimers = new Map();
     this.inflightByTab = new Map();
     chrome.debugger.onDetach.addListener((source, reason) => {
@@ -535,6 +545,12 @@ class BrowserBackend {
   // configure{idleDetachMs}: 0 disables idle detach (keep attached until the
   // turn ends); default DEFAULT_IDLE_DETACH_MS.
   async configure(params) {
+    if (params.sessionLeaseMs !== undefined) {
+      if (!Number.isInteger(params.sessionLeaseMs) || params.sessionLeaseMs < 0) {
+        throw new Error("configure sessionLeaseMs must be a non-negative integer");
+      }
+      this.sessionLeaseMs = params.sessionLeaseMs;
+    }
     if (params.idleDetachMs !== undefined) {
       if (!Number.isInteger(params.idleDetachMs) || params.idleDetachMs < 0) {
         throw new Error("configure idleDetachMs must be a non-negative integer");
@@ -542,7 +558,7 @@ class BrowserBackend {
       this.idleDetachMs = params.idleDetachMs;
       for (const tabId of this.attachedTabs) this.touchTab(tabId);
     }
-    return { idleDetachMs: this.idleDetachMs };
+    return { idleDetachMs: this.idleDetachMs, sessionLeaseMs: this.sessionLeaseMs };
   }
 
   clearIdleTimer(tabId) {
@@ -691,9 +707,12 @@ class BrowserBackend {
     if (!inGroup && !(origin === "popup" && (tab.groupId ?? -1) === -1)) {
       return "left_group";
     }
-    if (tab.active) {
+    // The active tab of any non-minimized window may be on screen even when
+    // Chrome is not frontmost; never pull it out from under the user.
+    // Agent popup windows (auth flows etc.) are transient: always closable.
+    if (tab.active && origin !== "popup") {
       const win = await chrome.windows?.get?.(tab.windowId).catch(() => null);
-      if (win?.focused) {
+      if (!win || win.state !== "minimized") {
         return "user_viewing";
       }
     }
@@ -947,6 +966,7 @@ class BrowserBackend {
       await this.queueGroupOp(() => this.moveToDeliverables(deliverableTabs));
     }
     if (handoffTabs.length > 0) {
+      sessionState.handoffTabIds = handoffTabs;
       sessionState.activeTabId = handoffTabs.includes(sessionState.activeTabId)
         ? sessionState.activeTabId
         : handoffTabs[0];
@@ -1057,6 +1077,7 @@ class BrowserBackend {
         : DEFAULT_CDP_TIMEOUT_MS;
     if (typeof tabId === "number") {
       this.inflightByTab.set(tabId, (this.inflightByTab.get(tabId) ?? 0) + 1);
+      this.lastAgentAction = { tabId, sessionId: params.session_id, at: Date.now() };
     }
     try {
       return await this.sendCdp(target, params, timeoutMs);
@@ -1510,21 +1531,74 @@ class BrowserBackend {
 
   // A tab opened by one of a session's tabs (window.open, target=_blank,
   // middle-click) is adopted by that session and reported as popupOpened.
+  // Attribution, most to least certain: the opener tab is owned; the new tab
+  // landed in an agent group (Chrome puts link-opened tabs in the source
+  // tab's group); an agent acted on a tab in the last 2 s (Chrome may report
+  // the window's active tab as opener for background-tab popups).
+  async attributePopup(tab) {
+    if (Number.isInteger(tab.openerTabId)) {
+      const owner = await this.store.findTabOwner(tab.openerTabId);
+      if (owner) return { sessionId: owner.sessionId, openerTabId: tab.openerTabId };
+    }
+    const recent = this.lastAgentAction && Date.now() - this.lastAgentAction.at < 2_000 ? this.lastAgentAction : null;
+    if (typeof tab.groupId === "number" && tab.groupId !== -1) {
+      const owner = await this.store.findSessionByGroup(tab.groupId);
+      if (owner) {
+        if (recent) {
+          const { rootSessionId } = await this.store.getRoot(recent.sessionId);
+          if (rootSessionId === owner.sessionId) return { sessionId: recent.sessionId, openerTabId: recent.tabId };
+        }
+        return { sessionId: owner.sessionId, openerTabId: tab.openerTabId ?? null };
+      }
+    }
+    if (recent && Number.isInteger(tab.openerTabId) && !(await this.store.findTabOwner(tab.openerTabId))) {
+      return { sessionId: recent.sessionId, openerTabId: recent.tabId };
+    }
+    return null;
+  }
+
   async handleTabCreated(tab) {
-    if (!hasTabId(tab) || !Number.isInteger(tab.openerTabId)) {
+    if (!hasTabId(tab) || (await this.store.findTabOwner(tab.id))) {
       return;
     }
-    const owner = await this.store.findTabOwner(tab.openerTabId);
-    if (!owner || (await this.store.findTabOwner(tab.id))) {
+    if (!Number.isInteger(tab.openerTabId) && (tab.groupId ?? -1) === -1) {
       return;
     }
-    await this.ensureSessionGroup(owner.sessionId, tab.id, "agent").catch(() => {});
+    const attribution = await this.attributePopup(tab);
+    if (!attribution || (await this.store.findTabOwner(tab.id))) {
+      return;
+    }
+    await this.ensureSessionGroup(attribution.sessionId, tab.id, "agent").catch(() => {});
+    if (tab.active) {
+      await this.restoreUserFocus(tab).catch(() => {});
+    }
     this.emit("popupOpened", {
       tabId: tab.id,
-      openerTabId: tab.openerTabId,
-      sessionId: owner.sessionId,
+      openerTabId: attribution.openerTabId,
+      sessionId: attribution.sessionId,
       ...(tab.pendingUrl || tab.url ? { url: tab.pendingUrl || tab.url } : {})
     });
+  }
+
+  handleTabActivated({ tabId, windowId }) {
+    const history = (this.activationHistory.get(windowId) ?? []).filter((id) => id !== tabId);
+    history.push(tabId);
+    this.activationHistory.set(windowId, history.slice(-8));
+  }
+
+  // An agent-opened tab came up in the foreground: give the window back to the
+  // tab the user had active before it.
+  async restoreUserFocus(tab) {
+    const history = this.activationHistory.get(tab.windowId) ?? [];
+    for (let i = history.length - 1; i >= 0; i -= 1) {
+      const candidate = history[i];
+      if (candidate === tab.id) continue;
+      const previous = await chrome.tabs.get(candidate).catch(() => null);
+      if (!previous) continue;
+      await chrome.tabs.update(candidate, { active: true });
+      return candidate;
+    }
+    return null;
   }
 
   // Dragging an owned tab out of the agent group (or into another window)
@@ -1776,7 +1850,10 @@ class BrowserBackend {
     session.activeTabId = tabId;
     this.activeTabsBySession.set(sessionId, tabId);
     await this.store.save();
-    await this.publishCursorState(tabId);
+    // Fire-and-forget: injecting the cursor overlay waits for the page to be
+    // scriptable (a loading background tab can take seconds); never block the
+    // agent's call on decoration.
+    void this.publishCursorState(tabId).catch(() => false);
   }
 
   // A session's tabs: its owned tabs still in the root group (plus popup-window
@@ -1829,11 +1906,45 @@ class BrowserBackend {
     if (typeof params.turn_id !== "string") {
       throw new Error("Missing required browser turn_id");
     }
-    await this.store.getSession(params.session_id, {
+    const sessionState = await this.store.getSession(params.session_id, {
       parentSessionId: typeof params.parent_session_id === "string" ? params.parent_session_id : undefined,
       label: typeof params.label === "string" ? params.label : undefined
     });
+    // In-memory only (no storage write per call); persisted by other saves.
+    sessionState.lastSeenAt = Date.now();
     return { sessionId: params.session_id, turnId: params.turn_id };
+  }
+
+  // Finalizes sessions idle past the lease: agent tabs close (close guard
+  // still applies), handoff tabs stay with the user, borrowed tabs are released.
+  async sweepExpiredSessions(now = Date.now()) {
+    if (this.sessionLeaseMs <= 0) {
+      return [];
+    }
+    await this.store.ready;
+    const expired = [];
+    for (const [sessionId, session] of Object.entries(this.store.state.sessions)) {
+      if (!session || typeof session !== "object") continue;
+      const lastSeenAt = typeof session.lastSeenAt === "number" ? session.lastSeenAt : 0;
+      if (now - lastSeenAt < this.sessionLeaseMs) continue;
+      const handoff = Array.isArray(session.handoffTabIds) ? session.handoffTabIds : [];
+      const ownedOrigins = Object.keys(session.tabOrigins ?? {}).filter((id) => !handoff.includes(Number(id)));
+      if (ownedOrigins.length === 0) continue;
+      expired.push(sessionId);
+    }
+    const results = [];
+    for (const sessionId of expired) {
+      const session = this.store.state.sessions[sessionId];
+      const tabs = await this.getSessionTabs(sessionId).catch(() => []);
+      const handoff = new Set(Array.isArray(session?.handoffTabIds) ? session.handoffTabIds : []);
+      const keep = tabs.filter((tab) => handoff.has(tab.id)).map((tab) => ({ tabId: tab.id, status: "handoff" }));
+      try {
+        const result = await this.finalizeTabs({ session_id: sessionId, turn_id: "lease-expired", keep });
+        this.emit("sessionExpired", { sessionId, ...result });
+        results.push({ sessionId, ...result });
+      } catch {}
+    }
+    return results;
   }
 
   async requireSessionTab(params, command) {
@@ -2269,7 +2380,11 @@ async function withWebMcpTimeout(timeoutMs, fn) {
 
 function startHeartbeat(peer, backend) {
   chrome.alarms.create(HEARTBEAT_ALARM_NAME, { periodInMinutes: 0.5 }).catch(() => {});
+  chrome.alarms.create(LEASE_SWEEP_ALARM_NAME, { periodInMinutes: 0.5 }).catch(() => {});
   chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === LEASE_SWEEP_ALARM_NAME) {
+      void backend.sweepExpiredSessions().catch(() => {});
+    }
     if (alarm.name === HEARTBEAT_ALARM_NAME) {
       safeSendNotification(peer, "heartbeat", { at: new Date().toISOString() });
       void backend.getInfo().catch(() => {});
@@ -2317,6 +2432,9 @@ chrome.tabs.onCreated?.addListener((tab) => {
 });
 chrome.tabs.onUpdated?.addListener((tabId, changeInfo, tab) => {
   void backend.handleTabUpdated(tabId, changeInfo, tab).catch(() => {});
+});
+chrome.tabs.onActivated?.addListener((activeInfo) => {
+  backend.handleTabActivated(activeInfo);
 });
 chrome.tabs.onRemoved?.addListener((tabId) => {
   void backend.handleTabRemoved(tabId).catch(() => {});
