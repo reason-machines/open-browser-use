@@ -140,6 +140,14 @@ export class SessionManager {
     return row;
   }
 
+  /** Cap a session's lease at `expiresAt` (never extends it). */
+  capLease(sessionId: SessionId, expiresAt: number): void {
+    const row = this.store.getSession(sessionId);
+    if (!row || row.expiresAt <= expiresAt) return;
+    row.expiresAt = expiresAt;
+    this.store.upsertSession(row);
+  }
+
   get(sessionId: SessionId): SessionRow | undefined {
     return this.store.getSession(sessionId);
   }
