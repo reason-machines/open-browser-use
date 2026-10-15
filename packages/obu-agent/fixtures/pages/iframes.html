@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Iframes fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Checkout with embedded frames</h1>
+<p>Same-origin frame:</p>
+<iframe id="same" title="same-origin payment" style="width:600px;height:200px"></iframe>
+<p>Cross-origin frame (OOPIF under site isolation, contains a nested same-site frame):</p>
+<iframe id="cross" title="cross-origin payment" style="width:600px;height:260px"></iframe>
+<ol id="fx-log"></ol>
+<script>
+document.getElementById("same").src = "/iframe-form.html";
+document.getElementById("cross").src = __fx.config.crossOrigin + "/iframe-form.html?depth=1";
+addEventListener("message", (e) => { if (e.data && e.data.fx) { __fx.log(e.data.fx, e.data); __fx.state[e.data.fx] = e.data; } });
+</script>

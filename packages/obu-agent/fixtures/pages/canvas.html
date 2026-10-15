@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Canvas fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Canvas-only UI</h1>
+<canvas id="c" width="600" height="200" aria-label="Game board" style="border:1px solid #000"></canvas>
+<ol id="fx-log"></ol>
+<script>
+const c = document.getElementById("c"), g = c.getContext("2d");
+const buttons = [{ x: 40, y: 60, w: 140, h: 60, label: "Red", color: "#d33" }, { x: 230, y: 60, w: 140, h: 60, label: "Green", color: "#3a3" }, { x: 420, y: 60, w: 140, h: 60, label: "Blue", color: "#33d" }];
+function draw(sel) { g.clearRect(0, 0, 600, 200); for (const b of buttons) { g.fillStyle = b.color; g.fillRect(b.x, b.y, b.w, b.h); g.fillStyle = "#fff"; g.font = "20px sans-serif"; g.fillText(b.label + (sel === b.label ? " ✓" : ""), b.x + 30, b.y + 38); } }
+draw();
+c.addEventListener("click", (e) => { const r = c.getBoundingClientRect(); const x = (e.clientX - r.left) * (c.width / r.width), y = (e.clientY - r.top) * (c.height / r.height);
+  const b = buttons.find((b) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); if (b) { __fx.state.picked = b.label; __fx.log("canvas", b.label); draw(b.label); } });
+</script>

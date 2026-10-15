@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Drag and drop fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<style>li[draggable]{padding:6px;border:1px solid #999;margin:2px;width:200px;cursor:grab}.zone{width:220px;min-height:60px;border:2px dashed #555;padding:4px;display:inline-block;vertical-align:top;margin:4px}#knob{position:absolute;top:-6px;width:16px;height:16px;border-radius:8px;background:#36c;cursor:pointer}</style>
+<h1>Kanban (HTML5 drag and drop)</h1>
+<div class="zone" id="todo" aria-label="To do"><ul><li draggable="true" id="card-a">Card A</li><li draggable="true" id="card-b">Card B</li></ul></div>
+<div class="zone" id="done" aria-label="Done"><ul></ul></div>
+<h2>Slider (pointer events)</h2>
+<div id="track" role="slider" aria-label="Price" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="position:relative;width:300px;height:4px;background:#ccc;margin:20px"><div id="knob"></div></div>
+<ol id="fx-log"></ol>
+<script>
+let dragged = null;
+document.addEventListener("dragstart", (e) => { dragged = e.target; e.dataTransfer.setData("text/plain", e.target.id); });
+for (const z of document.querySelectorAll(".zone")) {
+  z.addEventListener("dragover", (e) => e.preventDefault());
+  z.addEventListener("drop", (e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain") || (dragged && dragged.id); const el = document.getElementById(id); if (!el) return; z.querySelector("ul").appendChild(el); __fx.state[id] = z.id; __fx.log("drop", { id, zone: z.id }); });
+}
+const track = document.getElementById("track"), knob = document.getElementById("knob"); let down = false;
+knob.addEventListener("pointerdown", (e) => { down = true; knob.setPointerCapture(e.pointerId); });
+knob.addEventListener("pointermove", (e) => { if (!down) return; const r = track.getBoundingClientRect(); const v = Math.max(0, Math.min(100, Math.round(((e.clientX - r.left) / r.width) * 100))); knob.style.left = (v * 3 - 8) + "px"; track.setAttribute("aria-valuenow", v); __fx.state.slider = v; });
+knob.addEventListener("pointerup", () => { down = false; __fx.log("slider", __fx.state.slider); });
+</script>

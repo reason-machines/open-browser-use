@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Bench page</title>
+<script src="/fx.js"></script>
+<h1>Bench</h1>
+<label>Query <input id="q"></label>
+<button id="inc">Increment</button> <span id="count" role="status">0</span>
+<button id="mut">Mutate after 100 ms</button>
+<ul id="list"></ul>
+<script>
+let n = 0; document.getElementById("inc").onclick = () => { n++; document.getElementById("count").textContent = n; __fx.state.count = n; };
+document.getElementById("mut").onclick = () => setTimeout(() => { const li = document.createElement("li"); li.textContent = "mutated " + (++n); document.getElementById("list").appendChild(li); __fx.state.count = n; }, 100);
+for (let i = 0; i < 40; i++) document.getElementById("list").insertAdjacentHTML("beforeend", `<li><a href="#${i}">Link ${i}</a></li>`);
+</script>

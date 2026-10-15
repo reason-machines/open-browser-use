@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Hidden content fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Visibility cases</h1>
+<button id="visible">Visible button</button>
+<div style="display:none"><button id="dn">display none button</button></div>
+<div style="visibility:hidden"><button id="vh">visibility hidden button</button></div>
+<div aria-hidden="true"><button id="ah">aria-hidden button</button></div>
+<button id="zero" style="width:0;height:0;padding:0;border:0;overflow:hidden">zero size</button>
+<button id="opacity" style="opacity:0">transparent button</button>
+<div hidden><p>hidden attribute text</p></div>
+<details><summary>Disclosure summary</summary><button id="in-details">Inside closed details</button></details>
+<div style="height:3000px"></div>
+<h2 id="below">Far below the fold</h2>
+<button id="below-btn" onclick="__fx.log('below-click')">Below the fold button</button>
+<div style="position:absolute;left:-9999px"><button id="offscreen-left">Off-screen left</button></div>
+<ol id="fx-log"></ol>

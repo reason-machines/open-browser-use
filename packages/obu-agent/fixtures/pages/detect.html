@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><title>Automation detector</title>
+<script src="/fx.js"></script>
+<h1>Automation detector (I8)</h1>
+<p id="out" role="status">clean</p>
+<button id="ping" onclick="__fx.log('ping')">Ping</button>
+<script>
+// Classic anti-bot probe: when the Runtime domain is enabled, Chrome serialises console
+// arguments for the debugger and reads `stack` off Error objects -> getter fires.
+// Our daemon must never Runtime.enable an agent page, so this must stay clean.
+__fx.state.runtimeEnabled = false;
+setInterval(() => {
+  const e = new Error("probe");
+  Object.defineProperty(e, "stack", { configurable: true, get() { __fx.state.runtimeEnabled = true; document.getElementById("out").textContent = "DETECTED"; return ""; } });
+  console.debug(e);
+}, 100);
+__fx.state.webdriver = navigator.webdriver === true;
+</script>

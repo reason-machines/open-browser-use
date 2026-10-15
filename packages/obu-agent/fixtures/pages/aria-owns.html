@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>aria-owns fixture</title>
+<script src="/config.js"></script><script src="/fx.js"></script>
+<h1>Combobox with owned listbox</h1>
+<label id="lbl" for="cb">Fruit</label>
+<div role="combobox" aria-expanded="false" aria-owns="lb" aria-haspopup="listbox" id="cbwrap">
+  <input id="cb" aria-autocomplete="list" aria-controls="lb">
+</div>
+<p>Unrelated paragraph between the combobox and its list.</p>
+<ul role="listbox" id="lb" aria-labelledby="lbl" hidden>
+  <li role="option" id="o1">Apple</li><li role="option" id="o2">Banana</li><li role="option" id="o3">Cherry</li>
+</ul>
+<div role="tree" aria-owns="far-child"><div role="treeitem">Root item</div></div>
+<div id="far-child" role="treeitem">Reparented tree item</div>
+<ol id="fx-log"></ol>
+<script>
+const cb = document.getElementById("cb"), lb = document.getElementById("lb"), wrap = document.getElementById("cbwrap");
+cb.addEventListener("focus", () => { lb.hidden = false; wrap.setAttribute("aria-expanded", "true"); });
+cb.addEventListener("input", () => { for (const o of lb.children) o.hidden = !o.textContent.toLowerCase().startsWith(cb.value.toLowerCase()); });
+lb.addEventListener("click", (e) => { const o = e.target.closest("[role=option]"); if (!o) return;
+  cb.value = o.textContent; lb.hidden = true; wrap.setAttribute("aria-expanded", "false"); __fx.state.picked = o.textContent; __fx.log("pick", o.textContent); });
+</script>
