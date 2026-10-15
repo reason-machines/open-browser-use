@@ -23,7 +23,7 @@ CHROME_PROFILE = os.environ.get("BENCH_CHROME_PROFILE", "Profile 2")  # "QA Runn
 
 SUFFIX = """
 
-Rules: this is a read-only task. Do not purchase, book, log in, sign up, post, send messages or change any account settings. Use the web browser to do the task. Work in your own new tab(s); do not touch tabs you did not open.
+Safety rules: never complete a real purchase or payment, log in, sign up, post, send messages, or change account settings on a real public website. Using page controls is allowed and expected: search boxes, filters, sorting, date pickers, quizzes, selecting options, and any form, dialog, upload or download on the local test pages at 127.0.0.1 / localhost (those are offline test fixtures, so submitting them is fine). Work in your own new tab(s); do not touch tabs you did not open.
 When you are done, end your reply with one line that starts with `FINAL ANSWER:` followed by the complete answer (include every requested value)."""
 
 # Guidance for our agent: plays the role of the guide Aside bakes into its own agent.
@@ -123,7 +123,8 @@ def run_aside(task, tdir):
     cmd = ["aside", "-m", ASIDE_MODEL, "--effort", "medium", "--log-dump", str(events), task["prompt"] + SUFFIX]
     code, secs = run_proc(cmd, tdir / "stdout.txt", tdir / "stderr.txt", task["timeout_s"])
     out = ANSI.sub("", (tdir / "stdout.txt").read_text(errors="replace"))
-    m = re.search(r"created new session: (\S+)", out)
+    err = ANSI.sub("", (tdir / "stderr.txt").read_text(errors="replace"))
+    m = re.search(r"created new session: (\S+)", err + out)
     sid = m.group(1) if m else None
     if sid:
         STATE.mkdir(parents=True, exist_ok=True)
