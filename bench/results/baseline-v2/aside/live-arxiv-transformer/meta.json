@@ -1,0 +1,38 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-arxiv-transformer",
+ "category": "download-read",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 31.7,
+  "steps": 4,
+  "tokens": 358591,
+  "final": "arXiv ID 1706.03762; 8 authors; v1 submission date 12 June 2017; Transformer (big) EN-DE BLEU 28.4.",
+  "raw_final": "The arXiv paper is **1706.03762**. It has **8 authors**, and its v1 was submitted **12 June 2017**. In Table 2, **Transformer (big)** scores **28.4 EN-DE BLEU**. <citation refs=\"D-VsPmXzk5WL9iYYBXWtp,Kfi6f8-malm0jF__CdjEs\">Source: arXiv record and the paper PDF.</citation>\n\nFINAL ANSWER: arXiv ID 1706.03762; 8 authors; v1 submission date 12 June 2017; Transformer (big) EN-DE BLEU 28.4.",
+  "session_id": "tzSGtsHXFXUtzkFt",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values: arXiv 1706.03762, 8 authors, 12 June 2017, and EN-DE BLEU 28.4.",
+  "failure_category": "none"
+ }
+}

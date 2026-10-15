@@ -8,6 +8,7 @@ results/**
 !results/*/*/*/judge.json
 !results/*/summary.md
 !results/*/summary.json
+!results/*/logins.json
 !results/BASELINE.md
 .aside-sessions-created
 .native-manifest.backup.json

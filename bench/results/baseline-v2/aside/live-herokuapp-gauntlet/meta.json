@@ -1,0 +1,38 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-herokuapp-gauntlet",
+ "category": "waiting-overlays",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 72.6,
+  "steps": 15,
+  "tokens": 1139400,
+  "final": "(1) Hello World!; (2) name: user3; (3) BOTTOM; (4) You entered: bench.",
+  "raw_final": "1. Dynamic loading: **Hello World!**\n2. Third avatar hover: **name: user3**\n3. Bottom frame: **BOTTOM**\n4. JS Prompt after entering `bench` and accepting: **You entered: bench**\n\nFINAL ANSWER: (1) Hello World!; (2) name: user3; (3) BOTTOM; (4) You entered: bench.",
+  "session_id": "8vPk3yDDb2mG7sOR",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 80,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer contains all four required values from the answer key.",
+  "failure_category": "none"
+ }
+}

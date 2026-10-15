@@ -1,0 +1,38 @@
+{
+ "agent": "ours",
+ "stack": "obu",
+ "task_id": "live-hn-dropbox",
+ "category": "multi-hop-nav",
+ "suite": "hard",
+ "model": "gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 11.2,
+  "steps": 4,
+  "tokens": 126017,
+  "final": "Title: “My YC app: Dropbox - Throw away your USB drive”; author: dhouston; points: 104.",
+  "raw_final": "FINAL ANSWER: Title: “My YC app: Dropbox - Throw away your USB drive”; author: dhouston; points: 104.",
+  "session_id": "bench-baseline-v2-live-hn-dropbox",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 10,
+   "tabs_after_agent": 10,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 10,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The final answer includes the exact title, author dhouston, and 104 points, all supported by the trajectory and matching the answer key.",
+  "failure_category": "none"
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "agent": "aside",
+ "stack": "aside",
+ "task_id": "live-rfc9110",
+ "category": "multi-hop-research",
+ "suite": "hard",
+ "model": "openai-codex/gpt-6-luna",
+ "judge_model": "gpt-6.1-sol",
+ "result": {
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 8.6,
+  "steps": 2,
+  "tokens": 145310,
+  "final": "RFC 9110 lists three editors and their organizations: Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes GmbH. citedxaFBpp0QcMavXcH8daAd",
+  "raw_final": "FINAL ANSWER: RFC 9110 lists three editors and their organizations: Roy T. Fielding — Adobe; Mark Nottingham — Fastly; Julian Reschke — greenbytes GmbH. citedxaFBpp0QcMavXcH8daAd",
+  "session_id": "S76r2JCzr4tEF7ED",
+  "errors": [],
+  "tabs": {
+   "measured": true,
+   "tabs_before": 79,
+   "tabs_after_agent": 79,
+   "left_by_agent": 0,
+   "left_urls": [],
+   "closed_by_harness": 0,
+   "remaining_after_cleanup": 0,
+   "tabs_after_cleanup": 79,
+   "unattributed_new_tabs": 0,
+   "back_to_baseline": true
+  }
+ },
+ "verdict": {
+  "success": true,
+  "score": 1.0,
+  "reason": "The answer includes all three editors with the correct organizations. Expanded names and greenbytes GmbH are acceptable wording differences.",
+  "failure_category": "none"
+ }
+}

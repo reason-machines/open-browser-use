@@ -22,7 +22,7 @@ AGENT_MODEL = os.environ.get("BENCH_AGENT_MODEL", "gpt-6-luna")
 # (The Aside-hosted route `aside/gpt-6-luna` ran out of credits mid-baseline: 402 Insufficient credits.)
 ASIDE_MODEL = os.environ.get("BENCH_ASIDE_MODEL", f"openai-codex/{AGENT_MODEL}")
 JUDGE_MODEL = os.environ.get("BENCH_JUDGE_MODEL", "gpt-6.1-sol")
-CHROME_PROFILE = os.environ.get("BENCH_CHROME_PROFILE", "Profile 2")  # "QA Runner": no personal logins
+CHROME_PROFILE = os.environ.get("BENCH_CHROME_PROFILE", "Profile 1")  # "Adi": the account-rich profile (user direction)
 REAL_PROFILE = os.environ.get("BENCH_REAL_PROFILE", "Profile 1")  # the user's real logged-in profile (tasks with "profile": "real")
 
 SUFFIX = """
@@ -194,25 +194,49 @@ def profile_for(task):
     return REAL_PROFILE if task.get("profile") == "real" else CHROME_PROFILE
 
 
-def mcp_server(stack, session_id, profile=None):
+OBU_SOCKET_DIR = Path("/tmp/open-browser-use")
+
+
+def resolve_aside_socket():
+    """The OBU extension installed in Aside.app registers a socket that matches no Chrome profile.
+    Find the live socket whose host is not one of the connected Chrome profiles."""
+    r = subprocess.run(["obu", "profiles", "--connected", "--json"], capture_output=True, text=True, timeout=30)
+    chrome = {x.get("socketPath") for x in json.loads(r.stdout or "[]") if x.get("connected")}
+    for sock in sorted(OBU_SOCKET_DIR.glob("*.sock"), key=lambda p: p.stat().st_mtime, reverse=True):
+        if str(sock) in chrome:
+            continue
+        info = subprocess.run(["obu", "--socket", str(sock), "info", "--session-id", "bench-probe", "--timeout", "3s"],
+                              capture_output=True, text=True, timeout=15)
+        if info.returncode == 0 and '"extensionId"' in info.stdout:
+            return str(sock)
+    raise RuntimeError("no Open Browser Use socket from Aside.app is connected (is the extension installed and Aside running?)")
+
+
+def target_args(agent, task):
+    """Where our agent's browser lives: a Chrome profile, or the OBU extension inside Aside.app."""
+    if agent == "ours-in-aside":
+        return ["--socket", resolve_aside_socket()]
+    return ["--profile", profile_for(task)]
+
+
+def mcp_server(stack, session_id, target):
     """Adapter: which MCP server backs our agent. Swap stacks with --stack."""
     if stack == "obu":
-        return "obu", ["mcp", "--profile", profile or CHROME_PROFILE, "--session-id", session_id, "--timeout", "60s"]
+        return "obu", ["mcp", *target, "--session-id", session_id, "--timeout", "60s"]
     if stack == "obu-agent":  # new daemon (packages/obu-agent); thin MCP proxy over the resident daemon
-        return os.environ.get("OBU_AGENT_BIN", "obu-agent"), ["mcp", "--attach", "--profile", profile or CHROME_PROFILE,
-                                                               "--session-id", session_id]
+        return os.environ.get("OBU_AGENT_BIN", "obu-agent"), ["mcp", "--attach", *target, "--session-id", session_id]
     raise SystemExit(f"unknown stack {stack}")
 
 
-def finalize_obu(stack, session_id, profile=None):
+def finalize_obu(stack, session_id, target):
     if stack == "obu":
-        subprocess.run(["obu", "--profile", profile or CHROME_PROFILE, "finalize-tabs", "--session-id", session_id, "--keep", "[]"],
+        subprocess.run(["obu", *target, "finalize-tabs", "--session-id", session_id, "--keep", "[]"],
                        stdin=subprocess.DEVNULL, capture_output=True, timeout=30)
 
 
-def run_ours(task, tdir, stack, run_id):
+def run_ours(task, tdir, stack, run_id, target):
     session_id = f"bench-{run_id}-{task['id']}"[:80]
-    cmd_bin, cmd_args = mcp_server(stack, session_id, profile_for(task))
+    cmd_bin, cmd_args = mcp_server(stack, session_id, target)
     work = tdir / "work"
     work.mkdir(exist_ok=True)
     cmd = ["codex", "exec", "--ignore-user-config", "--skip-git-repo-check", "--json", "-m", AGENT_MODEL,
@@ -262,7 +286,7 @@ def run_ours(task, tdir, stack, run_id):
 # (all windows, all profiles) of the app the agent drives before and after the task. Per-agent
 # concurrency defaults to 1 so new tabs are attributable: Aside drives Aside.app, ours drives Chrome.
 
-APP_FOR = {"aside": "Aside", "ours": "Google Chrome"}
+APP_FOR = {"aside": "Aside", "ours": "Google Chrome", "ours-in-aside": "Aside"}
 TAB_SCRIPT = """tell application "%s"
 set out to ""
 repeat with w in windows
@@ -431,12 +455,14 @@ def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
             res, traj = run_aside(task, tdir)
             cleanup = lambda: None
         else:
-            res, traj = run_ours(task, tdir, stack, run_id)
-            cleanup = lambda: finalize_obu(stack, res["session_id"], profile_for(task))
+            target = target_args(agent, task)
+            res, traj = run_ours(task, tdir, stack, run_id, target)
+            res["target"] = target
+            cleanup = lambda: finalize_obu(stack, res["session_id"], target)
         res["tabs"] = hygiene(agent, task, before, traj, cleanup)
         (tdir / "trajectory.json").write_text(json.dumps(traj, indent=1, ensure_ascii=False))
     verdict = judge(task, res, traj, tdir)
-    meta = {"agent": agent, "stack": stack if agent == "ours" else "aside", "task_id": task["id"],
+    meta = {"requires_login": task.get("requires_login"), "agent": agent, "stack": "aside" if agent == "aside" else stack, "task_id": task["id"],
             "category": task["category"], "suite": task["suite"], "model": ASIDE_MODEL if agent == "aside" else AGENT_MODEL,
             "judge_model": JUDGE_MODEL, "result": res, "verdict": verdict}
     meta_path.write_text(json.dumps(meta, indent=1, ensure_ascii=False))
@@ -447,12 +473,27 @@ def run_one(agent, task, run_dir, stack, run_id, rejudge=False):
     return meta
 
 
+def login_excluded(task_or_meta, logins):
+    """A login-requiring task only counts where BOTH browsers are logged in. 'a|b' = either site suffices."""
+    req = task_or_meta.get("requires_login") or []
+    if not req or not logins:
+        return None
+    sides = list(logins.values())
+    def ok(site):
+        return all((side.get(site) or {}).get("logged_in") for side in sides)
+    missing = [r for r in req if not any(ok(s) for s in r.split("|"))]
+    return missing or None
+
+
 def left(m):
     return ((m["result"].get("tabs") or {}).get("left_by_agent") or 0)
 
 
 def summarize(run_dir):
+    logins = json.loads((run_dir / "logins.json").read_text()) if (run_dir / "logins.json").exists() else None
     metas = [json.loads(p.read_text()) for p in sorted(run_dir.glob("*/*/meta.json"))]
+    excluded = sorted({m["task_id"] for m in metas if login_excluded(m, logins)})
+    metas = [m for m in metas if m["task_id"] not in excluded]
     rows = {}
     for m in metas:
         rows.setdefault((m["suite"], m["agent"]), []).append(m)
@@ -481,6 +522,8 @@ def summarize(run_dir):
                          f"{m['result']['steps']}st {'' if m['verdict'].get('success') else m['verdict'].get('failure_category')}"
                          f"{f' 🗂{left(m)} tab(s) left' if left(m) else ''}")
         lines.append(f"| {tid} | {cat} | " + " | ".join(cells) + " |")
+    if excluded:
+        lines += ["", f"Excluded (a required site is not logged in on both browsers, see logins.json): {', '.join(excluded)}"]
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n")
     (run_dir / "summary.json").write_text(json.dumps(
         [{k: m[k] for k in ("agent", "stack", "suite", "task_id", "category", "model")} |
@@ -494,7 +537,7 @@ def summarize(run_dir):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", default="both", choices=["aside", "ours", "both"])
+    ap.add_argument("--agent", default="both", help="aside | ours | ours-in-aside | both (aside+ours) | all, or a comma list")
     ap.add_argument("--suite", default="hard", choices=["hard", "hard2", "mind2web", "all"])
     ap.add_argument("--tasks", default="")
     ap.add_argument("--stack", default=os.environ.get("BENCH_STACK", "obu"), choices=["obu", "obu-agent"])
@@ -511,13 +554,26 @@ def main():
     tasks = [t for s in suites for t in load_tasks(s, a.tasks)]
     if not tasks:
         raise SystemExit("no tasks matched")
+    logins_path = run_dir / "logins.json"
+    if logins_path.exists():
+        logins = json.loads(logins_path.read_text())
+        skip = [t["id"] for t in tasks if login_excluded(t, logins)]
+        if skip:
+            log(f"skipping (site not logged in on both browsers): {', '.join(skip)}")
+        tasks = [t for t in tasks if t["id"] not in skip]
     fx = ensure_fixtures() if any(t["suite"] in ("hard", "hard2") for t in tasks) else None
     ensure_upload_file()
-    agents = ["aside", "ours"] if a.agent == "both" else [a.agent]
+    agents = {"both": ["aside", "ours"], "all": ["aside", "ours", "ours-in-aside"]}.get(a.agent, a.agent.split(","))
+    for ag in agents:
+        if ag not in APP_FOR:
+            raise SystemExit(f"unknown agent {ag}")
     log(f"run {run_id}: {len(tasks)} tasks × {agents} (agent model {AGENT_MODEL}, aside model {ASIDE_MODEL}, "
         f"judge {JUDGE_MODEL}, stack {a.stack})")
     try:
-        pools = {ag: cf.ThreadPoolExecutor(max_workers=a.concurrency) for ag in agents}
+        # One pool per BROWSER APP, not per agent: Aside's agent and ours-in-aside share Aside.app, so they
+        # never run at the same time (no tab/CDP contention, clean tab attribution).
+        app_pools = {app: cf.ThreadPoolExecutor(max_workers=a.concurrency) for app in {APP_FOR[ag] for ag in agents}}
+        pools = {ag: app_pools[APP_FOR[ag]] for ag in agents}
         futs = []
         for t in tasks:
             for ag in agents:
@@ -529,7 +585,7 @@ def main():
                 f.result()
             except Exception as e:  # keep going; one task must not kill the run
                 log(f"task crashed: {e!r}")
-        for p in pools.values():
+        for p in app_pools.values():
             p.shutdown()
     finally:
         if fx:
