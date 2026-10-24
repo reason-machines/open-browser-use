@@ -3239,6 +3239,9 @@ func unzipExtension(zipPath string, targetDir string) error {
 		return err
 	}
 	for _, file := range reader.File {
+		if !filepath.IsLocal(file.Name) {
+			return fmt.Errorf("extension ZIP contains unsafe path: %s", file.Name)
+		}
 		targetPath := filepath.Join(cleanTargetDir, file.Name)
 		if targetPath != cleanTargetDir && !strings.HasPrefix(targetPath, cleanTargetDir+string(os.PathSeparator)) {
 			return fmt.Errorf("extension ZIP contains unsafe path: %s", file.Name)

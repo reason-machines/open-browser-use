@@ -685,7 +685,7 @@ export function installObu(): void {
   function shortUrlUncached(href: string): string {
     try {
       const u = new URL(href, location.href);
-      if (u.protocol === "javascript:") return "";
+      if (u.protocol === "javascript:" || u.protocol === "data:" || u.protocol === "vbscript:") return "";
       if (u.origin === location.origin) return cut(u.pathname + u.search + u.hash, 120);
       return cut(u.href, 120);
     } catch {

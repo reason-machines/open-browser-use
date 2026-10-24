@@ -49,12 +49,12 @@ function createHandler(config) {
       const head = `obu fixture download name=${name} tag=${tag}\n`;
       const body = bytes > head.length ? head + "x".repeat(bytes - head.length) : head;
       const send = () => { res.writeHead(200, { "content-type": "application/octet-stream", "content-length": Buffer.byteLength(body), "content-disposition": `attachment; filename="${name}"` }); res.end(body); };
-      const ms = Number(q.get("ms") ?? 0);
+      const ms = Math.min(Number(q.get("ms") ?? 0), 60_000);
       if (ms > 0) setTimeout(send, ms); else send();
       return;
     }
     if (url.pathname === "/slow") {
-      setTimeout(() => { res.writeHead(200, { "content-type": "application/json" }); res.end('{"ok":true}'); }, Number(q.get("ms") ?? 2000));
+      setTimeout(() => { res.writeHead(200, { "content-type": "application/json" }); res.end('{"ok":true}'); }, Math.min(Number(q.get("ms") ?? 2000), 60_000));
       return;
     }
     if (url.pathname === "/api/items") {
