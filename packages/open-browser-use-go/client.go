@@ -298,6 +298,11 @@ func EncodeFrame(value any) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	// The relay reads frames with wire.DefaultMaxFrame; refusing larger ones here
+	// also keeps the header length and the allocation size from overflowing.
+	if len(payload) > wire.DefaultMaxFrame {
+		return nil, fmt.Errorf("%w: %d > %d", wire.ErrFrameTooLarge, len(payload), wire.DefaultMaxFrame)
+	}
 	frame := make([]byte, wire.HeaderBytes+len(payload))
 	wire.NativeEndian().PutUint32(frame[:wire.HeaderBytes], uint32(len(payload)))
 	copy(frame[wire.HeaderBytes:], payload)
