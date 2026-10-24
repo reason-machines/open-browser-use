@@ -54,7 +54,8 @@ function createHandler(config) {
       return;
     }
     if (url.pathname === "/slow") {
-      setTimeout(() => { res.writeHead(200, { "content-type": "application/json" }); res.end('{"ok":true}'); }, Math.min(Number(q.get("ms") ?? 2000), 60_000));
+      const slowMs = Number(q.get("ms") ?? 2000);
+      setTimeout(() => { res.writeHead(200, { "content-type": "application/json" }); res.end('{"ok":true}'); }, slowMs > 60_000 ? 60_000 : slowMs);
       return;
     }
     if (url.pathname === "/api/items") {
