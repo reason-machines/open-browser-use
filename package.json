@@ -18,5 +18,10 @@
     "check": "pnpm typecheck && pnpm test",
     "example:iab": "pnpm --filter open-browser-use-electron... build && pnpm --filter @open-browser-use/electron-iab-example start",
     "smoke:iab": "pnpm --filter open-browser-use-electron... build && pnpm --filter @open-browser-use/electron-iab-example smoke"
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "^7.30.1"
+    }
   }
 }
