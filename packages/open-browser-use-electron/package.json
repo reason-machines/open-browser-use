@@ -22,5 +22,5 @@
   "repository": { "type": "git", "url": "git+https://github.com/iFurySt/open-browser-use.git", "directory": "packages/open-browser-use-electron" },
   "peerDependencies": { "electron": ">=30 <45" },
   "dependencies": { "open-browser-use-sdk": "workspace:^", "node-gyp": "11.5.0" },
-  "devDependencies": { "@types/node": "^22.10.2", "typescript": "^5.7.2", "electron": "44.10.1" }
+  "devDependencies": { "@types/node": "^22.10.2", "typescript": "^5.7.2", "electron": "44.11.2" }
 }
